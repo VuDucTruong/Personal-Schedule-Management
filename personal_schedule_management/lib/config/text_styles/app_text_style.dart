@@ -9,4 +9,6 @@ class AppTextStyle {
       TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
   static const TextStyle mini =
       TextStyle(fontSize: 8, fontWeight: FontWeight.bold);
+  static const TextStyle h3 =
+      TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 }

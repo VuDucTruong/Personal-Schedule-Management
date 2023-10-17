@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/features/controller/main_controller.dart';
@@ -27,7 +28,16 @@ class MyApp extends StatelessWidget {
     PageController pageController = PageController();
     // TODO: implement build
     return MaterialApp(
-      title: 'Flutter Demo',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('vi'),
+      ],
+      locale: const Locale('vi'),
       theme: ThemeData(
           useMaterial3: true,
           colorScheme: lightColorScheme,
@@ -59,12 +69,16 @@ class MyApp extends StatelessWidget {
           ),
           body: PageView(
             controller: pageController,
+            onPageChanged: (value) {
+              context.read<MainController>().changeIndex(value);
+            },
             children: [
               CalendarPage(),
               ManagementPage(),
               UserPage(),
               SettingsPage()
             ],
+            physics: NeverScrollableScrollPhysics(),
           ),
         ),
       ),
