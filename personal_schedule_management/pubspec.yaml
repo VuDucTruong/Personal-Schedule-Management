@@ -43,6 +43,7 @@ dependencies:
   google_fonts: ^6.1.0
   syncfusion_flutter_calendar: ^23.1.41
   syncfusion_localizations: ^23.1.41
+  syncfusion_flutter_charts: ^23.1.41
 
 dev_dependencies:
   flutter_test:
