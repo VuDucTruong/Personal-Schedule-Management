@@ -14,6 +14,7 @@ import 'config/theme/app_theme.dart';
 import 'features/pages/calendar_page.dart';
 import 'features/pages/user_page.dart';
 import 'features/pages/register_page.dart';
+import 'features/pages/pincode_page.dart';
 
 void main() {
   runApp(
