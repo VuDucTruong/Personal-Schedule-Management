@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/features/controller/main_controller.dart';
+import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/managemet_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ void main() {
   runApp(
     MultiProvider(
         providers: [ChangeNotifierProvider(create: (_) => MainController())],
-        child: const MyApp()),
+        child: const LoginView()),
   );
 }
 
