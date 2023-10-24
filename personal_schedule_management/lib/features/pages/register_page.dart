@@ -5,12 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 
-class SignUp extends StatelessWidget {
-  const SignUp({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     double barRatio = 0.75;
+    double buttonRatio = 0.6;
 
     // TODO: implement build
     return MaterialApp(
@@ -27,178 +28,197 @@ class SignUp extends StatelessWidget {
       theme: ThemeData(
           useMaterial3: true,
           colorScheme: lightColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()),
+          textTheme: GoogleFonts.robotoTextTheme()
+      ),
       darkTheme: ThemeData(
           useMaterial3: true,
           colorScheme: darkColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()),
+          textTheme: GoogleFonts.robotoTextTheme()
+      ),
       home: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container( // back button
-                  width: 50,
-                  margin: const EdgeInsets.only(top: 8.0, left: 8.0),
-                  child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(FontAwesomeIcons.circleChevronLeft, size: 40,
-                          color: Colors.deepPurple)
-                  )
+        child: Builder(
+          builder: (context) => Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              leading: IconButton(
+                onPressed: () {},
+                icon: Icon(FontAwesomeIcons.circleChevronLeft, size: 40,
+                color: Theme.of(context).colorScheme.primary)
               ),
+            ),
 
-              Container( // Logo & name
-                child: Column(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container( // Logo & name
+                  child: Column(
 
-                  children: [
-                    Container(
-                        alignment: Alignment.center,
-                        child: const CircleAvatar(
-                          radius: 70,
-                          backgroundColor: Colors.deepPurple,
+                    children: [
+                      Container(
+                          alignment: Alignment.center,
                           child: CircleAvatar(
-                            radius: 66,
-                            backgroundImage: AssetImage(
-                                'assets/image/logo.png'),
+                            radius: 72,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            child: CircleAvatar(
+                              radius: 66,
+                              backgroundImage: AssetImage(
+                                  'assets/image/logo.png'),
+                            ),
+                          )
+                      ),
+
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text('Chào mừng đến với', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground)
+                          )
+                      ),
+
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text('Magic Calendar', style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.surfaceTint)
+                          )
+                      )
+
+                    ],
+                  ),
+                ),
+
+                Container( // forms
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Tên tài khoản', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground)
                           ),
-                        )
-                    ),
+                          Container(
+                              height: 40,
+                              width:  MediaQuery.of(context).size.width * barRatio,
+                              child: Scaffold(
+                                  resizeToAvoidBottomInset: false,
+                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                  body: TextField(
+                                    keyboardType: TextInputType.text,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground),
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(width: 3, color: Colors.black),
+                                        borderRadius: BorderRadius.circular(50.0),
 
-                    Container(
-                        alignment: Alignment.center,
-                        child: Text('Wellcome to', style: Theme.of(context).textTheme.headlineSmall)
-                    ),
-
-                    Container(
-                        alignment: Alignment.center,
-                        child: Text('Personal Scheduler', style: Theme.of(context).textTheme.headlineMedium)
-                    )
-
-                  ],
-                ),
-              ),
-
-              Container( // forms
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Tên tài khoản', style: Theme.of(context).textTheme.bodyMedium),
-                        Container(
-                            height: 40,
-                            width:  MediaQuery.of(context).size.width * barRatio,
-                            child: Scaffold(
-                                resizeToAvoidBottomInset: false,
-                                backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                body: TextField(
-                                  keyboardType: TextInputType.text,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(width: 3, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(50.0),
+                                      ),
                                     ),
-                                  ),
-                                )
-                            )
-                        )
-                      ],
-                    ),
+                                  )
+                              )
+                          )
+                        ],
+                      ),
 
-                    SizedBox(height: 10),
+                      SizedBox(height: 10),
 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium),
-                        Container(
-                            height: 40,
-                            width: MediaQuery.of(context).size.width * barRatio,
-                            child: Scaffold(
-                                resizeToAvoidBottomInset: false,
-                                backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                body: TextField(
-                                  keyboardType: TextInputType.text,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(width: 3, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(50.0),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground)
+                          ),
+                          Container(
+                              height: 40,
+                              width: MediaQuery.of(context).size.width * barRatio,
+                              child: Scaffold(
+                                  resizeToAvoidBottomInset: false,
+                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                  body: TextField(
+                                    keyboardType: TextInputType.text,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground),
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(width: 3, color: Colors.black),
+                                        borderRadius: BorderRadius.circular(50.0),
+                                      ),
                                     ),
-                                  ),
-                                )
-                            )
-                        )
-                      ],
-                    ),
+                                  )
+                              )
+                          )
+                        ],
+                      ),
 
-                    SizedBox(height: 10),
+                      SizedBox(height: 10),
 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Email', style: Theme.of(context).textTheme.bodyMedium),
-                        Container(
-                            height: 40,
-                            width:  MediaQuery.of(context).size.width * barRatio,
-                            child: Scaffold(
-                                resizeToAvoidBottomInset: false,
-                                backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                body: TextField(
-                                  keyboardType: TextInputType.text,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(width: 3, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(50.0),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Email', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground)
+                          ),
+                          Container(
+                              height: 40,
+                              width:  MediaQuery.of(context).size.width * barRatio,
+                              child: Scaffold(
+                                  resizeToAvoidBottomInset: false,
+                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                  body: TextField(
+                                    keyboardType: TextInputType.text,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground),
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(width: 3, color: Colors.black),
+                                        borderRadius: BorderRadius.circular(50.0),
+                                      ),
                                     ),
-                                  ),
-                                )
-                            )
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              Container( // Register button
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(bottom: 32.0),
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                        side: BorderSide(
-                            color: Colors.deepPurple,
-                            width: 4,
-                            style: BorderStyle.solid
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(50))
-                    ),
-                  ),
-                  onPressed: () {
-                    /* do something */
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * barRatio,
-                    height: 48,
-                    alignment: Alignment.center,
-                    child: const Text("Đăng kí", style: AppTextStyle.h2),
+                                  )
+                              )
+                          )
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              )
-            ],
+
+                Container( // Register button
+                  alignment: Alignment.center,
+                  height: 48,
+                  margin: const EdgeInsets.only(bottom: 32.0),
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: Theme.of(context).colorScheme.primaryContainer,
+                              width: 4,
+                              style: BorderStyle.solid
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(50))
+                      ),
+                    ),
+                    onPressed: () {
+                      /* do something */
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * buttonRatio,
+                      alignment: Alignment.center,
+                      child: Text("Đăng kí", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary)),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
