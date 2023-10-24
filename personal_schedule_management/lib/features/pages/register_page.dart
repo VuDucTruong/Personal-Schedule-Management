@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -96,7 +95,7 @@ class RegisterPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Tên tài khoản', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          Text('Họ và tên', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: Theme.of(context).colorScheme.onBackground)
                           ),
                           Container(
@@ -107,46 +106,16 @@ class RegisterPage extends StatelessWidget {
                                   backgroundColor: Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
                                     keyboardType: TextInputType.text,
-                                    textAlign: TextAlign.center,
+                                    textAlign: TextAlign.left,
+                                    textAlignVertical: TextAlignVertical.center,
                                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                         color: Theme.of(context).colorScheme.onBackground),
                                     decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide(width: 3, color: Colors.black),
                                         borderRadius: BorderRadius.circular(50.0),
 
-                                      ),
-                                    ),
-                                  )
-                              )
-                          )
-                        ],
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
-                          Container(
-                              height: 40,
-                              width: MediaQuery.of(context).size.width * barRatio,
-                              child: Scaffold(
-                                  resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                  body: TextField(
-                                    keyboardType: TextInputType.text,
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
                                       ),
                                     ),
                                   )
@@ -166,16 +135,52 @@ class RegisterPage extends StatelessWidget {
                           ),
                           Container(
                               height: 40,
+                              width: MediaQuery.of(context).size.width * barRatio,
+                              child: Scaffold(
+                                  resizeToAvoidBottomInset: false,
+                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                  body: TextField(
+                                    keyboardType: TextInputType.text,
+                                    textAlign: TextAlign.left,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground),
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(width: 3, color: Colors.black),
+                                        borderRadius: BorderRadius.circular(50.0),
+                                      ),
+                                    ),
+                                  )
+                              )
+                          )
+                        ],
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground)
+                          ),
+                          Container(
+                              height: 40,
                               width:  MediaQuery.of(context).size.width * barRatio,
                               child: Scaffold(
                                   resizeToAvoidBottomInset: false,
                                   backgroundColor: Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
                                     keyboardType: TextInputType.text,
-                                    textAlign: TextAlign.center,
+                                    textAlign: TextAlign.left,
+                                    textAlignVertical: TextAlignVertical.center,
                                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                         color: Theme.of(context).colorScheme.onBackground),
                                     decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide(width: 3, color: Colors.black),
                                         borderRadius: BorderRadius.circular(50.0),
