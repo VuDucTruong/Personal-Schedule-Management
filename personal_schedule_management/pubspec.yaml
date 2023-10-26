@@ -76,6 +76,7 @@ flutter:
     - assets/image/setting_image.jpg
     - assets/image/logo.png
     - assets/image/pincode_image.png
+    - assets/image/changepass_image.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
