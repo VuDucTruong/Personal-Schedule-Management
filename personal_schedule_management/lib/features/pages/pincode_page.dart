@@ -158,8 +158,8 @@ class PincodePage extends StatelessWidget {
                         pinTheme: PinTheme(
                           shape: PinCodeFieldShape.box,
                           borderRadius: BorderRadius.circular(5),
-                          fieldHeight: 60,
-                          fieldWidth: 50,
+                          fieldHeight: 50,
+                          fieldWidth: 40,
                           activeFillColor:
                             hasError ? Colors.green : Colors.white,
                           selectedColor: Theme.of(context).colorScheme.onTertiaryContainer,
@@ -250,7 +250,7 @@ class PincodePage extends StatelessWidget {
                     children: [
                       Container(
                           alignment: Alignment.center,
-                          child: Text('Chưa nhận được email?', style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          child: Text('Chưa nhận được mã xác nhận?', style: Theme.of(context).textTheme.titleMedium!.copyWith(
                               color: Theme.of(context).colorScheme.onBackground)
                           )
                       ),
