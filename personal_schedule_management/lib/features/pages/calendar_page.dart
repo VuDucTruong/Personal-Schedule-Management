@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
+import 'package:personal_schedule_management/features/pages/create_work_page.dart';
 import 'package:personal_schedule_management/features/widgets/stateless/calendar_day_widget.dart';
 import 'package:personal_schedule_management/features/widgets/stateless/calendar_month_widget.dart';
 import 'package:personal_schedule_management/features/widgets/stateless/calendar_schedule_widget.dart';
@@ -86,7 +87,13 @@ class _CalendarPageState extends State<CalendarPage>
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(45)),
             child: Icon(Icons.add),
             onPressed: () {
-              print(getAppointments().length);
+              showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (context) {
+                  return CreateWorkPage();
+                },
+              );
             }),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
