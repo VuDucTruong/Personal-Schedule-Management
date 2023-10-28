@@ -4,13 +4,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 
-class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
+class ChangePassPage extends StatelessWidget {
+  const ChangePassPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     double barRatio = 0.75;
     double buttonRatio = 0.6;
+    double imageRatio = 0.6;
+    double maxImageHeightRatio = 0.33;
 
     // TODO: implement build
     return MaterialApp(
@@ -39,50 +41,40 @@ class RegisterPage extends StatelessWidget {
           builder: (context) => Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
+              centerTitle: true,
+              title: Text('Tạo mật khẩu mới', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold)
+              ),
               leading: IconButton(
-                onPressed: () {},
-                icon: Icon(FontAwesomeIcons.circleChevronLeft, size: 40,
-                color: Theme.of(context).colorScheme.primary)
+                  onPressed: () {},
+                  icon: Icon(FontAwesomeIcons.circleChevronLeft, size: 40,
+                      color: Theme.of(context).colorScheme.primary)
               ),
             ),
 
             body: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container( // Logo & name
-                  child: Column(
 
-                    children: [
-                      Container(
-                          alignment: Alignment.center,
-                          child: CircleAvatar(
-                            radius: 72,
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            child: CircleAvatar(
-                              radius: 66,
-                              backgroundImage: AssetImage(
-                                  'assets/image/logo.png'),
-                            ),
-                          )
-                      ),
+                // image
+                Container(
+                    margin: const EdgeInsets.only(top: 20.0),
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * imageRatio,
+                    height: MediaQuery.of(context).size.width * imageRatio < MediaQuery.of(context).size.height * maxImageHeightRatio ?
+                    MediaQuery.of(context).size.width * imageRatio : MediaQuery.of(context).size.height * maxImageHeightRatio,
+                    child: Image.asset(
+                        'assets/image/changepass_image.png')
+                ),
 
-                      Container(
-                          alignment: Alignment.center,
-                          child: Text('Chào mừng đến với', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          )
-                      ),
-
-                      Container(
-                          alignment: Alignment.center,
-                          child: Text('Magic Calendar', style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.surfaceTint)
-                          )
-                      )
-
-                    ],
-                  ),
+                Container(
+                    alignment: Alignment.center,
+                    child: Text('Hãy nhập mật khẩu mới', style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        fontWeight: FontWeight.bold)
+                    )
                 ),
 
                 Container( // forms
@@ -91,46 +83,12 @@ class RegisterPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Họ và tên', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
-                          Container(
-                              height: 40,
-                              width:  MediaQuery.of(context).size.width * barRatio,
-                              child: Scaffold(
-                                  resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                  body: TextField(
-                                    keyboardType: TextInputType.text,
-                                    textAlign: TextAlign.left,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
-
-                                      ),
-                                    ),
-                                  )
-                              )
-                          )
-                        ],
-                      ),
-
-                      SizedBox(height: 10),
 
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Email', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          Text('Mật khẩu mới', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: Theme.of(context).colorScheme.onBackground)
                           ),
                           Container(
@@ -140,6 +98,8 @@ class RegisterPage extends StatelessWidget {
                                   resizeToAvoidBottomInset: false,
                                   backgroundColor: Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
+                                    obscureText: true,
+                                    obscuringCharacter: '*',
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
                                     textAlignVertical: TextAlignVertical.center,
@@ -158,13 +118,13 @@ class RegisterPage extends StatelessWidget {
                         ],
                       ),
 
-                      SizedBox(height: 10),
+                      SizedBox(height: 20),
 
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          Text('Nhập lại mật khẩu mới', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: Theme.of(context).colorScheme.onBackground)
                           ),
                           Container(
@@ -219,7 +179,7 @@ class RegisterPage extends StatelessWidget {
                     child: Container(
                       width: MediaQuery.of(context).size.width * buttonRatio,
                       alignment: Alignment.center,
-                      child: Text("Đăng kí", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                      child: Text("Lưu", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                           color: Theme.of(context).colorScheme.onPrimary)),
                     ),
                   ),
