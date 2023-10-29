@@ -3,14 +3,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginPageState extends State<LoginPage> {
   //text editing controller
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -138,79 +138,115 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     //Username TextField
                     Flexible(
-                      flex: 1,
+                      flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: TextField(
-                          controller: usernameController,
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 2,
-                                    color:
-                                        Theme.of(context).colorScheme.outline),
-                                borderRadius: BorderRadius.circular(32)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    width: 3,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground),
-                                borderRadius: BorderRadius.circular(32)),
-                            hintText: "Tên đăng nhập",
-                            hintStyle: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary),
-                          ),
-                          obscureText: false,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Tên đăng nhập",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary),
+                                ),
+                              ],
+                            ),
+                            TextField(
+                              controller: usernameController,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 2,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline),
+                                    borderRadius: BorderRadius.circular(32)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 3,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground),
+                                    borderRadius: BorderRadius.circular(32)),
+                                hintText: "Tên đăng nhập",
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
+                              ),
+                              obscureText: false,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     //Password TextField
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Flexible(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40),
-                          child: TextField(
-                            controller: passwordController,
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      width: 2,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outline),
-                                  borderRadius: BorderRadius.circular(32)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      width: 3,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onBackground),
-                                  borderRadius: BorderRadius.circular(32)),
-                              hintText: "Mật khẩu",
-                              hintStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
+                    Flexible(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Mật khẩu",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary),
+                                ),
+                              ],
                             ),
-                            obscureText: true,
-                          ),
+                            TextField(
+                              controller: passwordController,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 2,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline),
+                                    borderRadius: BorderRadius.circular(32)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        width: 3,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground),
+                                    borderRadius: BorderRadius.circular(32)),
+                                hintText: "Mật khẩu",
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
+                              ),
+                              obscureText: true,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     //Forgot password
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -233,72 +269,74 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     //login button
                     Flexible(
-                      flex: 1,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 90, vertical: 20),
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onBackground,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primaryContainer,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(32)),
-                          side: BorderSide(
-                            width: 3,
-                            color: Theme.of(context).colorScheme.primary,
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 90, vertical: 20),
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onBackground,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(32)),
+                              side: BorderSide(
+                                width: 3,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            onPressed: signInButtonPressed,
+                            child: Text(
+                              "ĐĂNG NHẬP",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground),
+                            ),
                           ),
-                        ),
-                        onPressed: signInButtonPressed,
-                        child: Text(
-                          "ĐĂNG NHẬP",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 20.0),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Chưa có tài khoản? ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontStyle: FontStyle.italic,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
+                                  ),
+                                  Text(
+                                    "Đăng kí ngay",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontStyle: FontStyle.italic,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary),
+                                  )
+                                ]),
+                          ),
+                        ],
                       ),
                     ),
                     //Sign up
-                    Flexible(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 20.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Chưa có tài khoản? ",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onBackground),
-                              ),
-                              Text(
-                                "Đăng kí ngay",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .tertiary),
-                              )
-                            ]),
-                      ),
-                    ),
                   ],
                 )),
           ),

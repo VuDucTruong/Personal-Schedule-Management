@@ -17,7 +17,7 @@ void main() {
   runApp(
     MultiProvider(
         providers: [ChangeNotifierProvider(create: (_) => MainController())],
-        child: const LoginView()),
+        child: const LoginPage()),
   );
 }
 
