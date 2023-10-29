@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/features/controller/create_work_controller.dart';
 import 'package:personal_schedule_management/features/controller/main_controller.dart';
+import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/managemet_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ import 'features/pages/user_page.dart';
 
 void main() {
   runApp(
+
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (_) => MainController()),
       ChangeNotifierProvider(create: (_) => CreateWorkController()),
