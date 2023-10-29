@@ -42,12 +42,12 @@ class _LoginPageState extends State<LoginPage> {
           child: Builder(
             builder: (context) => Scaffold(
                 resizeToAvoidBottomInset: false,
-                body: Column(
-                  children: [
-                    //Background
-                    Flexible(
-                      flex: 3,
-                      child: Container(
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      //Background
+                      Container(
+                        height: 200,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           image: const DecorationImage(
@@ -116,31 +116,29 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 20),
-                      child: Row(children: [
-                        //Greeting
-                        Text("Chào Bạn!",
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground,
-                                )),
-                      ]),
-                    ),
-                    const Spacer(
-                      flex: 1,
-                    ),
-                    //Username TextField
-                    Flexible(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 20),
+                        child: Row(children: [
+                          //Greeting
+                          Text("Chào Bạn!",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground,
+                                  )),
+                        ]),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      //Username TextField
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 10),
                         child: Column(
                           children: [
                             Row(
@@ -157,6 +155,9 @@ class _LoginPageState extends State<LoginPage> {
                                               .tertiary),
                                 ),
                               ],
+                            ),
+                            const SizedBox(
+                              height: 5,
                             ),
                             TextField(
                               controller: usernameController,
@@ -189,12 +190,10 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                       ),
-                    ),
-                    //Password TextField
-                    Flexible(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                      //Password TextField
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 10),
                         child: Column(
                           children: [
                             Row(
@@ -211,6 +210,9 @@ class _LoginPageState extends State<LoginPage> {
                                               .tertiary),
                                 ),
                               ],
+                            ),
+                            const SizedBox(
+                              height: 5,
                             ),
                             TextField(
                               controller: passwordController,
@@ -243,34 +245,31 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                       ),
-                    ),
-                    //Forgot password
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              "Quên mật khẩu?",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .tertiary),
-                            ),
-                          ]),
-                    ),
-                    const Spacer(
-                      flex: 1,
-                    ),
-                    //login button
-                    Flexible(
-                      flex: 3,
-                      child: Column(
+                      //Forgot password
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Quên mật khẩu?",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary),
+                              ),
+                            ]),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      //login button
+                      Column(
                         children: [
                           OutlinedButton(
                             style: OutlinedButton.styleFrom(
@@ -303,7 +302,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 20.0),
+                                horizontal: 20.0, vertical: 10.0),
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -335,9 +334,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
-                    ),
-                    //Sign up
-                  ],
+                      //Sign up
+                    ],
+                  ),
                 )),
           ),
         ));
