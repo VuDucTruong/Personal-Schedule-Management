@@ -14,6 +14,23 @@ class _ManagementPageState extends State<ManagementPage> {
   String selectedCategory = 'Tất cả';
   bool isTruocExpanded = false;
   bool isTuongLaiExpanded = false;
+  bool isTodayExpanded = false;
+  late Offset _position;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Lấy kích thước màn hình
+      final screenHeight = MediaQuery.of(context).size.height;
+      final screenWidth = MediaQuery.of(context).size.width;
+
+      // Đặt vị trí ban đầu ở góc dưới bên phải
+      setState(() {
+        _position = Offset(screenWidth - 90, screenHeight - 180);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +136,7 @@ class _ManagementPageState extends State<ManagementPage> {
                       width: 30,
                       alignment: Alignment.centerRight,
                       child: PopupMenuButton<String>(
+                        offset: Offset(0, 48),
                         padding: const EdgeInsets.all(0),
                         icon: Icon(Icons.more_vert),
                         onSelected: (value) {
@@ -187,6 +205,44 @@ class _ManagementPageState extends State<ManagementPage> {
                       ],
                     ),
                   ),
+                SizedBox(height: 10),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      isTodayExpanded = !isTodayExpanded;
+                    });
+                  },
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hôm nay',
+                          style: AppTextStyle.h3.copyWith(
+                            fontSize: 18,
+                          ),
+                        ),
+                        Icon(isTodayExpanded
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down),
+                      ],
+                    ),
+                  ),
+                ),
+                if (isTodayExpanded)
+                  Container(
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text('Mục 1'),
+                        ),
+                        ListTile(
+                          title: Text('Mục 2'),
+                        ),
+                      ],
+                    ),
+                  ),
+                SizedBox(height: 10),
                 InkWell(
                   onTap: () {
                     setState(() {
@@ -225,29 +281,37 @@ class _ManagementPageState extends State<ManagementPage> {
               ],
             ),
           ),
-          Container(
-            width: size.width,
-            height: size.height,
-            padding: EdgeInsets.all(50),
-            alignment: Alignment.bottomRight,
-            child: InkWell(
-              borderRadius: BorderRadius.all(Radius.circular(40)),
-              splashColor: Colors.blueAccent,
-              onTap: () {},
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: lightColorScheme.tertiaryContainer,
-                    width: 5.0,
-                  ),
-                ),
+          Positioned(
+            left: _position.dx,
+            top: _position.dy,
+            child: Draggable(
+              child: FloatingActionButton(
+                backgroundColor: ColorPalette.onselectedColor, // Màu xanh dương
+                onPressed: () {
+                  // Xử lý khi nút được bấm
+                },
                 child: Icon(
-                  FontAwesomeIcons.circlePlus,
-                  size: 65,
-                  color: Color.fromARGB(255, 111, 174, 236),
+                  FontAwesomeIcons.plus,
+                  size: 30,
+                  color: Colors.white,
                 ),
+                shape: CircleBorder(),
               ),
+              feedback: FloatingActionButton(
+                backgroundColor: ColorPalette.onselectedColor, // Màu xanh dương
+                onPressed: () {},
+                child: Icon(
+                  FontAwesomeIcons.plus,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                shape: CircleBorder(),
+              ),
+              onDraggableCanceled: (velocity, offset) {
+                setState(() {
+                  _position = offset;
+                });
+              },
             ),
           ),
         ],
