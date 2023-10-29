@@ -225,6 +225,31 @@ class _ManagementPageState extends State<ManagementPage> {
               ],
             ),
           ),
+          Container(
+            width: size.width,
+            height: size.height,
+            padding: EdgeInsets.all(50),
+            alignment: Alignment.bottomRight,
+            child: InkWell(
+              borderRadius: BorderRadius.all(Radius.circular(40)),
+              splashColor: Colors.blueAccent,
+              onTap: () {},
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: lightColorScheme.tertiaryContainer,
+                    width: 5.0,
+                  ),
+                ),
+                child: Icon(
+                  FontAwesomeIcons.circlePlus,
+                  size: 65,
+                  color: Color.fromARGB(255, 111, 174, 236),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
