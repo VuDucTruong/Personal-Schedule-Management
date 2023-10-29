@@ -11,4 +11,5 @@ class AppTextStyle {
       TextStyle(fontSize: 8, fontWeight: FontWeight.bold);
   static const TextStyle h3 =
       TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
+  static const TextStyle h2_5 = TextStyle(fontSize: 16);
 }
