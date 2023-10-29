@@ -36,7 +36,7 @@ class _workslistState extends State<workslist> {
         ),
         title: Container(
           alignment: Alignment.center,
-          child: Text('WORKS LIST\t\t\t\t\t',
+          child: Text('WORKS LIST \t\t\t\t\t',
               style: AppTextStyle.h2.copyWith(
                 letterSpacing: 1.175,
               )),
