@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "840121542106",
+    "project_id": "personal-schedule-91287",
+    "storage_bucket": "personal-schedule-91287.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:840121542106:android:cf34eb529d79d15a5e4ce3",
+        "android_client_info": {
+          "package_name": "com.example.personal_schedule_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrIRvUOD7Tpwm-MnH9L5f7yW04x-38pXI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

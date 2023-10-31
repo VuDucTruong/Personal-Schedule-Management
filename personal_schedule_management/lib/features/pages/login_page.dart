@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(16),
                           image: const DecorationImage(
                             image: AssetImage(
-                                'lib/images/loginView_background.jpeg'),
+                                'assets/image/loginView_background.jpeg'),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                                           3), // Border radius
                                       child: ClipOval(
                                           child: Image.asset(
-                                              'lib/images/app_logo.png')),
+                                              'assets/image/logo.png')),
                                     ),
                                   ),
                                 ),
