@@ -71,3 +71,14 @@ const darkColorScheme = ColorScheme(
 class ColorPalette {
   static const Color onselectedColor = Color(0xff3399FF);
 }
+
+class Gradients {
+  static const Gradient defaultGradientBackground = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Colors.white,
+      Colors.lightBlue,
+    ],
+  );
+}

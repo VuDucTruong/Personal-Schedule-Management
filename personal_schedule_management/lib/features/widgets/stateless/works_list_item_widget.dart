@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_schedule_management/config/theme/app_theme.dart';
 
 class WorksListItem extends StatefulWidget {
   final String name;
@@ -20,7 +21,7 @@ class _WorksListItemState extends State<WorksListItem> {
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: Gradients.defaultGradientBackground,
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.grey),
       ),
