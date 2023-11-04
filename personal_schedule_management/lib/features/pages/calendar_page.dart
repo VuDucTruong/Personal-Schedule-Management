@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
-import 'package:personal_schedule_management/features/pages/create_work_page.dart';
-import 'package:personal_schedule_management/features/widgets/stateless/calendar_day_widget.dart';
-import 'package:personal_schedule_management/features/widgets/stateless/calendar_month_widget.dart';
-import 'package:personal_schedule_management/features/widgets/stateless/calendar_schedule_widget.dart';
-import 'package:personal_schedule_management/features/widgets/stateless/calendar_week_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import '../../config/text_styles/app_text_style.dart';
+import '../controller/calendar_controller.dart';
+import '../widgets/stateless/calendar_day_widget.dart';
+import '../widgets/stateless/calendar_month_widget.dart';
+import '../widgets/stateless/calendar_schedule_widget.dart';
+import '../widgets/stateless/calendar_week_widget.dart';
+import 'create_work_page.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -19,9 +22,11 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage>
     with TickerProviderStateMixin {
   late TabController tabController;
-  List<Appointment> getAppointments() {
-    List<Appointment> appointments = <Appointment>[];
+  List<Appointment> appointments = <Appointment>[];
+  Future<void> getAppointments(CalendarPageController controller) async {
     // Tạo các sự kiện (appointments)
+    await controller.getCalendarEvents();
+    appointments.addAll(controller.appointmentList);
     appointments.add(Appointment(
       startTime: DateTime(2023, 9, 19, 10, 0),
       endTime: DateTime(2023, 9, 19, 12, 0),
@@ -41,8 +46,6 @@ class _CalendarPageState extends State<CalendarPage>
       color: Colors.yellow,
     ));
     // Thêm các sự kiện khác vào danh sách appointments ở đây
-
-    return appointments;
   }
 
   @override
@@ -51,6 +54,7 @@ class _CalendarPageState extends State<CalendarPage>
     tabController = TabController(length: 4, vsync: this);
   }
 
+  int times = 0;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -68,15 +72,21 @@ class _CalendarPageState extends State<CalendarPage>
             onTap: (value) => tabController.animateTo(value),
           ),
           Expanded(
-            child: TabBarView(
-                controller: tabController,
-                physics: NeverScrollableScrollPhysics(),
-                children: [
-                  CalendarSchedule(getAppointments()),
-                  CalendarDay(getAppointments()),
-                  CalendarWeek(getAppointments()),
-                  CalendarMonth(getAppointments())
-                ]),
+            child: Consumer<CalendarPageController>(
+                builder: (context, controller, child) {
+              if (times++ < 1) {
+                getAppointments(controller);
+              }
+              return TabBarView(
+                  controller: tabController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    CalendarSchedule(appointments),
+                    CalendarDay(appointments),
+                    CalendarWeek(appointments),
+                    CalendarMonth(appointments)
+                  ]);
+            }),
           ),
         ],
       ),
