@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/features/controller/create_work_controller.dart';
 import 'package:personal_schedule_management/features/controller/main_controller.dart';
+import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/managemet_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,7 @@ import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 
 import 'config/theme/app_theme.dart';
 import 'core/data/datasource/remote/firebase_options.dart';
-import 'features/pages/calendar_page.dart';
+import 'features/controller/calendar_controller.dart';
 import 'features/pages/user_page.dart';
 import 'injection_container.dart';
 
@@ -24,6 +25,7 @@ Future<void> main() async {
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (_) => MainController()),
       ChangeNotifierProvider(create: (_) => CreateWorkController()),
+      ChangeNotifierProvider(create: (_) => CalendarPageController()),
     ], child: const MyApp()),
   );
 }
@@ -80,13 +82,13 @@ class MyApp extends StatelessWidget {
             onPageChanged: (value) {
               context.read<MainController>().changeIndex(value);
             },
+            physics: const NeverScrollableScrollPhysics(),
             children: [
               CalendarPage(),
               ManagementPage(),
               UserPage(),
-              SettingsPage()
+              SettingsPage(),
             ],
-            physics: NeverScrollableScrollPhysics(),
           ),
         ),
       ),
