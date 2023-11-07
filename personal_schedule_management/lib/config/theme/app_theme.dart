@@ -78,7 +78,7 @@ class Gradients {
     end: Alignment.bottomRight,
     colors: [
       Colors.white,
-      Colors.lightBlue,
+      Colors.lightGreenAccent,
     ],
   );
 }
