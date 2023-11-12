@@ -16,58 +16,97 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _firstEnterNameField = false;
   final _NameController = TextEditingController();
   FocusNode _NameFocus = FocusNode();
+  bool _NameCorrect = false;
 
   // email field
   bool _firstEnterEmailField = false;
   final _EmailController = TextEditingController();
   FocusNode _EmailFocus = FocusNode();
+  bool _EmailCorrect = false;
 
   // password field
   bool _passwordVisible = false;
   final _passwordController = TextEditingController();
   bool _firstEnterPasswordField = false;
   FocusNode _PasswordFocus = FocusNode();
+  bool _PasswordCorrect = false;
 
   // VALIDATING
   String? _NameValidating (String value) {
+    String? errorText;
     if (!_firstEnterNameField) {
         return null;
     }
-    else if (!_NameFocus.hasFocus)
+    else
     {
       if (value.isEmpty) {
-        return "Vui lòng nhập Họ & tên";
+        _NameCorrect = false;
+        errorText = "Vui lòng nhập Họ & tên";
+      }
+      else
+      {
+        _NameCorrect = true;
       }
     }
-
+    return _NameFocus.hasFocus ? null : errorText;
   }
 
   String? _EmailValidating (String value) {
+    String? errorText;
     if (!_firstEnterEmailField) {
       return null;
     }
-    else if (!_EmailFocus.hasFocus)
+    else
     {
       if (value.isEmpty) {
-        return "Vui lòng nhập Email";
+        _EmailCorrect = false;
+        errorText = "Vui lòng nhập Email";
       }
       else if (!EmailValidator.validate(value)) {
-        return "Email không hợp lệ";
+        _EmailCorrect = false;
+        errorText = "Email không hợp lệ";
+      }
+      else
+      {
+        _EmailCorrect = true;
       }
     }
+    return _EmailFocus.hasFocus ? null : errorText;
   }
 
   String? _PasswordValidating (String value) {
+    String? errorText;
     if (!_firstEnterPasswordField){
       return null;
     }
-    else if (!_PasswordFocus.hasFocus) {
+    else
+    {
       if (value.isEmpty) {
-        return "Vui lòng nhập mật khẩu";
+        _PasswordCorrect = false;
+        errorText = "Vui lòng nhập mật khẩu";
       }
       else if (value.length < 8) {
-        return "Mật khẩu phải từ 8 kí tự trở lên";
+        _PasswordCorrect = false;
+        errorText = "Mật khẩu phải từ 8 kí tự trở lên";
       }
+      else
+      {
+        _PasswordCorrect = true;
+      }
+    }
+    return _PasswordFocus.hasFocus ? null : errorText;
+  }
+
+  void _RegisterButton () {
+    setState(() {
+      _firstEnterNameField = true;
+      _firstEnterEmailField = true;
+      _firstEnterPasswordField = true;
+    });
+
+    if (_NameCorrect && _EmailCorrect && _PasswordCorrect)
+    {
+      // do something
     }
   }
 
@@ -77,6 +116,9 @@ class _RegisterPageState extends State<RegisterPage> {
     _firstEnterNameField = false;
     _firstEnterEmailField = false;
     _firstEnterPasswordField = false;
+    _NameCorrect = false;
+    _EmailCorrect = false;
+    _PasswordCorrect = false;
     super.initState();
   }
 
@@ -324,6 +366,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     onPressed: () {
                       /* do something */
+                      _RegisterButton();
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width * buttonRatio,
