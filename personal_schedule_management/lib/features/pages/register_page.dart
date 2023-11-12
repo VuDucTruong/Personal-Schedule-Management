@@ -3,11 +3,83 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
+import 'package:email_validator/email_validator.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  // name field
+  bool _firstEnterNameField = false;
+  final _NameController = TextEditingController();
+  FocusNode _NameFocus = FocusNode();
+
+  // email field
+  bool _firstEnterEmailField = false;
+  final _EmailController = TextEditingController();
+  FocusNode _EmailFocus = FocusNode();
+
+  // password field
+  bool _passwordVisible = false;
+  final _passwordController = TextEditingController();
+  bool _firstEnterPasswordField = false;
+  FocusNode _PasswordFocus = FocusNode();
+
+  // VALIDATING
+  String? _NameValidating (String value) {
+    if (!_firstEnterNameField) {
+        return null;
+    }
+    else if (!_NameFocus.hasFocus)
+    {
+      if (value.isEmpty) {
+        return "Vui lòng nhập Họ & tên";
+      }
+    }
+
+  }
+
+  String? _EmailValidating (String value) {
+    if (!_firstEnterEmailField) {
+      return null;
+    }
+    else if (!_EmailFocus.hasFocus)
+    {
+      if (value.isEmpty) {
+        return "Vui lòng nhập Email";
+      }
+      else if (!EmailValidator.validate(value)) {
+        return "Email không hợp lệ";
+      }
+    }
+  }
+
+  String? _PasswordValidating (String value) {
+    if (!_firstEnterPasswordField){
+      return null;
+    }
+    else if (!_PasswordFocus.hasFocus) {
+      if (value.isEmpty) {
+        return "Vui lòng nhập mật khẩu";
+      }
+      else if (value.length < 8) {
+        return "Mật khẩu phải từ 8 kí tự trở lên";
+      }
+    }
+  }
 
   @override
+  void initState() {
+    _passwordVisible = false;
+    _firstEnterNameField = false;
+    _firstEnterEmailField = false;
+    _firstEnterPasswordField = false;
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     double barRatio = 0.75;
     double buttonRatio = 0.6;
@@ -99,12 +171,17 @@ class RegisterPage extends StatelessWidget {
                               color: Theme.of(context).colorScheme.onBackground)
                           ),
                           Container(
-                              height: 40,
+                              height: 70,
                               width:  MediaQuery.of(context).size.width * barRatio,
                               child: Scaffold(
                                   resizeToAvoidBottomInset: false,
                                   backgroundColor: Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
+                                    controller: _NameController,
+                                    focusNode: _NameFocus,
+                                    onTap: () {
+                                      _firstEnterNameField = true;
+                                    },
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
                                     textAlignVertical: TextAlignVertical.center,
@@ -117,6 +194,8 @@ class RegisterPage extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(50.0),
 
                                       ),
+                                      helperText: " ",
+                                      errorText: _NameValidating(_NameController.value.text), // validator
                                     ),
                                   )
                               )
@@ -124,7 +203,7 @@ class RegisterPage extends StatelessWidget {
                         ],
                       ),
 
-                      SizedBox(height: 10),
+                      // SizedBox(height: 5),
 
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -134,12 +213,17 @@ class RegisterPage extends StatelessWidget {
                               color: Theme.of(context).colorScheme.onBackground)
                           ),
                           Container(
-                              height: 40,
+                              height: 70,
                               width: MediaQuery.of(context).size.width * barRatio,
                               child: Scaffold(
                                   resizeToAvoidBottomInset: false,
                                   backgroundColor: Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
+                                    controller: _EmailController,
+                                    focusNode: _EmailFocus,
+                                    onTap: () {
+                                      _firstEnterEmailField = true;
+                                    },
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
                                     textAlignVertical: TextAlignVertical.center,
@@ -151,6 +235,8 @@ class RegisterPage extends StatelessWidget {
                                         borderSide: BorderSide(width: 3, color: Colors.black),
                                         borderRadius: BorderRadius.circular(50.0),
                                       ),
+                                      helperText: " ",
+                                      errorText: _EmailValidating(_EmailController.value.text), // validator
                                     ),
                                   )
                               )
@@ -158,7 +244,7 @@ class RegisterPage extends StatelessWidget {
                         ],
                       ),
 
-                      SizedBox(height: 10),
+                      // SizedBox(height: 10),
 
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -168,13 +254,18 @@ class RegisterPage extends StatelessWidget {
                               color: Theme.of(context).colorScheme.onBackground)
                           ),
                           Container(
-                              height: 40,
+                              height: 70,
                               width:  MediaQuery.of(context).size.width * barRatio,
                               child: Scaffold(
                                   resizeToAvoidBottomInset: false,
                                   backgroundColor: Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
-                                    obscureText: true,
+                                    controller: _passwordController,
+                                    focusNode: _PasswordFocus,
+                                    obscureText: !_passwordVisible,
+                                    onTap: () {
+                                      _firstEnterPasswordField = true;
+                                    },
                                     obscuringCharacter: '*',
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
@@ -187,7 +278,25 @@ class RegisterPage extends StatelessWidget {
                                         borderSide: BorderSide(width: 3, color: Colors.black),
                                         borderRadius: BorderRadius.circular(50.0),
                                       ),
+
+                                      suffixIcon: GestureDetector(
+                                        onLongPress: () {
+                                          setState(() {
+                                            _passwordVisible = true;
+                                          });
+                                        },
+                                        onLongPressUp: () {
+                                          setState(() {
+                                            _passwordVisible = false;
+                                          });
+                                        },
+                                        child: Icon(
+                                            _passwordVisible ? Icons.visibility : Icons.visibility_off),
+                                      ),
+                                      helperText: " ",
+                                      errorText: _PasswordValidating(_passwordController.value.text), // validator
                                     ),
+
                                   )
                               )
                           )
@@ -234,3 +343,5 @@ class RegisterPage extends StatelessWidget {
     );
   }
 }
+
+
