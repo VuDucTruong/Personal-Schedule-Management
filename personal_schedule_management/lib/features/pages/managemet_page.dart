@@ -23,7 +23,7 @@ class _ManagementPageState extends State<ManagementPage> {
   bool isTruocExpanded = false;
   bool isTuongLaiExpanded = false;
   bool isTodayExpanded = false;
-  late Offset _position;
+  Offset _position = Offset(150, 300);
   final List<Works> WorksItemList = [
     Works(name: 'Mục 1', creator: 'Người tạo 1'),
     Works(name: 'Mục 2', creator: 'Người tạo 2'),
