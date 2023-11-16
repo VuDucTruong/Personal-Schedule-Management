@@ -104,6 +104,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                         else
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Thêm thất bại')));
+                        Navigator.of(context).pop();
                       },
                     ),
                   ),
