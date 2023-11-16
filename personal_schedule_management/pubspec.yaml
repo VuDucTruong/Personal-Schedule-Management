@@ -54,6 +54,10 @@ dependencies:
   cloud_firestore: ^4.12.1
   #sync calender
   device_calendar: ^4.3.1
+  #datetime format
+  intl: ^0.18.1
+  #shared preferences
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:
