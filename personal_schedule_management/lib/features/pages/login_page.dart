@@ -17,6 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
+  bool passwordVisible = false;
+
   void signInButtonPressed() {} //TODO: logic signin button
   void forgetPasswordTextTapped() {} //TODO: Logic forgot password
   void signUpTextTapped() {} //TODO: Logic signup text
@@ -196,33 +198,43 @@ class _LoginPageState extends State<LoginPage> {
                                 TextField(
                                   controller: passwordController,
                                   decoration: InputDecoration(
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              width: 2,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .outline),
-                                          borderRadius:
-                                              BorderRadius.circular(32)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              width: 3,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onBackground),
-                                          borderRadius:
-                                              BorderRadius.circular(32)),
-                                      hintText: "Mật khẩu",
-                                      hintStyle: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary),
-                                      prefixIcon:
-                                          const Icon(Icons.lock_outlined)),
-                                  obscureText: true,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 2,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .outline),
+                                        borderRadius:
+                                            BorderRadius.circular(32)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 3,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
+                                        borderRadius:
+                                            BorderRadius.circular(32)),
+                                    hintText: "Mật khẩu",
+                                    hintStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary),
+                                    prefixIcon: const Icon(Icons.lock_outlined),
+                                    suffixIcon: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          passwordVisible = !passwordVisible;
+                                        });
+                                      },
+                                      child: Icon(passwordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off),
+                                    ),
+                                  ),
+                                  obscureText: !passwordVisible,
                                   obscuringCharacter: '*',
                                 ),
                               ],
