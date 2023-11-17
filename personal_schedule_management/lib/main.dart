@@ -6,7 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/features/controller/create_work_controller.dart';
 import 'package:personal_schedule_management/features/controller/main_controller.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
+import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/managemet_page.dart';
+import 'package:personal_schedule_management/features/pages/register_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
@@ -26,7 +28,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => MainController()),
       ChangeNotifierProvider(create: (_) => CreateWorkController()),
       ChangeNotifierProvider(create: (_) => CalendarPageController()),
-    ], child: const MyApp()),
+    ], child: const LoginPage()),
   );
 }
 
