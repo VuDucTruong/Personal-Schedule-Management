@@ -51,6 +51,12 @@ class SettingsPage extends StatelessWidget {
                     ),
                     SettingsDivider(),
                     SettingItem(
+                        content: 'Đồng bộ hóa tài khoản',
+                        iconData: Icons.cloud_sync,
+                        color: Colors.tealAccent,
+                        isSwitch: false),
+                    SettingsDivider(),
+                    SettingItem(
                       color: Colors.deepPurpleAccent,
                       content: 'Định dạng ngày',
                       iconData: FontAwesomeIcons.calendarDays,
@@ -60,7 +66,7 @@ class SettingsPage extends StatelessWidget {
                     SettingItem(
                       color: Colors.red,
                       content: 'Định dạng thời gian 24h',
-                      iconData: FontAwesomeIcons.solidCircleUser,
+                      iconData: Icons.av_timer,
                       isSwitch: true,
                     ),
                     SettingsDivider(),

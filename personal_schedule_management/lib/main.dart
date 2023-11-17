@@ -7,6 +7,7 @@ import 'package:personal_schedule_management/features/controller/main_controller
 import 'package:personal_schedule_management/features/controller/work_category_controller.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/managemet_page.dart';
+import 'package:personal_schedule_management/features/pages/report_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
@@ -15,7 +16,6 @@ import 'config/theme/app_theme.dart';
 import 'core/data/datasource/remote/firebase_options.dart';
 import 'features/controller/calendar_controller.dart';
 import 'features/controller/create_work_controller.dart';
-import 'features/pages/user_page.dart';
 import 'injection_container.dart';
 
 Future<void> main() async {
@@ -65,7 +65,9 @@ class MyApp extends StatelessWidget {
               barItems: [
                 BarItem(title: 'Lịch', icon: FontAwesomeIcons.calendar),
                 BarItem(title: 'Quản lý', icon: FontAwesomeIcons.listCheck),
-                BarItem(title: 'Cá nhân', icon: FontAwesomeIcons.user),
+                BarItem(
+                    title: 'Thống kê',
+                    icon: FontAwesomeIcons.magnifyingGlassChart),
                 BarItem(title: 'Cài đặt', icon: FontAwesomeIcons.gear)
               ],
               iconSize: 20,
@@ -88,7 +90,7 @@ class MyApp extends StatelessWidget {
             children: [
               CalendarPage(),
               ManagementPage(),
-              UserPage(),
+              ReportPage(),
               SettingsPage(),
             ],
           ),
