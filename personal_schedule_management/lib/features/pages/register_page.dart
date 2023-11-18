@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,13 +24,17 @@ class _RegisterPageState extends State<RegisterPage> {
   final _EmailController = TextEditingController();
   FocusNode _EmailFocus = FocusNode();
   bool _EmailCorrect = false;
+  String? _EmailAuthError;
 
   // password field
-  bool _passwordVisible = false;
-  final _passwordController = TextEditingController();
+  bool _PasswordVisible = false;
+  final _PasswordController = TextEditingController();
   bool _firstEnterPasswordField = false;
   FocusNode _PasswordFocus = FocusNode();
   bool _PasswordCorrect = false;
+  String? _PasswordAuthError;
+
+  String? _ExceptionText;
 
   // VALIDATING
   String? _NameValidating (String value) {
@@ -66,6 +71,10 @@ class _RegisterPageState extends State<RegisterPage> {
         _EmailCorrect = false;
         errorText = "Email không hợp lệ";
       }
+      else if (_EmailAuthError != null) {
+        errorText = _EmailAuthError;
+        return errorText;
+      }
       else
       {
         _EmailCorrect = true;
@@ -89,6 +98,10 @@ class _RegisterPageState extends State<RegisterPage> {
         _PasswordCorrect = false;
         errorText = "Mật khẩu phải từ 8 kí tự trở lên";
       }
+      else if (_PasswordAuthError != null) {
+        errorText = _PasswordAuthError;
+        return errorText;
+      }
       else
       {
         _PasswordCorrect = true;
@@ -97,28 +110,87 @@ class _RegisterPageState extends State<RegisterPage> {
     return _PasswordFocus.hasFocus ? null : errorText;
   }
 
-  void _RegisterButton () {
+  // SIGN UP
+
+  void _RegisterButton (context) async {
+
+    if (_NameCorrect && _EmailCorrect && _PasswordCorrect)
+    {
+      // do something
+      bool? result;
+
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return const Center(
+              child: CircularProgressIndicator()
+            );
+          }
+      );
+
+      await _signup(_EmailController.text, _PasswordController.text, result);
+      if (result == true)
+      {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Tạo tài khoản thành công'))
+        );
+      }
+      else
+      {
+        String? message = 'Tạo tài khoản thất bại';
+        if (_ExceptionText != null) {
+          message = _ExceptionText;
+          _ExceptionText = null;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message.toString()))
+        );
+      }
+      Navigator.of(context).pop();
+    }
+
     setState(() {
       _firstEnterNameField = true;
       _firstEnterEmailField = true;
       _firstEnterPasswordField = true;
     });
+  }
 
-    if (_NameCorrect && _EmailCorrect && _PasswordCorrect)
-    {
-      // do something
+  Future<void> _signup(emailAddress, password, result) async {
+    try {
+      result = true;
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailAddress,
+        password: password,
+      );
+
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        _PasswordAuthError = 'Mật khẩu quá yếu';
+      } else if (e.code == 'email-already-in-use') {
+        _EmailAuthError = 'Email đã được sử dụng';
+      }
+      result = false;
+    } catch (e) {
+      // do nothing
+      _ExceptionText = e.toString();
+      result = false;
     }
   }
 
   @override
   void initState() {
-    _passwordVisible = false;
+    _PasswordVisible = false;
     _firstEnterNameField = false;
     _firstEnterEmailField = false;
     _firstEnterPasswordField = false;
     _NameCorrect = false;
     _EmailCorrect = false;
     _PasswordCorrect = false;
+    _PasswordAuthError = null;
+    _EmailAuthError = null;
     super.initState();
   }
 
@@ -151,7 +223,7 @@ class _RegisterPageState extends State<RegisterPage> {
       home: SafeArea(
         child: Builder(
           builder: (context) => Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               leading: IconButton(
                 onPressed: () {},
@@ -160,224 +232,226 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
 
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container( // Logo & name
+            body: SingleChildScrollView(
+              reverse: true,
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2,
                   child: Column(
-
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                          alignment: Alignment.center,
-                          child: CircleAvatar(
-                            radius: 72,
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            child: CircleAvatar(
-                              radius: 66,
-                              backgroundImage: AssetImage(
-                                  'assets/image/logo.png'),
+
+                      Container( // Logo & name
+                        margin: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          children: [
+                            Container(
+                                alignment: Alignment.center,
+                                child: CircleAvatar(
+                                  radius: 72,
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  child: CircleAvatar(
+                                    radius: 66,
+                                    backgroundImage: AssetImage(
+                                        'assets/image/logo.png'),
+                                  ),
+                                )
                             ),
-                          )
+
+                            Container(
+                                alignment: Alignment.center,
+                                child: Text('Chào mừng đến với', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                    color: Theme.of(context).colorScheme.onBackground)
+                                )
+                            ),
+
+                            Container(
+                                alignment: Alignment.center,
+                                child: Text('Magic Calendar', style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.surfaceTint)
+                                )
+                            )
+
+                          ],
+                        ),
                       ),
 
-                      Container(
-                          alignment: Alignment.center,
-                          child: Text('Chào mừng đến với', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          )
+                      Container( // forms
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Họ và tên', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.onBackground)
+                                ),
+                                Container(
+                                    height: 70,
+                                    width:  MediaQuery.of(context).size.width * barRatio,
+                                    child: Scaffold(
+                                        resizeToAvoidBottomInset: false,
+                                        backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                        body: TextField(
+                                          controller: _NameController,
+                                          focusNode: _NameFocus,
+                                          onTap: () {
+                                            _firstEnterNameField = true;
+                                          },
+                                          keyboardType: TextInputType.text,
+                                          textAlign: TextAlign.left,
+                                          textAlignVertical: TextAlignVertical.center,
+                                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                              color: Theme.of(context).colorScheme.onBackground),
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(width: 3, color: Colors.black),
+                                              borderRadius: BorderRadius.circular(50.0),
+
+                                            ),
+                                            helperText: " ",
+                                            errorText: _NameValidating(_NameController.value.text), // validator
+                                          ),
+                                        )
+                                    )
+                                )
+                              ],
+                            ),
+
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Email', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.onBackground)
+                                ),
+                                Container(
+                                    height: 70,
+                                    width: MediaQuery.of(context).size.width * barRatio,
+                                    child: Scaffold(
+                                        resizeToAvoidBottomInset: false,
+                                        backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                        body: TextField(
+                                          controller: _EmailController,
+                                          focusNode: _EmailFocus,
+                                          onTap: () {
+                                            _EmailAuthError = null;
+                                            _firstEnterEmailField = true;
+                                          },
+                                          keyboardType: TextInputType.text,
+                                          textAlign: TextAlign.left,
+                                          textAlignVertical: TextAlignVertical.center,
+                                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                              color: Theme.of(context).colorScheme.onBackground),
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(width: 3, color: Colors.black),
+                                              borderRadius: BorderRadius.circular(50.0),
+                                            ),
+                                            helperText: " ",
+                                            errorText: _EmailValidating(_EmailController.value.text), // validator
+                                          ),
+                                        )
+                                    )
+                                )
+                              ],
+                            ),
+
+
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.onBackground)
+                                ),
+                                Container(
+                                    height: 70,
+                                    width:  MediaQuery.of(context).size.width * barRatio,
+                                    child: Scaffold(
+                                        resizeToAvoidBottomInset: false,
+                                        backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                        body: TextField(
+                                          controller: _PasswordController,
+                                          focusNode: _PasswordFocus,
+                                          obscureText: !_PasswordVisible,
+                                          onTap: () {
+                                            _PasswordAuthError = null;
+                                            _firstEnterPasswordField = true;
+                                          },
+                                          obscuringCharacter: '*',
+                                          keyboardType: TextInputType.text,
+                                          textAlign: TextAlign.left,
+                                          textAlignVertical: TextAlignVertical.center,
+                                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                              color: Theme.of(context).colorScheme.onBackground),
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(width: 3, color: Colors.black),
+                                              borderRadius: BorderRadius.circular(50.0),
+                                            ),
+
+                                            suffixIcon: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _PasswordVisible = !_PasswordVisible;
+                                                });
+                                              },
+                                              child: Icon(
+                                                  _PasswordVisible ? Icons.visibility : Icons.visibility_off),
+                                            ),
+                                            helperText: " ",
+                                            errorText: _PasswordValidating(_PasswordController.value.text), // validator
+                                          ),
+
+                                        )
+                                    )
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
 
-                      Container(
-                          alignment: Alignment.center,
-                          child: Text('Magic Calendar', style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.surfaceTint)
-                          )
+                      Container( // Register button
+                        alignment: Alignment.center,
+                        height: 48,
+                        margin: const EdgeInsets.only(bottom: 32.0),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    color: Theme.of(context).colorScheme.primaryContainer,
+                                    width: 4,
+                                    style: BorderStyle.solid
+                                ),
+                                borderRadius: BorderRadius.all(Radius.circular(50))
+                            ),
+                          ),
+                          onPressed: () async {
+                            /* do something */
+                            _RegisterButton(context);
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * buttonRatio,
+                            alignment: Alignment.center,
+                            child: Text("Đăng kí", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary)),
+                          ),
+                        ),
                       )
-
                     ],
                   ),
-                ),
-
-                Container( // forms
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Họ và tên', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
-                          Container(
-                              height: 70,
-                              width:  MediaQuery.of(context).size.width * barRatio,
-                              child: Scaffold(
-                                  resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                  body: TextField(
-                                    controller: _NameController,
-                                    focusNode: _NameFocus,
-                                    onTap: () {
-                                      _firstEnterNameField = true;
-                                    },
-                                    keyboardType: TextInputType.text,
-                                    textAlign: TextAlign.left,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
-
-                                      ),
-                                      helperText: " ",
-                                      errorText: _NameValidating(_NameController.value.text), // validator
-                                    ),
-                                  )
-                              )
-                          )
-                        ],
-                      ),
-
-                      // SizedBox(height: 5),
-
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Email', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
-                          Container(
-                              height: 70,
-                              width: MediaQuery.of(context).size.width * barRatio,
-                              child: Scaffold(
-                                  resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                  body: TextField(
-                                    controller: _EmailController,
-                                    focusNode: _EmailFocus,
-                                    onTap: () {
-                                      _firstEnterEmailField = true;
-                                    },
-                                    keyboardType: TextInputType.text,
-                                    textAlign: TextAlign.left,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
-                                      ),
-                                      helperText: " ",
-                                      errorText: _EmailValidating(_EmailController.value.text), // validator
-                                    ),
-                                  )
-                              )
-                          )
-                        ],
-                      ),
-
-                      // SizedBox(height: 10),
-
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
-                          Container(
-                              height: 70,
-                              width:  MediaQuery.of(context).size.width * barRatio,
-                              child: Scaffold(
-                                  resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                  body: TextField(
-                                    controller: _passwordController,
-                                    focusNode: _PasswordFocus,
-                                    obscureText: !_passwordVisible,
-                                    onTap: () {
-                                      _firstEnterPasswordField = true;
-                                    },
-                                    obscuringCharacter: '*',
-                                    keyboardType: TextInputType.text,
-                                    textAlign: TextAlign.left,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
-                                      ),
-
-                                      suffixIcon: GestureDetector(
-                                        onLongPress: () {
-                                          setState(() {
-                                            _passwordVisible = true;
-                                          });
-                                        },
-                                        onLongPressUp: () {
-                                          setState(() {
-                                            _passwordVisible = false;
-                                          });
-                                        },
-                                        child: Icon(
-                                            _passwordVisible ? Icons.visibility : Icons.visibility_off),
-                                      ),
-                                      helperText: " ",
-                                      errorText: _PasswordValidating(_passwordController.value.text), // validator
-                                    ),
-
-                                  )
-                              )
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                Container( // Register button
-                  alignment: Alignment.center,
-                  height: 48,
-                  margin: const EdgeInsets.only(bottom: 32.0),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: Theme.of(context).colorScheme.primaryContainer,
-                              width: 4,
-                              style: BorderStyle.solid
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(50))
-                      ),
-                    ),
-                    onPressed: () {
-                      /* do something */
-                      _RegisterButton();
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * buttonRatio,
-                      alignment: Alignment.center,
-                      child: Text("Đăng kí", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary)),
-                    ),
-                  ),
-                )
-              ],
-            ),
+              ),
+            )
           ),
         ),
       ),
