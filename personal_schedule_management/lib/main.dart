@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
 import 'package:personal_schedule_management/features/controller/main_controller.dart';
 import 'package:personal_schedule_management/features/controller/work_category_controller.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
@@ -34,10 +35,11 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     PageController pageController = PageController();
+    ApiServices apiServices = ApiServices();
+    apiServices.fetchWeatherData();
     // TODO: implement build
     return MaterialApp(
       localizationsDelegates: const [
