@@ -31,9 +31,18 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     Colors.yellow,
     Colors.orangeAccent
   ];
+  Map<String, int> priorityMap = {
+    'Cao nhất': 1,
+    'Cao': 2,
+    'Trung bình': 3,
+    'Thấp': 4,
+    'Thấp nhất': 5
+  };
+  late List<String> priorityList;
   @override
   void initState() {
     super.initState();
+    priorityList = priorityMap.keys.toList();
     Provider.of<CreateWorkController>(context, listen: false).resetData();
     titleController = TextEditingController();
     descriptionController = TextEditingController();
@@ -93,7 +102,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                             controller.endDate!,
                             controller.allDaySwitch,
                             0,
-                            2,
+                            priorityMap[controller.priorityValue]!,
                             controller.colorIcon,
                             locationController.text,
                             urlController.text,
@@ -210,6 +219,30 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                         },
                       ),
                     )),
+                DividerWorkItem(),
+                ListTitleWork(
+                    Text('Độ ưu tiên'),
+                    Icons.priority_high,
+                    Container(
+                        height: 50,
+                        width: 120,
+                        child: Consumer<CreateWorkController>(
+                          builder: (context, controller, child) =>
+                              DropdownButton(
+                            isExpanded: true,
+                            value: controller.priorityValue,
+                            items: [
+                              ...priorityList.map((e) => DropdownMenuItem(
+                                    child: Text(e),
+                                    value: e,
+                                  ))
+                            ],
+                            onChanged: (value) {
+                              if (value != null)
+                                controller.changePriorityValue(value);
+                            },
+                          ),
+                        ))),
                 DividerWorkItem(),
                 ListTitleWork(
                     Text('Cả ngày'),

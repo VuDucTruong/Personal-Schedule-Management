@@ -18,6 +18,7 @@ class CreateWorkController extends ChangeNotifier {
   bool allDaySwitch = false;
   bool alarmSwitch = false;
   bool reminderSwitch = true;
+  String priorityValue = 'Trung bình';
   List<dynamic> reminderValueList = [];
   String selectedValue = 'Không có';
   DateTime? startDate, endDate;
@@ -260,6 +261,11 @@ class CreateWorkController extends ChangeNotifier {
     } else {
       contentRecurrence.add('Vô hạn');
     }
+  }
+
+  void changePriorityValue(String value) {
+    priorityValue = value;
+    notifyListeners();
   }
 
   void removeLoop() {
