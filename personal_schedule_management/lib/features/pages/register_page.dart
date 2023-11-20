@@ -27,65 +27,66 @@ class RegisterPage extends StatelessWidget {
       theme: ThemeData(
           useMaterial3: true,
           colorScheme: lightColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()
-      ),
+          textTheme: GoogleFonts.robotoTextTheme()),
       darkTheme: ThemeData(
           useMaterial3: true,
           colorScheme: darkColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()
-      ),
+          textTheme: GoogleFonts.robotoTextTheme()),
       home: SafeArea(
         child: Builder(
           builder: (context) => Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               leading: IconButton(
-                onPressed: () {},
-                icon: Icon(FontAwesomeIcons.circleChevronLeft, size: 40,
-                color: Theme.of(context).colorScheme.primary)
-              ),
+                  onPressed: () {},
+                  icon: Icon(FontAwesomeIcons.circleChevronLeft,
+                      size: 40, color: Theme.of(context).colorScheme.primary)),
             ),
-
             body: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container( // Logo & name
+                Container(
+                  // Logo & name
                   child: Column(
-
                     children: [
                       Container(
                           alignment: Alignment.center,
                           child: CircleAvatar(
                             radius: 72,
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
                             child: CircleAvatar(
                               radius: 66,
-                              backgroundImage: AssetImage(
-                                  'assets/image/logo.png'),
+                              backgroundImage:
+                                  AssetImage('assets/image/logo.png'),
                             ),
-                          )
-                      ),
-
+                          )),
                       Container(
                           alignment: Alignment.center,
-                          child: Text('Chào mừng đến với', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          )
-                      ),
-
+                          child: Text('Chào mừng đến với',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground))),
                       Container(
                           alignment: Alignment.center,
-                          child: Text('Magic Calendar', style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.surfaceTint)
-                          )
-                      )
-
+                          child: Text('Magic Calendar',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceTint)))
                     ],
                   ),
                 ),
-
-                Container( // forms
+                Container(
+                  // forms
                   alignment: Alignment.center,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -95,109 +96,143 @@ class RegisterPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Họ và tên', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
+                          Text('Họ và tên',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
                           Container(
                               height: 40,
-                              width:  MediaQuery.of(context).size.width * barRatio,
+                              width:
+                                  MediaQuery.of(context).size.width * barRatio,
                               child: Scaffold(
                                   resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                  backgroundColor:
+                                      Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
                                     textAlignVertical: TextAlignVertical.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(12, 8, 12, 0),
                                       border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
-
+                                        borderSide: BorderSide(
+                                            width: 3, color: Colors.black),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
                                       ),
                                     ),
-                                  )
-                              )
-                          )
+                                  )))
                         ],
                       ),
-
                       SizedBox(height: 10),
-
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Email', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
+                          Text('Email',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
                           Container(
                               height: 40,
-                              width: MediaQuery.of(context).size.width * barRatio,
+                              width:
+                                  MediaQuery.of(context).size.width * barRatio,
                               child: Scaffold(
                                   resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                  backgroundColor:
+                                      Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
                                     textAlignVertical: TextAlignVertical.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(12, 8, 12, 0),
                                       border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
+                                        borderSide: BorderSide(
+                                            width: 3, color: Colors.black),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
                                       ),
                                     ),
-                                  )
-                              )
-                          )
+                                  )))
                         ],
                       ),
-
                       SizedBox(height: 10),
-
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Mật khẩu', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                          ),
+                          Text('Mật khẩu',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
                           Container(
                               height: 40,
-                              width:  MediaQuery.of(context).size.width * barRatio,
+                              width:
+                                  MediaQuery.of(context).size.width * barRatio,
                               child: Scaffold(
                                   resizeToAvoidBottomInset: false,
-                                  backgroundColor: Colors.redAccent.withOpacity(0.0),
+                                  backgroundColor:
+                                      Colors.redAccent.withOpacity(0.0),
                                   body: TextField(
                                     obscureText: true,
                                     obscuringCharacter: '*',
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
                                     textAlignVertical: TextAlignVertical.center,
-                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onBackground),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(12, 8, 12, 0),
                                       border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 3, color: Colors.black),
-                                        borderRadius: BorderRadius.circular(50.0),
+                                        borderSide: BorderSide(
+                                            width: 3, color: Colors.black),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
                                       ),
                                     ),
-                                  )
-                              )
-                          )
+                                  )))
                         ],
                       ),
                     ],
                   ),
                 ),
-
-                Container( // Register button
+                Container(
+                  // Register button
                   alignment: Alignment.center,
                   height: 48,
                   margin: const EdgeInsets.only(bottom: 32.0),
@@ -206,12 +241,12 @@ class RegisterPage extends StatelessWidget {
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(
                           side: BorderSide(
-                              color: Theme.of(context).colorScheme.primaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
                               width: 4,
-                              style: BorderStyle.solid
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(50))
-                      ),
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.all(Radius.circular(50))),
                     ),
                     onPressed: () {
                       /* do something */
@@ -219,8 +254,13 @@ class RegisterPage extends StatelessWidget {
                     child: Container(
                       width: MediaQuery.of(context).size.width * buttonRatio,
                       alignment: Alignment.center,
-                      child: Text("Đăng kí", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary)),
+                      child: Text("Đăng kí",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary)),
                     ),
                   ),
                 )
@@ -229,7 +269,6 @@ class RegisterPage extends StatelessWidget {
           ),
         ),
       ),
-
       debugShowCheckedModeBanner: false,
     );
   }
