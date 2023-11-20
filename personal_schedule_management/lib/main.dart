@@ -7,6 +7,7 @@ import 'package:personal_schedule_management/features/controller/main_controller
 import 'package:personal_schedule_management/features/controller/work_category_controller.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/changepass_page.dart';
+import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/managemet_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => CreateWorkController()),
       ChangeNotifierProvider(create: (_) => CalendarPageController()),
       ChangeNotifierProvider(create: (_) => WorkCategoryController()),
-    ], child: const ChangePassPage()),
+    ], child: const MyApp()),
   );
 }
 
