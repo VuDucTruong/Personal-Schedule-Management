@@ -82,6 +82,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> signIn(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.value.text,
@@ -90,8 +97,12 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         errorText = "Tài khoản hoặc mật khẩu không chính xác!";
       });
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
       return;
     }
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
     // ignore: use_build_context_synchronously
     Navigator.push(
       context,
@@ -103,6 +114,14 @@ class _LoginPageState extends State<LoginPage> {
 
   void forgetPasswordTextTapped() {} //TODO: Logic forgot password
   void signUpTextTapped(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+    Navigator.of(context).pop();
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const RegisterPage()));
   }
