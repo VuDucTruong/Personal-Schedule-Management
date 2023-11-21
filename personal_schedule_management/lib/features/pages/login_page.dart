@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:personal_schedule_management/features/pages/changepass_page.dart';
 import 'package:personal_schedule_management/features/pages/register_page.dart';
 import 'package:personal_schedule_management/main.dart';
 
@@ -112,7 +113,20 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void forgetPasswordTextTapped() {} //TODO: Logic forgot password
+  void forgetPasswordTextTapped(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+    Navigator.of(context).pop();
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const ChangePassPage()));
+    // TODO: forgot password push route
+  }
+
   void signUpTextTapped(BuildContext context) {
     showDialog(
         context: context,
@@ -140,31 +154,34 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('en'), // English
-          Locale('vi'),
-        ],
-        locale: const Locale('vi'),
-        theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: lightColorScheme,
-            textTheme: GoogleFonts.robotoTextTheme()),
-        darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: darkColorScheme,
-            textTheme: GoogleFonts.robotoTextTheme()),
-        home: SafeArea(
-          child: Builder(
-            builder: (context) => Scaffold(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('vi'),
+      ],
+      locale: const Locale('vi'),
+      theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: lightColorScheme,
+          textTheme: GoogleFonts.robotoTextTheme()),
+      darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
+          textTheme: GoogleFonts.robotoTextTheme()),
+      home: SafeArea(
+        child: Builder(
+          builder: (context) => Scaffold(
               resizeToAvoidBottomInset: true,
               body: SingleChildScrollView(
-                  reverse: true,
+                reverse: true,
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 1.06,
                   child: Stack(
+                    fit: StackFit.loose,
                     children: [
                       Container(
                         height: MediaQuery.of(context).size.height,
@@ -410,8 +427,10 @@ class _LoginPageState extends State<LoginPage> {
                                                         .colorScheme
                                                         .primary),
                                             recognizer: TapGestureRecognizer()
-                                              ..onTap =
-                                                  forgetPasswordTextTapped),
+                                              ..onTap = () {
+                                                forgetPasswordTextTapped(
+                                                    context);
+                                              }),
                                       ),
                                     ]),
                               ),
@@ -503,9 +522,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       )
                     ],
-                  )),
-            ),
-          ),
-        ));
+                  ),
+                ),
+              )),
+        ),
+      ),
+    );
   }
 }
