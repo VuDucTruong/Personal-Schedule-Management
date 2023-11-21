@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -9,7 +8,6 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    print('zzzzzz');
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -50,15 +48,6 @@ class SettingsPage extends StatelessWidget {
                       content: 'Lịch của bạn',
                       iconData: FontAwesomeIcons.solidCircleUser,
                       isSwitch: false,
-                      function: null,
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      content: 'Đồng bộ hóa tài khoản',
-                      iconData: Icons.cloud_sync,
-                      color: Colors.tealAccent,
-                      isSwitch: false,
-                      function: () => AppRoutes.toSyncCalendarPage(context),
                     ),
                     SettingsDivider(),
                     SettingItem(
@@ -66,15 +55,13 @@ class SettingsPage extends StatelessWidget {
                       content: 'Định dạng ngày',
                       iconData: FontAwesomeIcons.calendarDays,
                       isSwitch: false,
-                      function: null,
                     ),
                     SettingsDivider(),
                     SettingItem(
                       color: Colors.red,
                       content: 'Định dạng thời gian 24h',
-                      iconData: Icons.av_timer,
+                      iconData: FontAwesomeIcons.solidCircleUser,
                       isSwitch: true,
-                      function: null,
                     ),
                     SettingsDivider(),
                     SettingItem(
@@ -82,7 +69,6 @@ class SettingsPage extends StatelessWidget {
                       content: 'Hiển thị thời tiết',
                       iconData: FontAwesomeIcons.cloudSun,
                       isSwitch: true,
-                      function: null,
                     ),
                   ],
                 ),
@@ -103,7 +89,6 @@ class SettingsPage extends StatelessWidget {
                       content: 'Tiện ích',
                       iconData: FontAwesomeIcons.mobile,
                       isSwitch: false,
-                      function: null,
                     ),
                     SettingsDivider(),
                     SettingItem(
@@ -111,7 +96,6 @@ class SettingsPage extends StatelessWidget {
                       content: 'Nhạc chuông',
                       iconData: FontAwesomeIcons.music,
                       isSwitch: false,
-                      function: null,
                     ),
                     SettingsDivider(),
                     SettingItem(
@@ -119,11 +103,9 @@ class SettingsPage extends StatelessWidget {
                       content: 'Thông báo & nhắc nhở',
                       iconData: FontAwesomeIcons.solidBell,
                       isSwitch: false,
-                      function: null,
                     ),
                     SettingsDivider(),
                     SettingItem(
-                      function: null,
                       color: Colors.purpleAccent,
                       content: 'Giao diện',
                       iconData: FontAwesomeIcons.brush,
@@ -148,7 +130,6 @@ class SettingsPage extends StatelessWidget {
                       content: 'Phản hồi',
                       iconData: FontAwesomeIcons.comments,
                       isSwitch: false,
-                      function: null,
                     ),
                   ],
                 ),
@@ -181,40 +162,35 @@ class SettingItem extends StatelessWidget {
   IconData iconData;
   Color color;
   bool isSwitch;
-  VoidCallback? function;
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: function,
-      child: ListTile(
-        title: Row(
-          children: [
-            Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), color: color),
-              child: Icon(iconData, color: Colors.white),
-            ),
-            SizedBox(
-              width: 16,
-            ),
-            Text(
-              content,
-              style: AppTextStyle.normal,
-            ),
-          ],
-        ),
-        trailing: isSwitch
-            ? Switch(value: false, onChanged: (_) {})
-            : Icon(FontAwesomeIcons.angleRight),
+    return ListTile(
+      title: Row(
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5), color: color),
+            child: Icon(iconData, color: Colors.white),
+          ),
+          SizedBox(
+            width: 16,
+          ),
+          Text(
+            content,
+            style: AppTextStyle.normal,
+          ),
+        ],
       ),
+      trailing: isSwitch
+          ? Switch(value: false, onChanged: (_) {})
+          : Icon(FontAwesomeIcons.angleRight),
     );
   }
 
   SettingItem(
-      {required this.function,
-      required this.content,
+      {required this.content,
       required this.iconData,
       required this.color,
       required this.isSwitch,

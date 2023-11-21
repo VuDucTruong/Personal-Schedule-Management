@@ -6,7 +6,6 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class CalendarPageController extends ChangeNotifier {
   late List<Appointment> appointmentList = [];
   final DeviceCalendarPlugin deviceCalendarPlugin = DeviceCalendarPlugin();
-  bool isWeatherVisible = true;
   Future<void> getCalendarEvents() async {
     final calendarsResult = (await deviceCalendarPlugin.retrieveCalendars());
     final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
@@ -62,10 +61,5 @@ class CalendarPageController extends ChangeNotifier {
         newList.add(element);
       }
     });
-  }
-
-  void changeWeatherVisibility() {
-    isWeatherVisible = !isWeatherVisible;
-    notifyListeners();
   }
 }
