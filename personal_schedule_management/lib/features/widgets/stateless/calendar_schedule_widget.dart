@@ -12,6 +12,20 @@ class CalendarSchedule extends StatelessWidget {
   CalendarDataSource dataSource;
   final VoidCallback setStateCallback;
   final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
+  final Map<int, String> monthMap = {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'May',
+    6: 'June',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December',
+  };
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -24,6 +38,29 @@ class CalendarSchedule extends StatelessWidget {
       dataSource: dataSource,
       onTap: (details) {
         print(details.targetElement);
+      },
+      scheduleViewMonthHeaderBuilder:
+          (BuildContext buildContext, ScheduleViewMonthHeaderDetails details) {
+        final String monthName = monthMap[details.date.month]!;
+        return Stack(
+          children: [
+            Image(
+                image: AssetImage('assets/image/' + monthName + '.jpg'),
+                fit: BoxFit.cover,
+                width: details.bounds.width,
+                height: details.bounds.height),
+            Positioned(
+              left: 55,
+              right: 0,
+              top: 20,
+              bottom: 0,
+              child: Text(
+                monthName + ' ' + details.date.year.toString(),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        );
       },
       appointmentBuilder: (context, calendarAppointmentDetails) {
         MyAppointment appointment =
