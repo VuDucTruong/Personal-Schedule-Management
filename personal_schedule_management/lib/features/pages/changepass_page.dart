@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -214,7 +216,7 @@ class _ChangePassPageState extends State<ChangePassPage> {
               reverse: true,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2,
+                height: max(MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2, 640),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -177,7 +179,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
               reverse: true,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2,
+                height: max(640, MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -334,7 +336,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
               reverse: true,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2,
+                height: max(640, MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
