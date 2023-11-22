@@ -5,7 +5,6 @@ import 'package:personal_schedule_management/config/text_styles/app_text_style.d
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/features/controller/create_work_controller.dart';
 import 'package:personal_schedule_management/features/pages/work_category_page.dart';
-import 'package:provider/provider.dart';
 
 import '../../core/domain/entity/cong_viec_entity.dart';
 
@@ -39,11 +38,11 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     'Thấp nhất': 5
   };
   late List<String> priorityList;
+  CreateWorkController createWorkController = CreateWorkController();
   @override
   void initState() {
     super.initState();
     priorityList = priorityMap.keys.toList();
-    Provider.of<CreateWorkController>(context, listen: false).resetData();
     titleController = TextEditingController();
     descriptionController = TextEditingController();
     locationController = TextEditingController();
@@ -80,42 +79,43 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                     'Công việc',
                     style: AppTextStyle.h2,
                   ),
-                  Consumer<CreateWorkController>(
-                    builder: (context, controller, child) => InkWell(
-                      child: Icon(FontAwesomeIcons.check,
-                          color: lightColorScheme.primary),
-                      onTap: () async {
-                        try {
-                          if (!_formKey.currentState!.validate()) return;
-                        } catch (e) {
-                          return;
-                        }
+                  InkWell(
+                    child: Icon(FontAwesomeIcons.check,
+                        color: lightColorScheme.primary),
+                    onTap: () async {
+                      try {
+                        if (!_formKey.currentState!.validate()) return;
+                      } catch (e) {
+                        return;
+                      }
 
-                        CongViec congViec = CongViec(
-                            '',
-                            '',
-                            '',
-                            titleController.text,
-                            descriptionController.text,
-                            controller.selectedValue,
-                            controller.startDate!,
-                            controller.endDate!,
-                            controller.allDaySwitch,
-                            0,
-                            priorityMap[controller.priorityValue]!,
-                            controller.colorIcon,
-                            locationController.text,
-                            urlController.text,
-                            false);
-                        if (await controller.createWork(congViec))
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Thêm thành công')));
-                        else
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Thêm thất bại')));
-                        Navigator.of(context).pop();
-                      },
-                    ),
+                      CongViec congViec = CongViec(
+                          '',
+                          '',
+                          '',
+                          titleController.text,
+                          descriptionController.text,
+                          createWorkController.selectedValue,
+                          createWorkController.startDate!,
+                          createWorkController.endDate!,
+                          createWorkController.allDaySwitch,
+                          0,
+                          priorityMap[createWorkController.priorityValue]!,
+                          createWorkController.colorIcon,
+                          locationController.text,
+                          urlController.text,
+                          false);
+                      bool results = false;
+                      if (await createWorkController.createWork(congViec)) {
+                        results = true;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Thêm thành công')));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Thêm thất bại')));
+                      }
+                      Navigator.pop(context, results);
+                    },
                   ),
                 ],
               ),
@@ -177,289 +177,291 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     int index = 0;
     return Card(
       elevation: 5,
-      child: Column(
-        children: [
-          Container(
-            child: Column(
-              children: [
-                ListTitleWork(
-                    Text('Loại công việc'),
-                    Icons.category,
-                    Consumer<CreateWorkController>(
-                      builder: (context, controller, child) => InkWell(
-                        child: Container(
-                          width: 120,
-                          height: 30,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  controller.selectedValue,
-                                  style: AppTextStyle.h2_5
-                                      .copyWith(fontWeight: FontWeight.bold),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Icon(Icons.arrow_forward_ios)
-                            ],
+      child: Column(children: [
+        Container(
+          child: Column(
+            children: [
+              ListTitleWork(
+                Text('Loại công việc'),
+                Icons.category,
+                InkWell(
+                  child: Container(
+                    width: 120,
+                    height: 30,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            createWorkController.selectedValue,
+                            style: AppTextStyle.h2_5
+                                .copyWith(fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        onTap: () async {
-                          List<String> result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WorkCategoryPage()),
-                          );
-                          controller.changeStringValue(result.first);
-                        },
-                      ),
-                    )),
-                DividerWorkItem(),
-                ListTitleWork(
-                    Text('Độ ưu tiên'),
-                    Icons.priority_high,
-                    Container(
-                        height: 50,
-                        width: 120,
-                        child: Consumer<CreateWorkController>(
-                          builder: (context, controller, child) =>
-                              DropdownButton(
-                            isExpanded: true,
-                            value: controller.priorityValue,
-                            items: [
-                              ...priorityList.map((e) => DropdownMenuItem(
-                                    child: Text(e),
-                                    value: e,
-                                  ))
-                            ],
-                            onChanged: (value) {
-                              if (value != null)
-                                controller.changePriorityValue(value);
-                            },
-                          ),
-                        ))),
-                DividerWorkItem(),
-                ListTitleWork(
-                    Text('Cả ngày'),
-                    FontAwesomeIcons.stopwatch,
-                    Consumer<CreateWorkController>(
-                      builder: (context, controller, child) => Switch(
-                        onChanged: (value) {
-                          controller.changeAllDaySwitch(value);
-                        },
-                        value: controller.allDaySwitch,
-                        activeColor: controller.colorIcon,
-                      ),
-                    )),
-                Container(
-                  margin: EdgeInsets.only(left: 12),
-                  child: Consumer<CreateWorkController>(
-                    builder: (context, controller, child) => Column(
-                      children: [
-                        ListTitleWork(
-                            GestureDetector(
-                              child: Text(toDayString(controller.startDate)),
-                              onTap: () {
-                                controller.pickUpStartDate(context);
-                              },
-                            ),
-                            FontAwesomeIcons.arrowRight,
-                            Visibility(
-                              visible: !controller.allDaySwitch,
-                              child: GestureDetector(
-                                child: Text(
-                                  toTimeString(controller.startDate),
-                                  style: AppTextStyle.h2_5,
-                                ),
-                                onTap: () {
-                                  controller.pickUpStartTime(context);
-                                },
-                              ),
-                            )),
-                        ListTitleWork(
-                            GestureDetector(
-                              child: Text(toDayString(controller.endDate)),
-                              onTap: () {
-                                controller.pickUpEndDate(context);
-                              },
-                            ),
-                            FontAwesomeIcons.arrowLeft,
-                            Visibility(
-                              visible: !controller.allDaySwitch,
-                              child: GestureDetector(
-                                child: Text(
-                                  toTimeString(controller.endDate),
-                                  style: AppTextStyle.h2_5,
-                                ),
-                                onTap: () {
-                                  controller.pickUpEndTime(context);
-                                },
-                              ),
-                            )),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Icon(Icons.arrow_forward_ios)
                       ],
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          DividerWorkItem(),
-          Container(
-            child: Column(
-              children: [
-                ListTitleWork(
-                    Text('Thiết lập nhắc nhở'),
-                    Icons.message,
-                    Consumer<CreateWorkController>(
-                      builder: (context, controller, child) => Switch(
-                        onChanged: (value) {
-                          controller.changeReminderSwitch(value);
-                        },
-                        value: controller.reminderSwitch,
-                        activeColor: controller.colorIcon,
-                      ),
-                    )),
-                Consumer<CreateWorkController>(
-                    builder: (context, controller, child) {
-                  int max = controller.reminderTimeList.length + 1;
-                  return Visibility(
-                    visible: controller.reminderSwitch,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 8),
-                      child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: max,
-                        itemBuilder: (context, index) {
-                          if (index == max - 1)
-                            return GestureDetector(
-                              child: ListTitleWork(Text('Thêm nhắc nhở'),
-                                  FontAwesomeIcons.plus, null),
-                              onTap: () {
-                                controller.insertReminderTime(context);
-                              },
-                            );
-                          return ListTitleWork(
-                              Text(controller.reminderTimeList[index]),
-                              FontAwesomeIcons.clock,
-                              InkWell(
-                                child: Icon(FontAwesomeIcons.xmark),
-                                onTap: () {
-                                  controller.deleteReminderTime(index);
-                                },
-                              ));
-                        },
-                      ),
-                    ),
-                  );
-                })
-              ],
-            ),
-          ),
-          DividerWorkItem(),
-          ListTitleWork(
-              Text('Lời nhắc báo thức'),
-              Icons.alarm,
-              Consumer<CreateWorkController>(
-                builder: (context, controller, child) => Switch(
-                  value: controller.alarmSwitch,
-                  onChanged: (value) {
-                    controller.changeAlarmSwitch(value);
+                  onTap: () async {
+                    List<String> result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WorkCategoryPage()),
+                    );
+                    setState(() {
+                      createWorkController.changeStringValue(result.first);
+                    });
                   },
-                  activeColor: controller.colorIcon,
                 ),
-              )),
-          DividerWorkItem(),
-
-          //TODO
-          Consumer<CreateWorkController>(
-            builder: (context, controller, child) => Builder(
-              builder: (context) {
-                if (controller.loop != null) {
-                  return Column(
-                    children: [
-                      ListTitleWork(
-                          Text(controller.contentRecurrence[0]),
-                          Icons.repeat,
-                          InkWell(
-                            child: Icon(FontAwesomeIcons.xmark),
-                            onTap: () {
-                              controller.removeLoop();
-                            },
-                          )),
-                      DividerWorkItem(),
-                      ListTitleWork(Text(controller.contentRecurrence[1]),
-                          FontAwesomeIcons.calendarXmark, null),
-                    ],
-                  );
-                } else {
-                  return GestureDetector(
-                    child: ListTitleWork(
-                        Text('Không lặp lại'), Icons.repeat, null),
-                    onTap: () {
-                      controller.openRecurringDialog(context);
-                    },
-                  );
-                }
-              },
-            ),
-          ),
-
-          DividerWorkItem(),
-          Container(
-            child: Column(
-              children: [
-                ListTitleWork(Text('Màu sắc'), Icons.palette, null),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              DividerWorkItem(),
+              ListTitleWork(
+                  Text('Độ ưu tiên'),
+                  Icons.priority_high,
+                  Container(
+                    height: 50,
+                    width: 120,
+                    child: DropdownButton(
+                      isExpanded: true,
+                      value: createWorkController.priorityValue,
+                      items: [
+                        ...priorityList.map((e) => DropdownMenuItem(
+                              child: Text(e),
+                              value: e,
+                            ))
+                      ],
+                      onChanged: (value) {
+                        if (value != null)
+                          createWorkController.changePriorityValue(value);
+                        setState(() {});
+                      },
+                    ),
+                  )),
+              DividerWorkItem(),
+              ListTitleWork(
+                Text('Cả ngày'),
+                FontAwesomeIcons.stopwatch,
+                Switch(
+                  onChanged: (value) {
+                    createWorkController.changeAllDaySwitch(value);
+                    setState(() {});
+                  },
+                  value: createWorkController.allDaySwitch,
+                  activeColor: createWorkController.colorIcon,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 12),
+                child: Column(
                   children: [
-                    ...colorList.map((e) => CustomColorRadio(index++, e))
+                    ListTitleWork(
+                        GestureDetector(
+                          child:
+                              Text(toDayString(createWorkController.startDate)),
+                          onTap: () async {
+                            await createWorkController.pickUpStartDate(context);
+                            setState(() {});
+                          },
+                        ),
+                        FontAwesomeIcons.arrowRight,
+                        Visibility(
+                          visible: !createWorkController.allDaySwitch,
+                          child: GestureDetector(
+                            child: Text(
+                              toTimeString(createWorkController.startDate),
+                              style: AppTextStyle.h2_5,
+                            ),
+                            onTap: () async {
+                              await createWorkController
+                                  .pickUpStartTime(context);
+                              setState(() {});
+                            },
+                          ),
+                        )),
+                    ListTitleWork(
+                        GestureDetector(
+                          child:
+                              Text(toDayString(createWorkController.endDate)),
+                          onTap: () async {
+                            await createWorkController.pickUpEndDate(context);
+                            setState(() {});
+                          },
+                        ),
+                        FontAwesomeIcons.arrowLeft,
+                        Visibility(
+                          visible: !createWorkController.allDaySwitch,
+                          child: GestureDetector(
+                            child: Text(
+                              toTimeString(createWorkController.endDate),
+                              style: AppTextStyle.h2_5,
+                            ),
+                            onTap: () async {
+                              await createWorkController.pickUpEndTime(context);
+                              setState(() {});
+                            },
+                          ),
+                        )),
                   ],
-                )
-              ],
-            ),
-          ),
-          DividerWorkItem(),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 12),
-            child: TextField(
-              controller: locationController,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  icon: Selector<CreateWorkController, Color>(
-                    selector: (p0, p1) => p1.colorIcon,
-                    builder: (context, value, child) => Icon(
-                      Icons.location_on,
-                      color: value,
+                ),
+              ),
+              DividerWorkItem(),
+              Container(
+                child: Column(
+                  children: [
+                    ListTitleWork(
+                      Text('Thiết lập nhắc nhở'),
+                      Icons.message,
+                      Switch(
+                        onChanged: (value) {
+                          createWorkController.changeReminderSwitch(value);
+                          setState(() {});
+                        },
+                        value: createWorkController.reminderSwitch,
+                        activeColor: createWorkController.colorIcon,
+                      ),
                     ),
-                  ),
-                  hintText: 'Vị trí'),
-            ),
+                    Builder(builder: (context) {
+                      int max =
+                          createWorkController.reminderTimeList.length + 1;
+                      return Visibility(
+                        visible: createWorkController.reminderSwitch,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 8),
+                          child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: max,
+                            itemBuilder: (context, index) {
+                              if (index == max - 1)
+                                return GestureDetector(
+                                  child: ListTitleWork(Text('Thêm nhắc nhở'),
+                                      FontAwesomeIcons.plus, null),
+                                  onTap: () async {
+                                    await createWorkController
+                                        .insertReminderTime(context);
+                                    setState(() {});
+                                  },
+                                );
+                              return ListTitleWork(
+                                  Text(createWorkController
+                                      .reminderTimeList[index]),
+                                  FontAwesomeIcons.clock,
+                                  InkWell(
+                                    child: Icon(FontAwesomeIcons.xmark),
+                                    onTap: () {
+                                      createWorkController
+                                          .deleteReminderTime(index);
+                                      setState(() {});
+                                    },
+                                  ));
+                            },
+                          ),
+                        ),
+                      );
+                    })
+                  ],
+                ),
+              ),
+              DividerWorkItem(),
+              ListTitleWork(
+                Text('Lời nhắc báo thức'),
+                Icons.alarm,
+                Switch(
+                  value: createWorkController.alarmSwitch,
+                  onChanged: (value) {
+                    createWorkController.changeAlarmSwitch(value);
+                    setState(() {});
+                  },
+                  activeColor: createWorkController.colorIcon,
+                ),
+              ),
+              DividerWorkItem(),
+              //TODO
+              Builder(
+                builder: (context) {
+                  if (createWorkController.loop != null) {
+                    return Column(
+                      children: [
+                        ListTitleWork(
+                            Text(createWorkController.contentRecurrence[0]),
+                            Icons.repeat,
+                            InkWell(
+                              child: Icon(FontAwesomeIcons.xmark),
+                              onTap: () {
+                                createWorkController.removeLoop();
+                                setState(() {});
+                              },
+                            )),
+                        DividerWorkItem(),
+                        ListTitleWork(
+                            Text(createWorkController.contentRecurrence[1]),
+                            FontAwesomeIcons.calendarXmark,
+                            null),
+                      ],
+                    );
+                  } else {
+                    return GestureDetector(
+                      child: ListTitleWork(
+                          Text('Không lặp lại'), Icons.repeat, null),
+                      onTap: () async {
+                        await createWorkController.openRecurringDialog(context);
+                        setState(() {});
+                      },
+                    );
+                  }
+                },
+              ),
+              DividerWorkItem(),
+              Container(
+                child: Column(
+                  children: [
+                    ListTitleWork(Text('Màu sắc'), Icons.palette, null),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ...colorList.map((e) => CustomColorRadio(index++, e))
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              DividerWorkItem(),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 12),
+                child: TextField(
+                  controller: locationController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      icon: Icon(
+                        Icons.location_on,
+                        color: createWorkController.colorIcon,
+                      ),
+                      hintText: 'Vị trí'),
+                ),
+              ),
+              DividerWorkItem(),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 12),
+                child: TextField(
+                  controller: urlController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      icon: Icon(
+                        Icons.link,
+                        color: createWorkController.colorIcon,
+                      ),
+                      hintText: 'URL'),
+                ),
+              )
+            ],
           ),
-          DividerWorkItem(),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 12),
-            child: TextField(
-              controller: urlController,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  icon: Selector<CreateWorkController, Color>(
-                    selector: (p0, p1) => p1.colorIcon,
-                    builder: (context, value, child) => Icon(
-                      Icons.link,
-                      color: value,
-                    ),
-                  ),
-                  hintText: 'URL'),
-            ),
-          )
-        ],
-      ),
+        ),
+      ]),
     );
   }
 
@@ -473,51 +475,38 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
 
   Widget ListTitleWork(
       Widget contentWidget, IconData leadingIcon, Widget? trailingWidget) {
-    return Consumer<CreateWorkController>(
-      builder: (context, controller, child) => ListTile(
-        title: contentWidget,
-        leading: Icon(
-          leadingIcon,
-          color: controller.colorIcon,
-        ),
-        trailing: trailingWidget,
+    return ListTile(
+      title: contentWidget,
+      leading: Icon(
+        leadingIcon,
+        color: createWorkController.colorIcon,
       ),
-    );
-  }
-}
-
-class CustomColorRadio extends StatelessWidget {
-  int index;
-  Color color;
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Consumer<CreateWorkController>(
-      builder: (context, controller, child) {
-        return OutlinedButton(
-            onPressed: () {
-              controller.onChangedColorRadio(color);
-            },
-            style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.all(0),
-                minimumSize: Size.fromRadius(14),
-                side: BorderSide(
-                    width: 2,
-                    color: (controller.colorIcon == color)
-                        ? Colors.greenAccent
-                        : Colors.transparent),
-                shape: CircleBorder()),
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(45), color: color),
-            ));
-      },
+      trailing: trailingWidget,
     );
   }
 
-  CustomColorRadio(this.index, this.color, {super.key});
+  Widget CustomColorRadio(int index, Color color) {
+    return OutlinedButton(
+        onPressed: () {
+          createWorkController.onChangedColorRadio(color);
+          setState(() {});
+        },
+        style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.all(0),
+            minimumSize: Size.fromRadius(14),
+            side: BorderSide(
+                width: 2,
+                color: (createWorkController.colorIcon == color)
+                    ? Colors.greenAccent
+                    : Colors.transparent),
+            shape: CircleBorder()),
+        child: Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(45), color: color),
+        ));
+  }
 }
 
 class DividerWorkItem extends StatelessWidget {

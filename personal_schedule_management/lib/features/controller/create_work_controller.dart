@@ -13,7 +13,7 @@ import 'package:personal_schedule_management/features/widgets/stateless/reminder
 import '../../config/theme/app_theme.dart';
 import '../../core/domain/entity/chu_ky_entity.dart';
 
-class CreateWorkController extends ChangeNotifier {
+class CreateWorkController {
   int selectedColorRadio = 0;
   bool allDaySwitch = false;
   bool alarmSwitch = false;
@@ -38,35 +38,21 @@ class CreateWorkController extends ChangeNotifier {
     startDate = currentDate;
     endDate = currentDate.add(Duration(hours: 1));
   }
-  void resetData() {
-    startDate = currentDate;
-    endDate = currentDate.add(Duration(hours: 1));
-    selectedColorRadio = 0;
-    allDaySwitch = false;
-    reminderSwitch = true;
-    selectedValue = 'Không có';
-    reminderTimeList = [];
-    loop = null;
-  }
 
   void onChangedColorRadio(Color color) {
     colorIcon = color;
-    notifyListeners();
   }
 
   void changeAllDaySwitch(bool value) {
     allDaySwitch = value;
-    notifyListeners();
   }
 
   void changeReminderSwitch(bool value) {
     reminderSwitch = value;
-    notifyListeners();
   }
 
   void changeAlarmSwitch(value) {
     alarmSwitch = value;
-    notifyListeners();
   }
 
   Future<void> createNotification(String maCV) async {
@@ -112,8 +98,7 @@ class CreateWorkController extends ChangeNotifier {
         }
         if (data['endDate'] != null)
           thoiDiemLap += ';UNTIL=${dateFormat.format(data['endDate'])}';
-        ChuKy chuKy =
-            ChuKy('', contentRecurrence[0], thoiDiemLap, data['endDate']);
+        ChuKy chuKy = ChuKy('', contentRecurrence[0], thoiDiemLap);
         maCK =
             await recurrenceRespositoryImpl.insertRecurrenceWorkToRemote(chuKy);
       }
@@ -139,7 +124,6 @@ class CreateWorkController extends ChangeNotifier {
           month: selectedDate.month,
           day: selectedDate.day);
       if (startDate!.compareTo(endDate!) > 0) endDate = startDate;
-      notifyListeners();
     }
   }
 
@@ -154,7 +138,6 @@ class CreateWorkController extends ChangeNotifier {
           year: selectedDate.year,
           month: selectedDate.month,
           day: selectedDate.day);
-      notifyListeners();
     }
   }
 
@@ -172,7 +155,6 @@ class CreateWorkController extends ChangeNotifier {
       } else {
         startDate = temp;
       }
-      notifyListeners();
     }
   }
 
@@ -186,7 +168,6 @@ class CreateWorkController extends ChangeNotifier {
           .copyWith(hour: selectedTime.hour, minute: selectedTime.minute);
       if (temp.compareTo(startDate!) >= 0) {
         endDate = temp;
-        notifyListeners();
       }
     }
   }
@@ -209,17 +190,14 @@ class CreateWorkController extends ChangeNotifier {
       reminderTimeList.add(results[0]);
       reminderValueList.add(results[1]);
     }
-    notifyListeners();
   }
 
   void deleteReminderTime(int index) {
     reminderTimeList.removeAt(index);
-    notifyListeners();
   }
 
   void changeStringValue(String newValue) {
     selectedValue = newValue;
-    notifyListeners();
   }
 
   Future<void> openRecurringDialog(BuildContext context) async {
@@ -230,7 +208,6 @@ class CreateWorkController extends ChangeNotifier {
     if (temp.isNotEmpty) {
       loop = temp;
       _extractData(loop?['type'], loop?['data']);
-      notifyListeners();
     }
   }
 
@@ -265,11 +242,9 @@ class CreateWorkController extends ChangeNotifier {
 
   void changePriorityValue(String value) {
     priorityValue = value;
-    notifyListeners();
   }
 
   void removeLoop() {
     loop = null;
-    notifyListeners();
   }
 }

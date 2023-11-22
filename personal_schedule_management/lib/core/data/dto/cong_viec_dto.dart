@@ -1,20 +1,23 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
 
 class CongViecDTO {
-  String maCV;
-  String maND;
-  String maCK;
-  String tieuDe;
-  String noiDung;
-  String loaiCongViec;
+  String? maCV;
+  String? maND;
+  String? maCK;
+  String? tieuDe;
+  String? noiDung;
+  String? loaiCongViec;
   Timestamp ngayBatDau;
   Timestamp ngayKetThuc;
   bool isCaNgay;
   int trangThai;
   int doUuTien;
-  String mauSac;
-  String diaDiem;
-  String url;
+  String? mauSac;
+  String? diaDiem;
+  String? url;
   bool isKhachMoi;
 
   CongViecDTO(
@@ -36,6 +39,7 @@ class CongViecDTO {
 
   toJson() {
     return {
+      "maCV": maCV,
       "maND": maND,
       "maCK": maCK,
       "tieuDe": tieuDe,
@@ -53,9 +57,9 @@ class CongViecDTO {
     };
   }
 
-  factory CongViecDTO.fromJson(Map<String, dynamic> json) {
+  factory CongViecDTO.fromJson(Map<String, dynamic> json, String id) {
     return CongViecDTO(
-        json['maCV'],
+        id,
         json['maND'],
         json['maCK'],
         json['tieuDe'],
@@ -70,5 +74,29 @@ class CongViecDTO {
         json['diaDiem'],
         json['url'],
         json['isKhachMoi']);
+  }
+
+  @override
+  String toString() {
+    return 'CongViecDTO{maCV: $maCV, maND: $maND, maCK: $maCK, tieuDe: $tieuDe, noiDung: $noiDung, loaiCongViec: $loaiCongViec, ngayBatDau: $ngayBatDau, ngayKetThuc: $ngayKetThuc, isCaNgay: $isCaNgay, trangThai: $trangThai, doUuTien: $doUuTien, mauSac: $mauSac, diaDiem: $diaDiem, url: $url, isKhachMoi: $isKhachMoi}';
+  }
+
+  toCongViec() {
+    return CongViec(
+        maCV ?? '',
+        maND ?? '',
+        maCK ?? '',
+        tieuDe ?? '',
+        noiDung ?? '',
+        loaiCongViec ?? '',
+        ngayBatDau.toDate(),
+        ngayKetThuc.toDate(),
+        isCaNgay,
+        trangThai,
+        doUuTien,
+        Color(int.parse(mauSac!)),
+        diaDiem ?? '',
+        url ?? '',
+        isKhachMoi);
   }
 }

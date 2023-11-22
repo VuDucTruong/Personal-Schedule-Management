@@ -18,6 +18,7 @@ class _ReportPageState extends State<ReportPage> {
     super.initState();
   }
 
+  DateTime monthOfYear = DateTime.now();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -27,7 +28,7 @@ class _ReportPageState extends State<ReportPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              MonthWidget(),
+              MonthWidget(monthOfYear),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

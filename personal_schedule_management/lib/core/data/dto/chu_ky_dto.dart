@@ -1,17 +1,28 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:personal_schedule_management/core/domain/entity/chu_ky_entity.dart';
 
 class ChuKyDTO {
   String maCK;
   String tenCK;
-  String thoiDiemLap;
-  Timestamp thoiDiemKetThuc;
+  String? thoiDiemLap;
 
-  ChuKyDTO(this.maCK, this.tenCK, this.thoiDiemLap, this.thoiDiemKetThuc);
+  ChuKyDTO(this.maCK, this.tenCK, this.thoiDiemLap);
   toJson() {
     return {
+      'maCK': maCK,
       'tenCK': tenCK,
       'thoiDiemLap': thoiDiemLap,
-      'thoiDiemKetThuc': thoiDiemKetThuc
     };
+  }
+
+  factory ChuKyDTO.fromJson(Map<String, dynamic> json, String id) {
+    return ChuKyDTO(id, json['tenCK'], json['thoiDiemLap']);
+  }
+  toChuKy() {
+    return ChuKy(maCK, tenCK, thoiDiemLap);
+  }
+
+  @override
+  String toString() {
+    return 'ChuKyDTO{maCK: $maCK, tenCK: $tenCK, thoiDiemLap: $thoiDiemLap}';
   }
 }

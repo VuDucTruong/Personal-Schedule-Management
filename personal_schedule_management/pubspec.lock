@@ -133,10 +133,10 @@ packages:
     dependency: "direct main"
     description:
       name: device_calendar
-      sha256: "5a1ce7887b4ffbaf3743078c8314dede5e694cddd69bab43f35ce815c5d82a7d"
+      sha256: "991b55bb9e0a0850ec9367af8227fe25185210da4f5fa7bd15db4cc813b1e2e5"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.1"
+    version: "4.3.2"
   fake_async:
     dependency: transitive
     description:
@@ -251,14 +251,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_native_timezone:
-    dependency: transitive
-    description:
-      name: flutter_native_timezone
-      sha256: ed7bfb982f036243de1c068e269182a877100c994f05143c8b26a325e28c1b02
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -365,14 +357,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
-  nested:
-    dependency: transitive
-    description:
-      name: nested
-      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -469,14 +453,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.7.3"
-  provider:
-    dependency: "direct main"
-    description:
-      name: provider
-      sha256: cdbe7530b12ecd9eb455bdaa2fcb8d4dad22e80b8afb4798b41479d5ce26847f
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.5"
   shared_preferences:
     dependency: "direct main"
     description:

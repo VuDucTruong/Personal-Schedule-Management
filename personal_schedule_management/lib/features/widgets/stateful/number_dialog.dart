@@ -22,6 +22,7 @@ class _NumberDialogState extends State<NumberDialog> {
     return AlertDialog(
       content: Container(
         height: 300,
+        width: 300,
         child: ListView(
           children: [
             ...number.map((e) => RadioListTile(

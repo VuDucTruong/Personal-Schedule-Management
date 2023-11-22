@@ -13,7 +13,11 @@ class NotificationRespositoryImpl extends NotificationRespository {
     ThongBaoDTO thongBaoDTO = thongBao.toThongBaoDTO();
     DocumentReference docRef =
         await _storage.collection(THONGBAO).add(thongBaoDTO.toJson());
-    if (docRef.id.isNotEmpty) return docRef.id;
+    if (docRef.id.isNotEmpty) {
+      thongBaoDTO.maTB = docRef.id;
+      await docRef.set(thongBaoDTO.toJson());
+      return docRef.id;
+    }
     return null;
   }
 }

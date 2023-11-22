@@ -9,7 +9,6 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    print('zzzzzz');
     return Scaffold(
       appBar: AppBar(
         title: Text(
