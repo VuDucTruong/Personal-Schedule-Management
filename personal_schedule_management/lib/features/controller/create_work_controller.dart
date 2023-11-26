@@ -41,10 +41,18 @@ class CreateWorkController {
 
   void changeAllDaySwitch(bool value) {
     allDaySwitch = value;
+    if (allDaySwitch) {
+      reminderTimeList.clear();
+      reminderValueList.clear();
+    }
   }
 
   void changeReminderSwitch(bool value) {
     reminderSwitch = value;
+    if (!reminderSwitch) {
+      reminderTimeList.clear();
+      reminderValueList.clear();
+    }
   }
 
   void changeAlarmSwitch(value) {
@@ -76,7 +84,7 @@ class CreateWorkController {
   Future<bool> createWork(CongViec congViec) async {
     await getRecurrenceInfo(congViec);
     String? maCV = await workRespositoryImpl.insertWorkToRemote(congViec);
-    if (maCV != null) {
+    if (maCV != null && reminderSwitch) {
       createNotification(maCV);
       return true;
     }

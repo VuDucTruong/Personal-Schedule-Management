@@ -50,15 +50,11 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
       dataSource: widget.dataSource,
       onTap: (details) async {
         //calendarScheduleController.showWorkDetails(context, details.)
-        /*if ((details.appointments?.length ?? 5) == 1 && details.date != null) {
+        if ((details.appointments?.length ?? 5) == 1 && details.date != null) {
           Appointment appointment = details.appointments!.first;
           await calendarScheduleController.showWorkDetails(
-              context,
-              appointment.id.toString(),
-              details.date!,
-              () => widget.setStateCallback());
-        }*/
-        print(details.appointments?.first);
+              context, appointment, () => widget.setStateCallback());
+        }
       },
       scheduleViewMonthHeaderBuilder:
           (BuildContext buildContext, ScheduleViewMonthHeaderDetails details) {

@@ -67,6 +67,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     return datetimeString;
   }
 
+  bool update = false;
   CreateWorkController createWorkController = CreateWorkController();
   @override
   void initState() {
@@ -77,6 +78,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     locationController = TextEditingController();
     urlController = TextEditingController();
     if (widget.selectedCongViec != null) {
+      update = true;
       CongViec congViec = widget.selectedCongViec!;
       titleController.text = congViec.tieuDe;
       descriptionController.text = congViec.noiDung;
@@ -455,12 +457,15 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                         ListTitleWork(
                             Text(createWorkController.contentRecurrence[0]),
                             Icons.repeat,
-                            InkWell(
-                              child: Icon(FontAwesomeIcons.xmark),
-                              onTap: () {
-                                createWorkController.removeLoop();
-                                setState(() {});
-                              },
+                            Visibility(
+                              visible: !update,
+                              child: InkWell(
+                                child: Icon(FontAwesomeIcons.xmark),
+                                onTap: () {
+                                  createWorkController.removeLoop();
+                                  setState(() {});
+                                },
+                              ),
                             )),
                         DividerWorkItem(),
                         ListTitleWork(

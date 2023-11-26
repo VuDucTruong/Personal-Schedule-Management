@@ -24,7 +24,8 @@ class ReportController {
     congViecHT = await completedWorkRespositoryImpl.getAllCompletedWork();
     numOfFinish = congViecHT.length;
     congViecHT.forEach((element) {
-      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc)) {
+      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc) &&
+          element.ngayKetThuc.isAfter(DateTime.now())) {
         numOfLate--;
       }
     });
@@ -37,7 +38,10 @@ class ReportController {
                 element.thoiDiemLap, element.ngayBatDau);
         totalNumOfWorks += dateTaskList.length;
         dateTaskList.forEach((element1) {
-          if (element1.isBefore(DateTime.now())) {
+          DateTime ngayKetThuc =
+              element1.add(element.ngayKetThuc.difference(element.ngayBatDau));
+
+          if (ngayKetThuc.isBefore(DateTime.now())) {
             numOfLate++;
           }
         });

@@ -30,7 +30,8 @@ class _ReportPageState extends State<ReportPage> {
       body: FutureBuilder(
           future: reportController.getAllNumberOfWorks(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (!snapshot.hasData)
+              return Center(child: CircularProgressIndicator());
             int numOfFinish = reportController.numOfFinish;
             int numOfUnfinish = reportController.numOfUnFinish;
             int numOfLate = reportController.numOfLate;
