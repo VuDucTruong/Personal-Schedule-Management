@@ -34,7 +34,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _firstEnterPasswordField = false;
   FocusNode _PasswordFocus = FocusNode();
   bool _PasswordCorrect = false;
-  String? _PasswordAuthError;
 
   String? _ExceptionText;
 
@@ -100,10 +99,6 @@ class _RegisterPageState extends State<RegisterPage> {
         _PasswordCorrect = false;
         errorText = "Mật khẩu phải từ 8 kí tự trở lên";
       }
-      else if (_PasswordAuthError != null) {
-        errorText = _PasswordAuthError;
-        return errorText;
-      }
       else
       {
         _PasswordCorrect = true;
@@ -131,21 +126,19 @@ class _RegisterPageState extends State<RegisterPage> {
           }
       );
 
-      await _signup(_EmailController.text, _PasswordController.text, result);
+      result = await _checkIfEmailInUse(_EmailController.value.text);
       if (result == true)
       {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Tạo tài khoản thành công'))
-        );
+          _EmailAuthError = 'Email đã được sử dụng';
       }
-      else
+      if (result == false)
       {
-        String? message = 'Tạo tài khoản thất bại';
-        if (_ExceptionText != null) {
-          message = _ExceptionText;
-          _ExceptionText = null;
-        }
-
+        // Chuyển hướng sang PINCODE page để xác thực tài khoản
+        //Navigator.of(context).push(_createRoute());
+      }
+      else if (_ExceptionText != null)
+      {
+        String? message = _ExceptionText;
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message.toString()))
         );
@@ -160,25 +153,24 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  Future<void> _signup(emailAddress, password, result) async {
+  Future<bool> _checkIfEmailInUse(String emailAddress) async {
     try {
-      result = true;
       final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailAddress,
-        password: password,
+        password: '123456',
       );
-
+      await credential.user?.delete();
+      return false;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        _PasswordAuthError = 'Mật khẩu quá yếu';
-      } else if (e.code == 'email-already-in-use') {
-        _EmailAuthError = 'Email đã được sử dụng';
+      if (e.code == 'email-already-in-use') {
+        return true;
+      } else {
+        _ExceptionText = e.code;
+        return false;
       }
-      result = false;
     } catch (e) {
-      // do nothing
       _ExceptionText = e.toString();
-      result = false;
+      return false;
     }
   }
 
@@ -191,7 +183,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _NameCorrect = false;
     _EmailCorrect = false;
     _PasswordCorrect = false;
-    _PasswordAuthError = null;
     _EmailAuthError = null;
     super.initState();
   }
@@ -384,7 +375,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                           focusNode: _PasswordFocus,
                                           obscureText: !_PasswordVisible,
                                           onTap: () {
-                                            _PasswordAuthError = null;
                                             _firstEnterPasswordField = true;
                                           },
                                           obscuringCharacter: '*',
@@ -461,6 +451,29 @@ class _RegisterPageState extends State<RegisterPage> {
       debugShowCheckedModeBanner: false,
     );
   }
+
+  // Route _createRoute() {
+  //   return PageRouteBuilder(
+  //     pageBuilder: (context, animation, secondaryAnimation)
+  //            => const PincodePage(_EmailController.value.text, _NameController.value.text, _PasswordController.value.text),
+  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+  //       const begin = Offset(1.0, 0.0);
+  //       const end = Offset.zero;
+  //       const curve = Curves.ease;
+  //
+  //       final tween = Tween(begin: begin, end: end);
+  //       final curvedAnimation = CurvedAnimation(
+  //         parent: animation,
+  //         curve: curve,
+  //       );
+  //
+  //       return SlideTransition(
+  //         position: tween.animate(curvedAnimation),
+  //         child: child,
+  //       );
+  //     },
+  //   );
+  // }
 }
 
 
