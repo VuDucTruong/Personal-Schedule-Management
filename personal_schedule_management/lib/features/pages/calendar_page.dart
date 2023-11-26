@@ -62,8 +62,10 @@ class _CalendarPageState extends State<CalendarPage>
                       children: [
                     CalendarSchedule(
                         calendarPageController.calendarDatasource, reloadPage),
-                    CalendarDay(calendarPageController.calendarDatasource),
-                    CalendarWeek(calendarPageController.calendarDatasource),
+                    CalendarDay(
+                        calendarPageController.calendarDatasource, reloadPage),
+                    CalendarWeek(
+                        calendarPageController.calendarDatasource, reloadPage),
                     CalendarMonth(
                         calendarPageController.calendarDatasource, reloadPage)
                   ]));
@@ -83,7 +85,7 @@ class _CalendarPageState extends State<CalendarPage>
                 isScrollControlled: true,
                 context: context,
                 builder: (context) {
-                  return CreateWorkPage();
+                  return CreateWorkPage(null);
                 },
               );
               if (result != null && result) {

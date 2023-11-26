@@ -9,8 +9,8 @@ import 'package:personal_schedule_management/features/pages/work_category_page.d
 import '../../core/domain/entity/cong_viec_entity.dart';
 
 class CreateWorkPage extends StatefulWidget {
-  const CreateWorkPage({super.key});
-
+  CreateWorkPage(this.selectedCongViec, {super.key});
+  CongViec? selectedCongViec;
   @override
   _CreateWorkPageState createState() {
     return _CreateWorkPageState();
@@ -25,10 +25,10 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
   final _formKey = GlobalKey<FormState>();
   List<Color> colorList = [
     lightColorScheme.primary,
-    Colors.red,
-    Colors.blue,
-    Colors.yellow,
-    Colors.orangeAccent
+    Color.fromRGBO(232, 56, 56, 0.81),
+    Color.fromRGBO(56, 232, 216, 0.81),
+    Color.fromRGBO(186, 56, 232, 0.81),
+    Color.fromRGBO(189, 232, 56, 0.81),
   ];
   Map<String, int> priorityMap = {
     'Cao nhất': 1,
@@ -37,7 +37,36 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     'Thấp': 4,
     'Thấp nhất': 5
   };
+  DateFormat dayFormat = DateFormat("EE, dd/MM/yyyy", 'vi_VN');
+  DateFormat time12Format = DateFormat("hh:mm a", 'vi_VN');
+  DateFormat time24Format = DateFormat("HH:mm", 'vi_VN');
   late List<String> priorityList;
+  String getDateTimeFromString(String thoiDiemLap) {
+    String input = thoiDiemLap;
+
+    List<String> parts = input.split(';');
+    String datetimeString = '';
+    for (String part in parts) {
+      List<String> keyValue = part.split('=');
+      DateTime datetime;
+
+      if (keyValue.length == 2) {
+        String key = keyValue[0];
+        String value = keyValue[1];
+        if (key == 'UNTIL') {
+          String year = value.substring(0, 4);
+          String month = value.substring(4, 6);
+          String day = value.substring(6, 8);
+          datetime =
+              DateTime(int.parse(year), int.parse(month), int.parse(day));
+          datetimeString = dayFormat.format(datetime);
+          break;
+        }
+      }
+    }
+    return datetimeString;
+  }
+
   CreateWorkController createWorkController = CreateWorkController();
   @override
   void initState() {
@@ -47,16 +76,58 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     descriptionController = TextEditingController();
     locationController = TextEditingController();
     urlController = TextEditingController();
+    if (widget.selectedCongViec != null) {
+      CongViec congViec = widget.selectedCongViec!;
+      titleController.text = congViec.tieuDe;
+      descriptionController.text = congViec.noiDung;
+      locationController.text = congViec.diaDiem;
+      urlController.text = congViec.url;
+      createWorkController.colorIcon = congViec.mauSac;
+      createWorkController.startDate = congViec.ngayBatDau;
+      createWorkController.endDate = congViec.ngayKetThuc;
+      createWorkController.priorityValue = priorityList[congViec.doUuTien - 1];
+      createWorkController.allDaySwitch = congViec.isCaNgay;
+      createWorkController.selectedValue = congViec.loaiCongViec;
+      if (congViec.tenCK.isNotEmpty) {
+        createWorkController.contentRecurrence.add(congViec.tenCK);
+        createWorkController.contentRecurrence
+            .add(getDateTimeFromString(congViec.thoiDiemLap));
+        createWorkController.loop = {};
+      }
+      createWorkController.fulfillReminderList(
+          congViec.maCV, () => setState(() {}));
+    }
   }
 
-  DateFormat dayFormat = DateFormat("dd/MM/yyyy", 'vi_VN');
-  DateFormat time12Format = DateFormat("hh:mm a", 'vi_VN');
-  DateFormat time24Format = DateFormat("HH:mm", 'vi_VN');
+  Future<bool> chooseAction(CongViec congViec) async {
+    bool results = false;
+    if (widget.selectedCongViec != null) {
+      if (await createWorkController.updateWork(congViec)) {
+        results = true;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sửa thành công')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sửa thất bại')));
+      }
+    } else {
+      if (await createWorkController.createWork(congViec)) {
+        results = true;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Thêm thành công')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Thêm thất bại')));
+      }
+    }
+    return results;
+  }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     double height = MediaQuery.of(context).size.height;
+
     return Container(
       margin: EdgeInsets.all(8),
       height: height * 5 / 6,
@@ -90,8 +161,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                       }
 
                       CongViec congViec = CongViec(
-                          '',
-                          '',
+                          widget.selectedCongViec?.maCV ?? '',
                           '',
                           titleController.text,
                           descriptionController.text,
@@ -99,22 +169,16 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                           createWorkController.startDate!,
                           createWorkController.endDate!,
                           createWorkController.allDaySwitch,
-                          0,
                           priorityMap[createWorkController.priorityValue]!,
                           createWorkController.colorIcon,
                           locationController.text,
                           urlController.text,
-                          false);
-                      bool results = false;
-                      if (await createWorkController.createWork(congViec)) {
-                        results = true;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Thêm thành công')));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Thêm thất bại')));
-                      }
-                      Navigator.pop(context, results);
+                          false,
+                          widget.selectedCongViec?.tenCK ?? '',
+                          widget.selectedCongViec?.thoiDiemLap ?? '',
+                          createWorkController.alarmSwitch);
+                      bool result = await chooseAction(congViec);
+                      Navigator.pop(context, result);
                     },
                   ),
                 ],
@@ -211,7 +275,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                     List<String> result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WorkCategoryPage()),
+                          builder: (context) => WorkCategoryPage(
+                              createWorkController.selectedValue)),
                     );
                     setState(() {
                       createWorkController.changeStringValue(result.first);

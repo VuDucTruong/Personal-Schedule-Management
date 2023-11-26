@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:personal_schedule_management/features/controller/work_category_controller.dart';
 
 class WorkCategoryPage extends StatefulWidget {
-  const WorkCategoryPage({super.key});
-
+  WorkCategoryPage(this.selectedCategory, {super.key});
+  String selectedCategory;
   @override
   State<WorkCategoryPage> createState() => _WorkCategoryPageState();
 }
 
 class _WorkCategoryPageState extends State<WorkCategoryPage> {
   String selectedValue = 'Không có';
+
+  @override
+  void initState() {
+    super.initState();
+    selectedValue = widget.selectedCategory;
+  }
+
   WorkCategoryController controller = WorkCategoryController();
   @override
   Widget build(BuildContext context) {

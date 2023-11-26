@@ -2,17 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_schedule_management/core/domain/entity/my_appointment.dart';
+import 'package:personal_schedule_management/config/calendar_data_source.dart';
+import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../../core/domain/entity/cong_viec_ht_entity.dart';
 import '../../../core/domain/repository_impl/work_respository_impl.dart';
 
-class CalendarMonth extends StatelessWidget {
+class CalendarMonth extends StatefulWidget {
   CalendarMonth(this.dataSource, this.setStateCallback, {super.key});
-  CalendarDataSource dataSource;
+  MyCalendarDataSource dataSource;
   final VoidCallback setStateCallback;
-  final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
 
+  @override
+  State<CalendarMonth> createState() => _CalendarMonthState();
+}
+
+class _CalendarMonthState extends State<CalendarMonth> {
+  final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
+  CalendarScheduleController calendarScheduleController =
+      CalendarScheduleController();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -25,8 +34,8 @@ class CalendarMonth extends StatelessWidget {
             todayBackgroundColor: Theme.of(context).colorScheme.primary,
           )),
       appointmentBuilder: (context, calendarAppointmentDetails) {
-        MyAppointment appointment =
-            calendarAppointmentDetails.appointments.first as MyAppointment;
+        Appointment appointment =
+            calendarAppointmentDetails.appointments.first as Appointment;
         Duration duration = DateTime(appointment.startTime.year,
                 appointment.startTime.month, appointment.startTime.day)
             .difference(DateTime(
@@ -42,88 +51,112 @@ class CalendarMonth extends StatelessWidget {
           durationString =
               '(${-duration.inDays + 1} / ${duration2.inDays + 1})';
         }
-        return Card(
-          color: appointment.color,
-          child: Container(
-            margin: EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                      SizedBox(
-                        width: 130,
-                        child: Text(
-                          appointment.subject,
-                          style: TextStyle(
-                              color: Colors.white,
-                              overflow: TextOverflow.ellipsis),
-                        ),
+        int? isFinished = (int.tryParse(appointment.notes![2]));
+        return FutureBuilder(
+          future: calendarScheduleController.getCompletedWork(
+              appointment.id.toString(), calendarAppointmentDetails.date),
+          builder: (context, snapshot) {
+            CongViecHT? congViecHT = snapshot.data;
+            return InkWell(
+              onTap: () async {
+                //calendarScheduleController.showWorkDetails(context, details.)
+                Appointment appointment =
+                    calendarAppointmentDetails.appointments.first;
+                await calendarScheduleController.showWorkDetails(
+                    context, appointment, () => widget.setStateCallback());
+              },
+              child: Card(
+                color: appointment.color,
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  child: Row(
+                    children: [
+                      if (isFinished != null)
+                        Checkbox(
+                            value: (congViecHT != null ? 1 : 0) > 0,
+                            onChanged: (value) async {
+                              if (value != null) {
+                                if (value) {
+                                  await calendarScheduleController
+                                      .addCompletedWork(appointment);
+                                } else {
+                                  await calendarScheduleController
+                                      .removeCompletedWork(
+                                          appointment.id.toString(),
+                                          calendarAppointmentDetails.date);
+                                }
+                                setState(() {});
+                              }
+                            }),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 190,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      appointment.subject,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 50,
+                                    child: Text(
+                                      '  $durationString',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  )
+                                ]),
+                          ),
+                          Builder(
+                            builder: (context) {
+                              if (appointment.isAllDay) {
+                                return Text(
+                                  'Cả ngày',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 14),
+                                );
+                              } else {
+                                return Text(
+                                  '${timeFormat.format(appointment.startTime)} - ${timeFormat.format(appointment.endTime)}',
+                                  style: TextStyle(color: Colors.white),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        width: 60,
-                        child: Text(
-                          '   $durationString',
-                          style: TextStyle(
-                              color: Colors.white,
-                              overflow: TextOverflow.ellipsis),
+                      Spacer(),
+                      Visibility(
+                        visible: appointment.notes?[0] == '1',
+                        child: InkWell(
+                          child: Icon(FontAwesomeIcons.xmark),
+                          onTap: () async {
+                            await GetIt.instance<WorkRespositoryImpl>()
+                                .deleteWorkById(appointment.id.toString());
+                            widget.dataSource.notifyListeners(
+                                CalendarDataSourceAction.remove, [appointment]);
+                            widget.setStateCallback();
+                          },
                         ),
                       )
-                    ]),
-                    Builder(
-                      builder: (context) {
-                        if (appointment.isAllDay) {
-                          return Text(
-                            'Cả ngày',
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          );
-                        } else {
-                          return Text(
-                            '${timeFormat.format(appointment.startTime)} - ${timeFormat.format(appointment.endTime)}',
-                            style: TextStyle(color: Colors.white),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                Spacer(),
-                if (durationString.isNotEmpty)
-                  Icon(
-                    Icons.double_arrow_outlined,
-                    color: Colors.white,
+                    ],
                   ),
-                SizedBox(
-                  width: 4,
                 ),
-                if (appointment.recurrenceRule != null)
-                  Icon(
-                    Icons.event_repeat_rounded,
-                    color: Colors.white,
-                  ),
-                SizedBox(
-                  width: 4,
-                ),
-                Visibility(
-                  visible: appointment.isDeletePermisson,
-                  child: InkWell(
-                    child: Icon(FontAwesomeIcons.xmark),
-                    onTap: () async {
-                      await GetIt.instance<WorkRespositoryImpl>()
-                          .deleteWorkById(appointment.id.toString());
-                      dataSource.notifyListeners(
-                          CalendarDataSourceAction.remove, [appointment]);
-                      setStateCallback();
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
+        return Container();
       },
-      dataSource: dataSource,
+      dataSource: widget.dataSource,
     );
   }
 }

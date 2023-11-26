@@ -5,13 +5,11 @@ import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
 import 'package:personal_schedule_management/core/domain/entity/thong_bao_entity.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/recurrence_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:personal_schedule_management/features/widgets/stateful/create_recurrence_dialog.dart';
 import 'package:personal_schedule_management/features/widgets/stateless/reminder_dialog.dart';
 
 import '../../config/theme/app_theme.dart';
-import '../../core/domain/entity/chu_ky_entity.dart';
 
 class CreateWorkController {
   int selectedColorRadio = 0;
@@ -19,16 +17,14 @@ class CreateWorkController {
   bool alarmSwitch = false;
   bool reminderSwitch = true;
   String priorityValue = 'Trung bình';
-  List<dynamic> reminderValueList = [];
+  List<dynamic> reminderValueList = []; // Luu tru thoi gian thong bao
   String selectedValue = 'Không có';
   DateTime? startDate, endDate;
   List<String> reminderTimeList = [];
-  late List<String> contentRecurrence;
+  List<String> contentRecurrence = [];
   Map<String, dynamic>? loop;
   Color colorIcon = lightColorScheme.primary;
   DateTime currentDate = DateTime.now();
-  RecurrenceRespositoryImpl recurrenceRespositoryImpl =
-      GetIt.instance<RecurrenceRespositoryImpl>();
   NotificationRespositoryImpl notificationRespositoryImpl =
       GetIt.instance<NotificationRespositoryImpl>();
   WorkRespositoryImpl workRespositoryImpl =
@@ -55,17 +51,39 @@ class CreateWorkController {
     alarmSwitch = value;
   }
 
+  Future<void> fulfillReminderList(
+      String maCV, VoidCallback setStateCallBack) async {
+    List<ThongBao> thongBaoList =
+        await notificationRespositoryImpl.getNotificationByWorkId(maCV);
+    thongBaoList.forEach((element) {
+      reminderValueList.add(element.thoiGian);
+      reminderTimeList.add(element.tenTB);
+    });
+    setStateCallBack();
+  }
+
   Future<void> createNotification(String maCV) async {
+    int index = 0;
     if (reminderValueList.isNotEmpty) {
       reminderValueList.forEach((element) {
-        ThongBao thongBao = ThongBao('', maCV, alarmSwitch ? 1 : 0, element);
-        notificationRespositoryImpl.insertNotificationToRemote(thongBao);
+        ThongBao thongBao =
+            ThongBao('', maCV, reminderTimeList[index++], element);
+        notificationRespositoryImpl.insertNotificationToWork(thongBao, maCV);
       });
     }
   }
 
   Future<bool> createWork(CongViec congViec) async {
-    String? maCK;
+    await getRecurrenceInfo(congViec);
+    String? maCV = await workRespositoryImpl.insertWorkToRemote(congViec);
+    if (maCV != null) {
+      createNotification(maCV);
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> getRecurrenceInfo(CongViec congViec) async {
     if (loop != null) {
       Map<String, dynamic> data = loop?['data'] ?? {};
       if (data.isNotEmpty) {
@@ -96,20 +114,35 @@ class CreateWorkController {
                 'FREQ=${loop?['type']};INTERVAL=1;BYMONTHDAY=${startDate?.day};BYMONTH=${startDate?.month}';
             break;
         }
-        if (data['endDate'] != null)
-          thoiDiemLap += ';UNTIL=${dateFormat.format(data['endDate'])}';
-        ChuKy chuKy = ChuKy('', contentRecurrence[0], thoiDiemLap);
-        maCK =
-            await recurrenceRespositoryImpl.insertRecurrenceWorkToRemote(chuKy);
+        thoiDiemLap +=
+            ';UNTIL=${dateFormat.format(data['endDate'] ?? DateTime(2050))}';
+        congViec.thoiDiemLap = thoiDiemLap;
+        congViec.tenCK = contentRecurrence[0];
       }
     }
-    congViec.maCK = maCK ?? '';
-    String? maCV = await workRespositoryImpl.insertWorkToRemote(congViec);
+  }
+
+  Future<bool> updateWork(CongViec congViec) async {
+    await getRecurrenceInfo(congViec);
+    String? maCV = await workRespositoryImpl.updateWorkToRemote(congViec);
     if (maCV != null) {
-      createNotification(maCV);
+      await updateNotifcation(maCV);
       return true;
     }
     return false;
+  }
+
+  Future<void> updateNotifcation(String maCV) async {
+    int index = 0;
+    await notificationRespositoryImpl.deleteALlNotificationByWorkId(maCV);
+    if (reminderValueList.isNotEmpty) {
+      reminderValueList.forEach((element) {
+        ThongBao thongBao =
+            ThongBao('', maCV, reminderTimeList[index], element);
+        index++;
+        notificationRespositoryImpl.insertNotificationToWork(thongBao, maCV);
+      });
+    }
   }
 
   Future<void> pickUpStartDate(BuildContext context) async {
@@ -194,6 +227,7 @@ class CreateWorkController {
 
   void deleteReminderTime(int index) {
     reminderTimeList.removeAt(index);
+    reminderValueList.removeAt(index);
   }
 
   void changeStringValue(String newValue) {

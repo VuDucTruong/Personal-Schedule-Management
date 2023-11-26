@@ -1,12 +1,54 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:personal_schedule_management/core/domain/entity/cong_viec_ht_entity.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/report_responsitory_impl.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class ReportController extends ChangeNotifier {
+import '../../core/domain/entity/cong_viec_entity.dart';
+
+class ReportController {
   ReportResponsitoryImpl reportResponsitoryImpl =
       GetIt.instance<ReportResponsitoryImpl>();
-  int numOfFinishedWork = 0;
-  void fetchData(DateTime monthOfYear) {
-    reportResponsitoryImpl.getAllFinishedWorkByUserIdAndMonth('', monthOfYear);
+  WorkRespositoryImpl workRespositoryImpl =
+      GetIt.instance<WorkRespositoryImpl>();
+  CompletedWorkRespositoryImpl completedWorkRespositoryImpl =
+      GetIt.instance<CompletedWorkRespositoryImpl>();
+  int numOfFinish = 0;
+  int numOfUnFinish = 0;
+  int numOfLate = 0;
+  int totalNumOfWorks = 0;
+  List<CongViecHT> congViecHT = [];
+
+  Future<String> getAllNumberOfWorks() async {
+    congViecHT = await completedWorkRespositoryImpl.getAllCompletedWork();
+    numOfFinish = congViecHT.length;
+    congViecHT.forEach((element) {
+      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc)) {
+        numOfLate--;
+      }
+    });
+    List<CongViec> congViecList =
+        await workRespositoryImpl.getAllCongViecByUserId('');
+    congViecList.forEach((element) {
+      if (element.thoiDiemLap.isNotEmpty) {
+        List<DateTime> dateTaskList =
+            SfCalendar.getRecurrenceDateTimeCollection(
+                element.thoiDiemLap, element.ngayBatDau);
+        totalNumOfWorks += dateTaskList.length;
+        dateTaskList.forEach((element1) {
+          if (element1.isBefore(DateTime.now())) {
+            numOfLate++;
+          }
+        });
+      } else {
+        totalNumOfWorks += 1;
+        if (element.ngayKetThuc.isAfter(DateTime.now())) {
+          numOfLate++;
+        }
+      }
+    });
+    numOfUnFinish = totalNumOfWorks - numOfFinish;
+    return 'Hello';
   }
 }

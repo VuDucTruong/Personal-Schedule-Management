@@ -11,7 +11,6 @@ class WorkRespositoryImpl extends WorkRespository {
     CongViecDTO insertWork = congViec.toCongViecDTO();
     DocumentReference docRef =
         await _storage.collection(CONGVIEC).add(insertWork.toJson());
-
     if (docRef.id.isNotEmpty) {
       insertWork.maCV = docRef.id;
       await docRef.set(insertWork.toJson());
@@ -37,5 +36,38 @@ class WorkRespositoryImpl extends WorkRespository {
   @override
   Future<void> deleteWorkById(String maCV) async {
     await _storage.collection(CONGVIEC).doc(maCV).delete();
+  }
+
+  @override
+  Future<CongViec?> getCongViecById(String maCV) async {
+    var data = await _storage
+        .collection(CONGVIEC)
+        .where('maCV', isEqualTo: maCV)
+        .get();
+    if (data.docs.isEmpty) {
+      return null;
+    }
+    CongViecDTO congViecDTO =
+        CongViecDTO.fromJson(data.docs.first.data(), data.docs.first.id);
+    return congViecDTO.toCongViec();
+  }
+
+  @override
+  Future<String?> updateWorkToRemote(CongViec congViec) async {
+    CongViecDTO insertWork = congViec.toCongViecDTO();
+    if (congViec.maCV.isNotEmpty) {
+      await _storage
+          .collection(CONGVIEC)
+          .doc(congViec.maCV)
+          .update(insertWork.toJson());
+      return congViec.maCV;
+    }
+    return null;
+  }
+
+  @override
+  Future<void> updateTinhTrangWork(String maCV, int trangThai) async {
+    var data = await _storage.collection(CONGVIEC).doc(maCV);
+    await data.update({'trangThai': trangThai});
   }
 }

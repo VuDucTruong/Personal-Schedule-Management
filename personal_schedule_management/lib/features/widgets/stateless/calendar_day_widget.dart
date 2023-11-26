@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_schedule_management/config/calendar_data_source.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
 import 'package:personal_schedule_management/core/data/dto/forecast_weather_dto.dart';
 import 'package:personal_schedule_management/core/data/dto/weather_dto.dart';
 import 'package:personal_schedule_management/core/data/dto/weather_location_dto.dart';
+import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalendarDay extends StatefulWidget {
-  CalendarDay(this.dataSource, {super.key});
-  CalendarDataSource dataSource;
+  CalendarDay(this.dataSource, this.setStateCallback, {super.key});
+  MyCalendarDataSource dataSource;
+  VoidCallback setStateCallback;
   @override
   State<CalendarDay> createState() => _CalendarDayState();
 }
@@ -21,6 +24,8 @@ class _CalendarDayState extends State<CalendarDay> {
   final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
   PageController pageController = PageController(viewportFraction: 0.95);
   bool isWeatherVisible = true;
+  CalendarScheduleController calendarScheduleController =
+      CalendarScheduleController();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -265,6 +270,15 @@ class _CalendarDayState extends State<CalendarDay> {
           showDatePickerButton: true,
           showNavigationArrow: true,
           showCurrentTimeIndicator: true,
+          onTap: (details) async {
+            //calendarScheduleController.showWorkDetails(context, details.)
+            if ((details.appointments?.length ?? 5) == 1 &&
+                details.date != null) {
+              Appointment appointment = details.appointments!.first;
+              await calendarScheduleController.showWorkDetails(
+                  context, appointment, () => widget.setStateCallback());
+            }
+          },
         ),
       ),
     ]));

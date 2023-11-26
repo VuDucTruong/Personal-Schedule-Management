@@ -62,25 +62,24 @@ class _MyAppState extends State<MyApp> {
           textTheme: GoogleFonts.robotoTextTheme()),
       home: SafeArea(
         child: Scaffold(
-          bottomNavigationBar: SlidingClippedNavBar(
-            barItems: [
-              BarItem(title: 'Lịch', icon: FontAwesomeIcons.calendar),
-              BarItem(
-                  title: 'Thống kê',
-                  icon: FontAwesomeIcons.magnifyingGlassChart),
-              BarItem(title: 'Cài đặt', icon: FontAwesomeIcons.gear)
-            ],
-            iconSize: 20,
-            selectedIndex: selectedIndex,
-            onButtonPressed: (int index) {
-              setState(() {
-                selectedIndex = index;
-              });
-            },
-            activeColor: lightColorScheme.primary,
-          ),
-          body: pageList[selectedIndex]
-        ),
+            bottomNavigationBar: SlidingClippedNavBar(
+              barItems: [
+                BarItem(title: 'Lịch', icon: FontAwesomeIcons.calendar),
+                BarItem(
+                    title: 'Thống kê',
+                    icon: FontAwesomeIcons.magnifyingGlassChart),
+                BarItem(title: 'Cài đặt', icon: FontAwesomeIcons.gear)
+              ],
+              iconSize: 20,
+              selectedIndex: selectedIndex,
+              onButtonPressed: (int index) {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+              activeColor: lightColorScheme.primary,
+            ),
+            body: pageList[selectedIndex]),
       ),
       debugShowCheckedModeBanner: false,
     );
