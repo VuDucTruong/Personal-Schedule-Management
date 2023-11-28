@@ -118,6 +118,8 @@ class _CalendarMonthState extends State<CalendarMonth> {
                               Expanded(
                                 child: Text(
                                   appointment.subject,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                   style: TextStyle(
                                       color: Colors.white,
                                       overflow: TextOverflow.ellipsis),

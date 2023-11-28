@@ -156,6 +156,8 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
                             Expanded(
                               child: Text(
                                 appointment.subject,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                                 style: TextStyle(
                                     color: Colors.white,
                                     overflow: TextOverflow.ellipsis),

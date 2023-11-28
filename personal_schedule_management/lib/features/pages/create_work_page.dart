@@ -218,7 +218,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                           else
                                             return 'Không được bỏ trống !';
                                         },
-                                        maxLines: 2,
+                                        maxLines: 1,
                                         minLines: 1,
                                         decoration: InputDecoration(
                                             hintText: 'Tiêu đề',

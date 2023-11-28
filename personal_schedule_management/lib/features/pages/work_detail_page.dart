@@ -59,7 +59,10 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
             (congViecHT == null ? 'Hoàn thành' : 'Chưa hoàn thành');
         return Scaffold(
           appBar: AppBar(
-              title: Text(selectedCongViec.tieuDe),
+              title: Text(
+                selectedCongViec.tieuDe,
+                overflow: TextOverflow.ellipsis,
+              ),
               centerTitle: true,
               leading: InkWell(
                 child: Icon(Icons.arrow_back),
