@@ -7,6 +7,7 @@ import 'package:personal_schedule_management/features/controller/create_work_con
 import 'package:personal_schedule_management/features/controller/main_controller.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/managemet_page.dart';
+import 'package:personal_schedule_management/features/pages/pincode_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
@@ -86,7 +87,8 @@ class MyApp extends StatelessWidget {
             children: [
               CalendarPage(),
               ManagementPage(),
-              UserPage(),
+              PincodePage("phamthanhtuong12052003@gmail.com", "123456789",
+                  "Tuong Pham"),
               SettingsPage(),
             ],
           ),
