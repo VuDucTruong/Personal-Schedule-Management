@@ -22,6 +22,15 @@ class _CalendarMonthState extends State<CalendarMonth> {
   final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
   CalendarScheduleController calendarScheduleController =
       CalendarScheduleController();
+
+  @override
+  void initState() {
+    super.initState();
+    calendarScheduleController.getAllCompletedWork(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

@@ -38,7 +38,6 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
 
   CalendarScheduleController calendarScheduleController =
       CalendarScheduleController();
-  List<bool> checkList = [];
   @override
   void initState() {
     super.initState();
