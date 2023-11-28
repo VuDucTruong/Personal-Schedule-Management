@@ -5,6 +5,7 @@ const String LCV = 'LOAICONGVIEC';
 const String NGUOIDUNG = 'NGUOIDUNG';
 const String THONGBAO = 'THONGBAO';
 const String THONGKE = 'THONGKE';
+const String CONGVIECHT = 'CONGVIECHT';
 const List<String> REMINDER_LIST = [
   'Trước 15 phút',
   'Trước 30 phút',

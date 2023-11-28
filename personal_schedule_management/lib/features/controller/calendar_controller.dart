@@ -1,12 +1,31 @@
 import 'package:device_calendar/device_calendar.dart';
-import 'package:flutter/material.dart';
-import 'package:personal_schedule_management/config/theme/app_theme.dart';
+import 'package:get_it/get_it.dart';
+import 'package:personal_schedule_management/config/calendar_data_source.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class CalendarPageController extends ChangeNotifier {
-  late List<Appointment> appointmentList = [];
+import '../../config/theme/app_theme.dart';
+import '../../core/domain/entity/cong_viec_entity.dart';
+
+class CalendarPageController {
+  List<Appointment> appointmentList = [];
+  int times = 0;
+  late MyCalendarDataSource calendarDatasource;
   final DeviceCalendarPlugin deviceCalendarPlugin = DeviceCalendarPlugin();
-  Future<void> getCalendarEvents() async {
+  WorkRespositoryImpl workRespositoryImpl =
+      GetIt.instance<WorkRespositoryImpl>();
+  CompletedWorkRespositoryImpl completedWorkRespositoryImpl =
+      GetIt.instance<CompletedWorkRespositoryImpl>();
+  bool isWeatherVisible = true;
+
+  Future<bool> getCalendarEvents() async {
+    appointmentList = [];
+
+    await loadAppointment();
+    if (times++ >= 1) {
+      return true;
+    }
     final calendarsResult = (await deviceCalendarPlugin.retrieveCalendars());
     final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
     List<String> calendarIds = [];
@@ -23,11 +42,17 @@ class CalendarPageController extends ChangeNotifier {
           endTime: DateTime.parse(event.end.toString()),
           isAllDay: event.allDay!,
           subject: event.title!,
-          notes: event.description,
+          notes: '0',
           location: event.location,
           color: lightColorScheme.primary));
     }
-    notifyListeners();
+    return true;
+  }
+
+  CalendarPageController() {}
+
+  void getCalendarDatasource() {
+    calendarDatasource = MyCalendarDataSource(appointmentList);
   }
 
   Future<List<Event>> retrieveEvents(List<String> calendarIds) async {
@@ -61,5 +86,35 @@ class CalendarPageController extends ChangeNotifier {
         newList.add(element);
       }
     });
+  }
+
+  void changeWeatherVisibility() {
+    isWeatherVisible = !isWeatherVisible;
+  }
+
+  //TODO
+  Future<void> _createAppointment(CongViec congViec) async {
+    String? rule;
+    rule = congViec.thoiDiemLap;
+    Appointment appointment = Appointment(
+        startTime: congViec.ngayBatDau,
+        endTime: congViec.ngayKetThuc,
+        subject: congViec.tieuDe,
+        color: congViec.mauSac,
+        isAllDay: congViec.isCaNgay,
+        id: congViec.maCV,
+        recurrenceRule: rule,
+        location: congViec.diaDiem,
+        notes: '1');
+    //if (appointmentList.contains(appointment)) return;
+    appointmentList.add(appointment);
+  }
+
+  Future<void> loadAppointment() async {
+    List<CongViec> congViecList =
+        await workRespositoryImpl.getAllCongViecByUserId('');
+    for (var element in congViecList) {
+      await _createAppointment(element);
+    }
   }
 }

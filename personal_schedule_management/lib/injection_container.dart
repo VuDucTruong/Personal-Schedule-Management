@@ -1,7 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/core/data/datasource/local/local_database.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/recurrence_respository_impl.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/report_responsitory_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,8 +13,9 @@ Future<void> initializeDependencies() async {
   instance.registerSingleton<WorkRespositoryImpl>(WorkRespositoryImpl());
   instance.registerSingleton<NotificationRespositoryImpl>(
       NotificationRespositoryImpl());
-  instance.registerSingleton<RecurrenceRespositoryImpl>(
-      RecurrenceRespositoryImpl());
+  instance.registerSingleton<ReportResponsitoryImpl>(ReportResponsitoryImpl());
+  instance.registerSingleton<CompletedWorkRespositoryImpl>(
+      CompletedWorkRespositoryImpl());
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   if (!prefs.containsKey('LOAI_CV')) {
     await prefs.setStringList('LOAI_CV', [
@@ -27,4 +29,5 @@ Future<void> initializeDependencies() async {
       'Thói quen'
     ]);
   }
+  prefs.setBool('isLoadCalendar', false);
 }
