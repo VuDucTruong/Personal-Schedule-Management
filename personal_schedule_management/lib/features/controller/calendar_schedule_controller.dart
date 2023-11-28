@@ -13,6 +13,8 @@ class CalendarScheduleController {
       GetIt.instance<WorkRespositoryImpl>();
   CompletedWorkRespositoryImpl completedWorkRespositoryImpl =
       GetIt.instance<CompletedWorkRespositoryImpl>();
+  Map<String, CongViecHT> congViecHTMap = {};
+  Map<String, bool> checkBoxMap = {};
   Future<void> showWorkDetails(BuildContext context, Appointment appointment,
       VoidCallback voidCallback) async {
     CongViec? congViec =
@@ -28,6 +30,18 @@ class CalendarScheduleController {
         voidCallback();
       }
     }
+  }
+
+  Future<void> getAllCompletedWork(VoidCallback setStateCallStack) async {
+    checkBoxMap.clear();
+    List<CongViecHT> list =
+        await completedWorkRespositoryImpl.getAllCompletedWork();
+    list.forEach((element) {
+      String key = '${element.maCV}-${element.ngayBatDau}';
+      congViecHTMap[key] = element;
+      checkBoxMap['${element.ngayBatDau}'] = true;
+    });
+    setStateCallStack();
   }
 
   Future<bool> addCompletedWork(Appointment appointment) async {

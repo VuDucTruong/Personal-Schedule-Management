@@ -65,7 +65,10 @@ class _WorkCategoryPageState extends State<WorkCategoryPage> {
                       title: Text('Thêm loại công việc'),
                     ),
                     onTap: () {
-                      controller.openCreateWorkCategoryDialog(context);
+                      controller.openCreateWorkCategoryDialog(
+                        context,
+                        () => setState(() {}),
+                      );
                     },
                   );
                 }

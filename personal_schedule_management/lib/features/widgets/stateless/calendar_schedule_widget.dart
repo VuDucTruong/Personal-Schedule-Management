@@ -38,6 +38,16 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
 
   CalendarScheduleController calendarScheduleController =
       CalendarScheduleController();
+  List<bool> checkList = [];
+  @override
+  void initState() {
+    super.initState();
+    calendarScheduleController.getAllCompletedWork(() {
+      setState(() {});
+    });
+  }
+
+  int index = 0;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -52,8 +62,13 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
         //calendarScheduleController.showWorkDetails(context, details.)
         if ((details.appointments?.length ?? 5) == 1 && details.date != null) {
           Appointment appointment = details.appointments!.first;
-          await calendarScheduleController.showWorkDetails(
-              context, appointment, () => widget.setStateCallback());
+          await calendarScheduleController.showWorkDetails(context, appointment,
+              () {
+            calendarScheduleController.getAllCompletedWork(() {
+              setState(() {});
+            });
+            widget.setStateCallback();
+          });
         }
       },
       scheduleViewMonthHeaderBuilder:
@@ -97,101 +112,102 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
           durationString =
               '(${-duration.inDays + 1} / ${duration2.inDays + 1})';
         }
-        int? isFinished = (int.tryParse(appointment.notes![2]));
-        return FutureBuilder(
-          future: calendarScheduleController.getCompletedWork(
-              appointment.id.toString(), appointment.startTime),
-          builder: (context, snapshot) {
-            CongViecHT? congViecHT = snapshot.data;
-            return Card(
-              color: appointment.color,
-              child: Container(
-                margin: EdgeInsets.all(8),
-                child: Row(
+        int? isFinished = (int.tryParse(appointment.notes![0]));
+        CongViecHT? congViecHT;
+        if (calendarScheduleController.congViecHTMap.isNotEmpty) {
+          congViecHT = calendarScheduleController
+              .congViecHTMap['${appointment.id}-${appointment.startTime}'];
+        }
+        return Card(
+          color: appointment.color,
+          child: Container(
+            margin: EdgeInsets.all(8),
+            child: Row(
+              children: [
+                if (isFinished == 1)
+                  Checkbox(
+                      value: calendarScheduleController
+                              .checkBoxMap['${appointment.startTime}'] ??
+                          false,
+                      onChanged: (value) async {
+                        if (value != null) {
+                          setState(() {
+                            calendarScheduleController
+                                    .checkBoxMap['${appointment.startTime}'] =
+                                value;
+                          });
+                          if (value) {
+                            await calendarScheduleController
+                                .addCompletedWork(appointment);
+                          } else {
+                            await calendarScheduleController
+                                .removeCompletedWork(appointment.id.toString(),
+                                    appointment.startTime);
+                          }
+                        }
+                      }),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (isFinished != null)
-                      Checkbox(
-                          value: (congViecHT != null ? 1 : 0) > 0,
-                          onChanged: (value) async {
-                            if (value != null) {
-                              if (value) {
-                                await calendarScheduleController
-                                    .addCompletedWork(appointment);
-                              } else {
-                                await calendarScheduleController
-                                    .removeCompletedWork(
-                                        appointment.id.toString(),
-                                        appointment.startTime);
-                              }
-                              setState(() {});
-                            }
-                          }),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 190,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    appointment.subject,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 50,
-                                  child: Text(
-                                    '  $durationString',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                )
-                              ]),
-                        ),
-                        Builder(
-                          builder: (context) {
-                            if (appointment.isAllDay) {
-                              return Text(
-                                'Cả ngày',
+                    SizedBox(
+                      width: 190,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                appointment.subject,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 14),
-                              );
-                            } else {
-                              return Text(
-                                '${timeFormat.format(appointment.startTime)} - ${timeFormat.format(appointment.endTime)}',
-                                style: TextStyle(color: Colors.white),
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                                    color: Colors.white,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 50,
+                              child: Text(
+                                '  $durationString',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            )
+                          ]),
                     ),
-                    Spacer(),
-                    Visibility(
-                      visible: appointment.notes?[0] == '1',
-                      child: InkWell(
-                        child: Icon(FontAwesomeIcons.xmark),
-                        onTap: () async {
-                          await GetIt.instance<WorkRespositoryImpl>()
-                              .deleteWorkById(appointment.id.toString());
-                          widget.dataSource.notifyListeners(
-                              CalendarDataSourceAction.remove, [appointment]);
-                          widget.setStateCallback();
-                        },
-                      ),
-                    )
+                    Builder(
+                      builder: (context) {
+                        if (appointment.isAllDay) {
+                          return Text(
+                            'Cả ngày',
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          );
+                        } else {
+                          return Text(
+                            '${timeFormat.format(appointment.startTime)} - ${timeFormat.format(appointment.endTime)}',
+                            style: TextStyle(color: Colors.white),
+                          );
+                        }
+                      },
+                    ),
                   ],
                 ),
-              ),
-            );
-          },
+                Spacer(),
+                Visibility(
+                  visible: isFinished == 1,
+                  child: InkWell(
+                    child: Icon(FontAwesomeIcons.xmark),
+                    onTap: () async {
+                      await GetIt.instance<WorkRespositoryImpl>()
+                          .deleteWorkById(appointment.id.toString());
+                      widget.dataSource.notifyListeners(
+                          CalendarDataSourceAction.remove, [appointment]);
+                      widget.setStateCallback();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         );
-        return Container();
       },
     ));
   }

@@ -128,12 +128,14 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    double height = MediaQuery.of(context).size.height;
+    MediaQueryData mediaQuery = MediaQuery.of(context);
+    double height = mediaQuery.size.height;
 
     return Container(
       margin: EdgeInsets.all(8),
       height: height * 5 / 6,
-      child: SingleChildScrollView(
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
         child: Column(
           children: [
             Container(
@@ -180,59 +182,75 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                           widget.selectedCongViec?.thoiDiemLap ?? '',
                           createWorkController.alarmSwitch);
                       bool result = await chooseAction(congViec);
-                      Navigator.pop(context, result);
+                      if (update) {
+                        Navigator.pop(context, [result, congViec]);
+                      } else
+                        Navigator.pop(context, result);
                     },
                   ),
                 ],
               ),
             ),
-            Card(
-              elevation: 5,
-              child: Container(
-                margin: EdgeInsets.all(4),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Form(
-                            key: _formKey,
-                            child: TextFormField(
-                              controller: titleController,
-                              validator: (value) {
-                                if (value != null && value.isNotEmpty)
-                                  return null;
-                                else
-                                  return 'Không được bỏ trống !';
-                              },
-                              maxLines: 2,
-                              minLines: 1,
-                              decoration: InputDecoration(
-                                  hintText: 'Tiêu đề',
-                                  border: InputBorder.none),
-                              style: AppTextStyle.h2,
-                            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Card(
+                        elevation: 5,
+                        child: Container(
+                          margin: EdgeInsets.all(4),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Form(
+                                      key: _formKey,
+                                      child: TextFormField(
+                                        controller: titleController,
+                                        validator: (value) {
+                                          if (value != null && value.isNotEmpty)
+                                            return null;
+                                          else
+                                            return 'Không được bỏ trống !';
+                                        },
+                                        maxLines: 2,
+                                        minLines: 1,
+                                        decoration: InputDecoration(
+                                            hintText: 'Tiêu đề',
+                                            border: InputBorder.none),
+                                        style: AppTextStyle.h2,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                height: 100,
+                                child: TextFormField(
+                                  controller: descriptionController,
+                                  expands: true,
+                                  maxLines: null,
+                                  minLines: null,
+                                  decoration: InputDecoration(
+                                      hintText: 'Thêm chi tiết',
+                                      border: InputBorder.none),
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    Container(
-                      height: 100,
-                      child: TextFormField(
-                        controller: descriptionController,
-                        expands: true,
-                        maxLines: null,
-                        minLines: null,
-                        decoration: InputDecoration(
-                            hintText: 'Thêm chi tiết',
-                            border: InputBorder.none),
                       ),
-                    )
-                  ],
+                      OptionWork(),
+                    ],
+                  ),
                 ),
               ),
             ),
-            OptionWork()
           ],
         ),
       ),
@@ -240,6 +258,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
   }
 
   Widget OptionWork() {
+    MediaQueryData mediaQueryData = MediaQuery.of(context);
     int index = 0;
     return Card(
       elevation: 5,

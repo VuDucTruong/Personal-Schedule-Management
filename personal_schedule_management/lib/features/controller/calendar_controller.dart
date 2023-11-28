@@ -1,6 +1,7 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/config/calendar_data_source.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -14,6 +15,8 @@ class CalendarPageController {
   final DeviceCalendarPlugin deviceCalendarPlugin = DeviceCalendarPlugin();
   WorkRespositoryImpl workRespositoryImpl =
       GetIt.instance<WorkRespositoryImpl>();
+  CompletedWorkRespositoryImpl completedWorkRespositoryImpl =
+      GetIt.instance<CompletedWorkRespositoryImpl>();
   bool isWeatherVisible = true;
 
   Future<bool> getCalendarEvents() async {
@@ -39,7 +42,7 @@ class CalendarPageController {
           endTime: DateTime.parse(event.end.toString()),
           isAllDay: event.allDay!,
           subject: event.title!,
-          notes: '0,x',
+          notes: '0',
           location: event.location,
           color: lightColorScheme.primary));
     }
@@ -102,7 +105,7 @@ class CalendarPageController {
         id: congViec.maCV,
         recurrenceRule: rule,
         location: congViec.diaDiem,
-        notes: '1,0');
+        notes: '1');
     //if (appointmentList.contains(appointment)) return;
     appointmentList.add(appointment);
   }

@@ -28,14 +28,15 @@ class CompletedWorkRespositoryImpl extends CompletedWorkRespository {
         .collection(CONGVIECHT)
         .where('ngayBatDau', isEqualTo: Timestamp.fromDate(startDay))
         .get();
-    String path = docRef.docs.first.id;
-
-    await _storage
-        .collection(CONGVIEC)
-        .doc(maCV)
-        .collection(CONGVIECHT)
-        .doc(path)
-        .delete();
+    try {
+      String path = docRef.docs.first.id;
+      await _storage
+          .collection(CONGVIEC)
+          .doc(maCV)
+          .collection(CONGVIECHT)
+          .doc(path)
+          .delete();
+    } catch (e) {}
   }
 
   @override

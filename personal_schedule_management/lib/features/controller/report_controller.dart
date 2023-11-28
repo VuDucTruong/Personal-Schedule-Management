@@ -24,8 +24,7 @@ class ReportController {
     congViecHT = await completedWorkRespositoryImpl.getAllCompletedWork();
     numOfFinish = congViecHT.length;
     congViecHT.forEach((element) {
-      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc) &&
-          element.ngayKetThuc.isAfter(DateTime.now())) {
+      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc)) {
         numOfLate--;
       }
     });
@@ -47,7 +46,7 @@ class ReportController {
         });
       } else {
         totalNumOfWorks += 1;
-        if (element.ngayKetThuc.isAfter(DateTime.now())) {
+        if (element.ngayKetThuc.isBefore(DateTime.now())) {
           numOfLate++;
         }
       }

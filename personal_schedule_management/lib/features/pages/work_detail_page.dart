@@ -43,11 +43,11 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
 
   final List<String> options = ['Chỉnh sửa', 'Hoàn thành'];
   final String notSet = 'Chưa đặt';
-
+  bool isChange = false;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    bool isChange = false;
+
     int times = 0;
     int timesRemove = 0;
     return FutureBuilder(
@@ -93,22 +93,29 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                                 widget.startDay,
                                 widget.endDay);
                           }
-                          isChange = true;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Cập nhật trạng thái thành công')));
+                          setState(() {
+                            isChange = true;
+                          });
                         },
                       ),
                       PopupMenuItem(
                         child: Text('Chỉnh sửa'),
                         value: 'Chỉnh sửa',
                         onTap: () async {
-                          bool? result = await showModalBottomSheet(
+                          List<dynamic> results = await showModalBottomSheet(
                             isScrollControlled: true,
                             context: context,
                             builder: (context) =>
                                 CreateWorkPage(selectedCongViec),
                           );
-                          if (result != null && result) setState(() {});
+                          if (results.length > 1 && results[0]) {
+                            setState(() {
+                              isChange = true;
+                              selectedCongViec = results[1];
+                            });
+                          }
                         },
                       ),
                       PopupMenuItem(

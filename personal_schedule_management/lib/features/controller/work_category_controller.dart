@@ -15,10 +15,11 @@ class WorkCategoryController {
     return workCategoryList;
   }
 
-  Future<void> openCreateWorkCategoryDialog(BuildContext context) async {
+  Future<void> openCreateWorkCategoryDialog(
+      BuildContext context, VoidCallback setStateCallStack) async {
     showDialog(
       context: context,
-      builder: (context) => WorkCategoryDialog(this),
+      builder: (context) => WorkCategoryDialog(this, setStateCallStack),
     );
   }
 
