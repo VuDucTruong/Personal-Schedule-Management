@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
-import 'package:personal_schedule_management/features/widgets/stateful/month_widget.dart';
+import 'package:personal_schedule_management/features/controller/report_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../../core/domain/entity/cong_viec_ht_entity.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
@@ -13,88 +16,51 @@ class ReportPage extends StatefulWidget {
 }
 
 class _ReportPageState extends State<ReportPage> {
+  ReportController reportController = ReportController();
   @override
   void initState() {
     super.initState();
   }
 
+  DateTime monthOfYear = DateTime.now();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      body: Container(
-        margin: EdgeInsets.all(4),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              MonthWidget(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ReportBoxWidget('Số công việc hoàn thành', 20),
-                  ReportBoxWidget('Số công việc chưa hoàn thành', 20),
-                  ReportBoxWidget('Số công việc bị trễ', 20),
-                ],
-              ),
-              SizedBox(height: 400, child: SplineChart()),
-              SizedBox(
-                height: 350,
-                child: PieChart(),
-              ),
-              Card(
+      body: FutureBuilder(
+          future: reportController.getAllNumberOfWorks(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return Center(child: CircularProgressIndicator());
+            int numOfFinish = reportController.numOfFinish;
+            int numOfUnfinish = reportController.numOfUnFinish;
+            int numOfLate = reportController.numOfLate;
+            return Container(
+              margin: EdgeInsets.all(4),
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      margin: EdgeInsets.all(4),
-                      child: Center(
-                        child: Text(
-                          'Công việc đang tiến hành',
-                          style: AppTextStyle.h2,
-                        ),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ReportBoxWidget('Số công việc hoàn thành', numOfFinish),
+                        ReportBoxWidget(
+                            'Số công việc chưa hoàn thành', numOfUnfinish),
+                        ReportBoxWidget('Số công việc bị trễ', numOfLate),
+                      ],
                     ),
-                    ListView.builder(
-                      itemCount: 3,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return const Column(
-                          children: [
-                            ListTile(
-                              title: Text('Title'),
-                              trailing: SizedBox(
-                                width: 80,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      '1',
-                                      style: AppTextStyle.h3,
-                                    ),
-                                    SizedBox(
-                                      width: 4,
-                                    ),
-                                    Icon(Icons.arrow_forward_ios)
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Divider(
-                              height: 1,
-                              color: Colors.grey,
-                              indent: 4,
-                              endIndent: 4,
-                            )
-                          ],
-                        );
-                      },
+                    SizedBox(
+                        height: 400,
+                        child: SplineChart(reportController.congViecHT)),
+                    SizedBox(
+                      height: 350,
+                      child: PieChart(numOfFinish, numOfUnfinish, numOfLate),
                     ),
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
+              ),
+            );
+          }),
     );
   }
 }
@@ -139,31 +105,31 @@ class ReportBoxWidget extends StatelessWidget {
 }
 
 class SplineChart extends StatelessWidget {
-  SplineChart({super.key});
-  final List<ChartData> chartData1 = [
-    ChartData(2010, 35),
-    ChartData(2011, 13),
-    ChartData(2012, 34),
-    ChartData(2013, 27),
-    ChartData(2014, 40)
-  ];
-  final List<ChartData> chartData3 = [
-    ChartData(2010, 20),
-    ChartData(2011, 13),
-    ChartData(2012, 1),
-    ChartData(2013, 13),
-    ChartData(2014, 54)
-  ];
-  final List<ChartData> chartData2 = [
-    ChartData(2010, 3),
-    ChartData(2011, 1),
-    ChartData(2012, 34),
-    ChartData(2013, 20),
-    ChartData(2014, 19)
-  ];
+  SplineChart(this.congViecHTList, {super.key});
+  List<CongViecHT> congViecHTList;
+  List<ChartData> completeData = [];
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    DateFormat dateFormat = DateFormat('dd/MM');
+    DateTime now = DateTime.now();
+    Map<String, double> map = {
+      '${dateFormat.format(now.subtract(Duration(days: 3)))}': 0,
+      '${dateFormat.format(now.subtract(Duration(days: 2)))}': 0,
+      '${dateFormat.format(now.subtract(Duration(days: 1)))}': 0,
+      '${dateFormat.format(now.subtract(Duration(days: 0)))}': 0,
+      '${dateFormat.format(now.add(Duration(days: 1)))}': 0,
+      '${dateFormat.format(now.add(Duration(days: 2)))}': 0,
+      '${dateFormat.format(now.add(Duration(days: 3)))}': 0,
+    };
+    congViecHTList.forEach((element) {
+      String key = dateFormat.format(element.ngayHoanThanh);
+      if (map.containsKey(key)) {
+        map[key] = map[key]! + 1;
+      }
+    });
+    completeData = [...map.keys.map((e) => ChartData(e, map[e]))];
+
     final TrackballBehavior _trackballBehavior = TrackballBehavior(
         enable: true,
         // Display mode of trackball tooltip
@@ -173,9 +139,10 @@ class SplineChart extends StatelessWidget {
       child: Card(
         child: SfCartesianChart(
             trackballBehavior: _trackballBehavior,
-            primaryXAxis: NumericAxis(),
+            primaryXAxis: CategoryAxis(),
+            primaryYAxis: NumericAxis(interval: 1),
             title: ChartTitle(
-                text: 'Thống kê công việc theo tháng',
+                text: 'Thống kê công việc hoàn thành trong 7 ngày',
                 textStyle: AppTextStyle.h3),
             legend: Legend(
                 isVisible: true,
@@ -188,14 +155,14 @@ class SplineChart extends StatelessWidget {
                 orientation: LegendItemOrientation.auto),
             series: <ChartSeries>[
               // Renders spline chart
-              SplineSeries<ChartData, int>(
+              SplineSeries<ChartData, String>(
                 name: 'Công việc hoàn thành',
                 legendIconType: LegendIconType.rectangle,
-                dataSource: chartData1,
+                dataSource: completeData,
                 xValueMapper: (ChartData data, _) => data.x,
                 yValueMapper: (ChartData data, _) => data.y,
               ),
-              SplineSeries<ChartData, int>(
+              /*SplineSeries<ChartData, int>(
                   name: 'Công việc chưa hoàn thành',
                   dataSource: chartData2,
                   legendIconType: LegendIconType.rectangle,
@@ -206,24 +173,39 @@ class SplineChart extends StatelessWidget {
                   dataSource: chartData3,
                   legendIconType: LegendIconType.rectangle,
                   xValueMapper: (ChartData data, _) => data.x,
-                  yValueMapper: (ChartData data, _) => data.y),
+                  yValueMapper: (ChartData data, _) => data.y),*/
             ]),
       ),
     );
   }
 }
 
-class PieChart extends StatelessWidget {
-  PieChart({super.key});
+class PieChart extends StatefulWidget {
+  PieChart(this.numofFinish, this.numOfUnfinish, this.numOfLate, {super.key});
+  late int numofFinish;
+  late int numOfUnfinish;
+  late int numOfLate;
 
-  final List<ChartData> chartData = [
-    ChartData('Công việc hoàn thành', 25),
-    ChartData('Công việc chưa hoàn thành', 38),
-    ChartData('Công việc trễ', 34),
-  ];
+  @override
+  State<PieChart> createState() => _PieChartState();
+}
+
+class _PieChartState extends State<PieChart> {
+  late List<ChartData> chartData;
+
+  @override
+  void initState() {
+    super.initState();
+    chartData = [
+      ChartData('Công việc hoàn thành', widget.numofFinish.toDouble()),
+      ChartData('Công việc chưa hoàn thành', widget.numOfUnfinish.toDouble()),
+      ChartData('Công việc trễ', widget.numOfLate.toDouble()),
+    ];
+  }
 
   Widget build(BuildContext context) {
     // TODO: implement build
+    int total = widget.numOfUnfinish + widget.numofFinish;
     return Card(
         child: SfCircularChart(
             title: ChartTitle(text: 'Tổng quan', textStyle: AppTextStyle.h2),
@@ -240,7 +222,7 @@ class PieChart extends StatelessWidget {
             annotations: <CircularChartAnnotation>[
           CircularChartAnnotation(
               widget: Container(
-                  child: const Text('40',
+                  child: Text('${widget.numofFinish + widget.numOfUnfinish}',
                       style: TextStyle(color: Colors.black, fontSize: 20))))
         ],
             series: <CircularSeries>[
@@ -248,7 +230,8 @@ class PieChart extends StatelessWidget {
               dataSource: chartData,
               xValueMapper: (ChartData data, _) => data.x,
               yValueMapper: (ChartData data, _) => data.y,
-              dataLabelMapper: (datum, index) => datum.percent,
+              dataLabelMapper: (datum, index) =>
+                  '${(datum.y! / total * 100).roundToDouble()}%',
               // Radius of doughnut
               radius: '110%',
               explode: true,
