@@ -487,7 +487,7 @@ class _RegisterPageState extends State<RegisterPage> {
   // Route _createRoute() {
   //   return PageRouteBuilder(
   //     pageBuilder: (context, animation, secondaryAnimation)
-  //            => const PincodePage(_EmailController.value.text, _NameController.value.text, _PasswordController.value.text),
+  //            => const PincodePage(_EmailController.value.text, _PasswordController.value.text, _NameController.value.text),
   //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
   //       const begin = Offset(1.0, 0.0);
   //       const end = Offset.zero;
