@@ -20,6 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _NameController = TextEditingController();
   FocusNode _NameFocus = FocusNode();
   bool _NameCorrect = false;
+  String? _NameValidateText;
 
   // email field
   bool _firstEnterEmailField = false;
@@ -27,6 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   FocusNode _EmailFocus = FocusNode();
   bool _EmailCorrect = false;
   String? _EmailAuthError;
+  String? _EmailValidateText;
 
   // password field
   bool _PasswordVisible = false;
@@ -34,6 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _firstEnterPasswordField = false;
   FocusNode _PasswordFocus = FocusNode();
   bool _PasswordCorrect = false;
+  String? _PasswordValidateText;
 
   String? _ExceptionText;
 
@@ -184,6 +187,45 @@ class _RegisterPageState extends State<RegisterPage> {
     _EmailCorrect = false;
     _PasswordCorrect = false;
     _EmailAuthError = null;
+
+    // add listener
+    _NameFocus.addListener(() {
+      if(_NameFocus.hasFocus){
+        print("Name got focused.");
+        _firstEnterNameField = true;
+        _NameValidateText = null;
+      }else{
+        print("Name got unfocued.");
+        _NameValidateText = _NameValidating(_NameController.value.text);
+        setState(() {});
+      }
+    });
+
+    _EmailFocus.addListener(() {
+      if(_EmailFocus.hasFocus){
+        print("Email got focused.");
+        _EmailValidateText = null;
+        _EmailAuthError = null;
+        _firstEnterEmailField = true;
+      }else{
+        print("Email got unfocued.");
+        _EmailValidateText = _EmailValidating(_EmailController.value.text);
+        setState(() {});
+      }
+    });
+
+    _PasswordFocus.addListener(() {
+      if(_PasswordFocus.hasFocus){
+        print("Password got focused.");
+        _firstEnterPasswordField = true;
+        _PasswordValidateText = null;
+      }else{
+        print("Password got unfocued.");
+        _PasswordValidateText = _PasswordValidating(_PasswordController.value.text);
+        setState(() {});
+      }
+    });
+
     super.initState();
   }
 
@@ -292,9 +334,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                         body: TextField(
                                           controller: _NameController,
                                           focusNode: _NameFocus,
-                                          onTap: () {
-                                            _firstEnterNameField = true;
-                                          },
                                           keyboardType: TextInputType.text,
                                           textAlign: TextAlign.left,
                                           textAlignVertical: TextAlignVertical.center,
@@ -332,10 +371,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                         body: TextField(
                                           controller: _EmailController,
                                           focusNode: _EmailFocus,
-                                          onTap: () {
-                                            _EmailAuthError = null;
-                                            _firstEnterEmailField = true;
-                                          },
                                           keyboardType: TextInputType.text,
                                           textAlign: TextAlign.left,
                                           textAlignVertical: TextAlignVertical.center,
@@ -348,7 +383,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                               borderRadius: BorderRadius.circular(50.0),
                                             ),
                                             helperText: " ",
-                                            errorText: _EmailValidating(_EmailController.value.text), // validator
+                                            errorText: _EmailValidateText, // validator
                                           ),
                                         )
                                     )
@@ -374,9 +409,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                           controller: _PasswordController,
                                           focusNode: _PasswordFocus,
                                           obscureText: !_PasswordVisible,
-                                          onTap: () {
-                                            _firstEnterPasswordField = true;
-                                          },
                                           obscuringCharacter: '*',
                                           keyboardType: TextInputType.text,
                                           textAlign: TextAlign.left,
@@ -400,7 +432,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                                   _PasswordVisible ? Icons.visibility : Icons.visibility_off),
                                             ),
                                             helperText: " ",
-                                            errorText: _PasswordValidating(_PasswordController.value.text), // validator
+                                            errorText: _PasswordValidateText, // validator
                                           ),
 
                                         )
