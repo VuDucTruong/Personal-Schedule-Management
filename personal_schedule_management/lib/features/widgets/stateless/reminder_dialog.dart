@@ -13,7 +13,9 @@ class ReminderDialog extends StatelessWidget {
     return AlertDialog(
       content: Container(
         height: 300,
+        width: 400,
         child: ListView.builder(
+          shrinkWrap: true,
           itemCount: reminder_list.length,
           itemBuilder: (context, index) {
             return CheckboxListTile(
@@ -56,7 +58,7 @@ class ReminderDialog extends StatelessWidget {
                   }
                   Navigator.pop(context, [reminder_list[index], pickedDate]);
                 } else {
-                  List<dynamic> results = await showDialog(
+                  List<dynamic>? results = await showDialog(
                     context: context,
                     builder: (context) {
                       return CreateReminderDialog(isAllDay, startDate);

@@ -3,9 +3,10 @@ import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/features/controller/work_category_controller.dart';
 
 class WorkCategoryDialog extends StatefulWidget {
-  WorkCategoryDialog(this.workCategoryController, {super.key});
+  WorkCategoryDialog(this.workCategoryController, this.setStateCallBack,
+      {super.key});
   WorkCategoryController workCategoryController;
-
+  VoidCallback setStateCallBack;
   @override
   State<WorkCategoryDialog> createState() => _WorkCategoryDialogState();
 }
@@ -54,6 +55,7 @@ class _WorkCategoryDialogState extends State<WorkCategoryDialog> {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text('Thêm thất bại!')));
               }
+              widget.setStateCallBack();
             },
             child: Text('Đồng ý')),
         FilledButton(

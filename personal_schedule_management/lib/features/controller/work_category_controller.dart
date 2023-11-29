@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:personal_schedule_management/features/widgets/stateful/create_recurrence_dialog.dart';
 import 'package:personal_schedule_management/features/widgets/stateful/create_work_category_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class WorkCategoryController extends ChangeNotifier {
+class WorkCategoryController {
   List<String> workCategoryList = [];
-  late String selectedValue = 'Không có';
+
   Future<List<String>> getWorkCategoryList() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
@@ -16,15 +15,11 @@ class WorkCategoryController extends ChangeNotifier {
     return workCategoryList;
   }
 
-  void onValueChange(String value) {
-    selectedValue = value;
-    notifyListeners();
-  }
-
-  Future<void> openCreateWorkCategoryDialog(BuildContext context) async {
+  Future<void> openCreateWorkCategoryDialog(
+      BuildContext context, VoidCallback setStateCallStack) async {
     showDialog(
       context: context,
-      builder: (context) => WorkCategoryDialog(this),
+      builder: (context) => WorkCategoryDialog(this, setStateCallStack),
     );
   }
 
@@ -34,7 +29,6 @@ class WorkCategoryController extends ChangeNotifier {
     try {
       workCategoryList.add(category);
       prefs.setStringList('LOAI_CV', workCategoryList);
-      notifyListeners();
       return true;
     } catch (e) {
       print(e);
@@ -47,7 +41,6 @@ class WorkCategoryController extends ChangeNotifier {
     try {
       workCategoryList.removeAt(index);
       prefs.setStringList('LOAI_CV', workCategoryList);
-      notifyListeners();
     } catch (e) {
       print(e);
     }

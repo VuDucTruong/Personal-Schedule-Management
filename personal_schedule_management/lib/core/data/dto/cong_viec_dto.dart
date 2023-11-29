@@ -1,74 +1,102 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
 
 class CongViecDTO {
-  String maCV;
-  String maND;
-  String maCK;
-  String tieuDe;
-  String noiDung;
-  String loaiCongViec;
+  String? maCV;
+  String? maND;
+  String? tieuDe;
+  String? noiDung;
+  String? loaiCongViec;
   Timestamp ngayBatDau;
   Timestamp ngayKetThuc;
   bool isCaNgay;
-  int trangThai;
   int doUuTien;
-  String mauSac;
-  String diaDiem;
-  String url;
+  String? mauSac;
+  String? diaDiem;
+  String? url;
   bool isKhachMoi;
+  String? tenCK;
+  String? thoiDiemLap;
+  bool isBaoThuc;
 
   CongViecDTO(
       this.maCV,
       this.maND,
-      this.maCK,
       this.tieuDe,
       this.noiDung,
       this.loaiCongViec,
       this.ngayBatDau,
       this.ngayKetThuc,
       this.isCaNgay,
-      this.trangThai,
       this.doUuTien,
       this.mauSac,
       this.diaDiem,
       this.url,
-      this.isKhachMoi);
+      this.isKhachMoi,
+      this.tenCK,
+      this.thoiDiemLap,
+      this.isBaoThuc);
 
   toJson() {
     return {
+      "maCV": maCV,
       "maND": maND,
-      "maCK": maCK,
       "tieuDe": tieuDe,
       "noiDung": noiDung,
       "loaiCongViec": loaiCongViec,
       "ngayBatDau": ngayBatDau,
       "ngayKetThuc": ngayKetThuc,
       "isCaNgay": isCaNgay,
-      "trangThai": trangThai,
       "doUuTien": doUuTien,
       "mauSac": mauSac,
       "diaDiem": diaDiem,
       "url": url,
-      "isKhachMoi": isKhachMoi
+      "isKhachMoi": isKhachMoi,
+      "tenCK": tenCK,
+      "thoiDiemLap": thoiDiemLap,
+      "isBaoThuc": isBaoThuc,
     };
   }
 
-  factory CongViecDTO.fromJson(Map<String, dynamic> json) {
+  factory CongViecDTO.fromJson(Map<String, dynamic> json, String id) {
     return CongViecDTO(
-        json['maCV'],
+        id,
         json['maND'],
-        json['maCK'],
         json['tieuDe'],
         json['noiDung'],
         json["loaiCongViec"],
         json['ngayBatDau'],
         json['ngayKetThuc'],
         json['isCaNgay'],
-        json['trangThai'],
         json['doUuTien'],
         json['mauSac'],
         json['diaDiem'],
         json['url'],
-        json['isKhachMoi']);
+        json['isKhachMoi'],
+        json['tenCK'],
+        json['thoiDiemLap'],
+        json['isBaoThuc']);
+  }
+
+  toCongViec() {
+    return CongViec(
+        maCV ?? '',
+        maND ?? '',
+        tieuDe ?? '',
+        noiDung ?? '',
+        loaiCongViec ?? '',
+        ngayBatDau.toDate(),
+        ngayKetThuc.toDate(),
+        isCaNgay,
+        doUuTien,
+        Color(int.parse(mauSac!)),
+        diaDiem ?? '',
+        url ?? '',
+        isKhachMoi,
+        tenCK ?? '',
+        thoiDiemLap ?? '',
+        isBaoThuc);
   }
 }
