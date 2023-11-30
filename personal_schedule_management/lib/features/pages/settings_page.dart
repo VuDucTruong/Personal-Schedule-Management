@@ -1,14 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
+import 'package:personal_schedule_management/config/theme/app_theme.dart';
+import 'package:personal_schedule_management/features/controller/settings_controller.dart';
+import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
+import 'package:personal_schedule_management/features/pages/login_page.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  SettingsController settingsController = SettingsController();
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    User? user = settingsController.currentUser;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -23,6 +36,7 @@ class SettingsPage extends StatelessWidget {
             children: [
               Container(
                 height: 200,
+                margin: EdgeInsets.only(bottom: 4),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
@@ -30,6 +44,84 @@ class SettingsPage extends StatelessWidget {
                         image: AssetImage('assets/image/setting_image.jpg'),
                         fit: BoxFit.cover)),
               ),
+              Builder(builder: (context) {
+                if (user != null) {
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            child: Icon(FontAwesomeIcons.userLarge),
+                            backgroundColor: lightColorScheme.primaryContainer,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          RichText(
+                              text: TextSpan(children: [
+                            TextSpan(
+                                text: 'Xin chào',
+                                style: TextStyle(color: Colors.black)),
+                            TextSpan(
+                                text: ' ${user.displayName ?? user.email!}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black)),
+                          ])),
+                          Spacer(),
+                          PopupMenuButton(
+                            offset: Offset(0, 40),
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem(
+                                    child: Text('Đăng xuất'),
+                                    onTap: () async {
+                                      await settingsController.signOut();
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => LoginPage(),
+                                          ));
+                                    }),
+                                PopupMenuItem(
+                                  child: Text('Đổi mật khẩu'),
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ForgotPassPage(),
+                                      )),
+                                ),
+                              ];
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(),
+                          ));
+                    },
+                    child: Card(
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            child: Icon(FontAwesomeIcons.userLarge),
+                            backgroundColor: lightColorScheme.primaryContainer,
+                          ),
+                          Text('Đăng nhập'),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              }),
               SizedBox(
                 height: 12,
               ),

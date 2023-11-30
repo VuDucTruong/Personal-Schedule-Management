@@ -24,7 +24,8 @@ class ReportController {
     congViecHT = await completedWorkRespositoryImpl.getAllCompletedWork();
     numOfFinish = congViecHT.length;
     congViecHT.forEach((element) {
-      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc)) {
+      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc) &&
+          element.ngayKetThuc.isBefore(DateTime.now())) {
         numOfLate--;
       }
     });

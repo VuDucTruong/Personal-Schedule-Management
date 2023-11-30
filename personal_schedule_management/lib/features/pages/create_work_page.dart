@@ -166,7 +166,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
 
                       CongViec congViec = CongViec(
                           widget.selectedCongViec?.maCV ?? '',
-                          '',
+                          widget.selectedCongViec?.maND ?? '',
                           titleController.text,
                           descriptionController.text,
                           createWorkController.selectedValue,

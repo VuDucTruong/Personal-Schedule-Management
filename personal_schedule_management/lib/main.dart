@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -19,7 +20,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDependencies();
   runApp(
-    const LoginPage(),
+    const MyApp(),
   );
 }
 
@@ -41,48 +42,52 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     ApiServices apiServices = ApiServices();
     apiServices.fetchWeatherData();
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      return MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'), // English
+          Locale('vi'),
+        ],
+        locale: const Locale('vi'),
+        theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: lightColorScheme,
+            textTheme: GoogleFonts.robotoTextTheme()),
+        darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: darkColorScheme,
+            textTheme: GoogleFonts.robotoTextTheme()),
+        home: SafeArea(
+          child: Scaffold(
+              bottomNavigationBar: SlidingClippedNavBar(
+                barItems: [
+                  BarItem(title: 'Lịch', icon: FontAwesomeIcons.calendar),
+                  BarItem(
+                      title: 'Thống kê',
+                      icon: FontAwesomeIcons.magnifyingGlassChart),
+                  BarItem(title: 'Cài đặt', icon: FontAwesomeIcons.gear)
+                ],
+                iconSize: 20,
+                selectedIndex: selectedIndex,
+                onButtonPressed: (int index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                activeColor: lightColorScheme.primary,
+              ),
+              body: pageList[selectedIndex]),
+        ),
+        debugShowCheckedModeBanner: false,
+      );
+    } else
+      return LoginPage();
     // TODO: implement build
-    return MaterialApp(
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'), // English
-        Locale('vi'),
-      ],
-      locale: const Locale('vi'),
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: lightColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()),
-      darkTheme: ThemeData(
-          useMaterial3: true,
-          colorScheme: darkColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()),
-      home: SafeArea(
-        child: Scaffold(
-            bottomNavigationBar: SlidingClippedNavBar(
-              barItems: [
-                BarItem(title: 'Lịch', icon: FontAwesomeIcons.calendar),
-                BarItem(
-                    title: 'Thống kê',
-                    icon: FontAwesomeIcons.magnifyingGlassChart),
-                BarItem(title: 'Cài đặt', icon: FontAwesomeIcons.gear)
-              ],
-              iconSize: 20,
-              selectedIndex: selectedIndex,
-              onButtonPressed: (int index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-              activeColor: lightColorScheme.primary,
-            ),
-            body: pageList[selectedIndex]),
-      ),
-      debugShowCheckedModeBanner: false,
-    );
   }
 }

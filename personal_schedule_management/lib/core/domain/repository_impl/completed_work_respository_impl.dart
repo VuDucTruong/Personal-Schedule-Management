@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/data/dto/cong_viec_ht_dto.dart';
 import 'package:personal_schedule_management/core/data/repository/completed_work_respository.dart';
@@ -6,6 +7,7 @@ import 'package:personal_schedule_management/core/domain/entity/cong_viec_ht_ent
 
 class CompletedWorkRespositoryImpl extends CompletedWorkRespository {
   final FirebaseFirestore _storage = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Future<String?> insertCompletedWork(CongViecHT congViecHT) async {
     CongViecHTDTO congViecHTDTO = congViecHT.toCongViecHTDTO();
@@ -55,9 +57,10 @@ class CompletedWorkRespositoryImpl extends CompletedWorkRespository {
   @override
   Future<List<CongViecHT>> getAllCompletedWork() async {
     List<CongViecHT> congViecHTList = [];
-    var docRef =
-        await _storage.collection(CONGVIEC).where('maND', isEqualTo: '').get();
-
+    var docRef = await _storage
+        .collection(CONGVIEC)
+        .where('maND', isEqualTo: _auth.currentUser?.uid ?? '')
+        .get();
     for (var element in docRef.docs) {
       var docRef2 = await _storage
           .collection(CONGVIEC)
