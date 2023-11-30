@@ -70,46 +70,49 @@ class _LoginPageState extends State<LoginPage> {
   //   return passwordFocus.hasFocus ? null : errorText;
   // }
 
-  void signInButtonPressed(BuildContext context) {
+  Future signInButtonPressed(BuildContext context) async {
     setState(() {
       firstEnterEmailTF = true;
       firstEnterPasswordTF = true;
     });
 
     if (emailIsCorrect) {
-      signIn(context);
+      showDialog(
+          context: context,
+          builder: (context) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          });
+      if (await signIn(context)) {
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MyApp(),
+          ),
+        );
+      } else {
+        setState(() {
+          errorText = "Tài khoản hoặc mật khẩu không chính xác!";
+        });
+      }
     }
   }
 
-  Future<void> signIn(BuildContext context) async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
+  Future<bool> signIn(BuildContext context) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.value.text,
           password: passwordController.value.text);
     } on FirebaseAuthException {
-      setState(() {
-        errorText = "Tài khoản hoặc mật khẩu không chính xác!";
-      });
       // ignore: use_build_context_synchronously
       Navigator.of(context).pop();
-      return;
+      return false;
     }
     // ignore: use_build_context_synchronously
     Navigator.of(context).pop();
-    // ignore: use_build_context_synchronously
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const MyApp(),
-      ),
-    );
+    return true;
   }
 
   void forgetPasswordTextTapped(BuildContext context) {
