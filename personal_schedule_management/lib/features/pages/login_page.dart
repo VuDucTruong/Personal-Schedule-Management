@@ -22,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   bool firstEnterEmailTF = false;
   FocusNode emailFocus = FocusNode();
-  bool emailIsCorrect = false;
 
   //password textfield
   final passwordController = TextEditingController();
@@ -34,23 +33,23 @@ class _LoginPageState extends State<LoginPage> {
   String errorText = "";
 
   //Validate
-  String? validateEmail(String value) {
-    String? errorText;
-    if (!firstEnterEmailTF) {
-      return null;
-    } else {
-      if (value.isEmpty) {
-        emailIsCorrect = false;
-        errorText = "Vui lòng nhập Email";
-      } else if (!EmailValidator.validate(value)) {
-        emailIsCorrect = false;
-        errorText = "Email không hợp lệ";
-      } else {
-        emailIsCorrect = true;
-      }
-    }
-    return emailFocus.hasFocus ? null : errorText;
-  }
+  // String? validateEmail(String value) {
+  //   String? errorText;
+  //   if (!firstEnterEmailTF) {
+  //     return null;
+  //   } else {
+  //     if (value.isEmpty) {
+  //       emailIsCorrect = false;
+  //       errorText = "Vui lòng nhập Email";
+  //     } else if (!EmailValidator.validate(value)) {
+  //       emailIsCorrect = false;
+  //       errorText = "Email không hợp lệ";
+  //     } else {
+  //       emailIsCorrect = true;
+  //     }
+  //   }
+  //   return emailFocus.hasFocus ? null : errorText;
+  // }
 
   // String? validatePassword(String value) {
   //   String? errorText;
@@ -74,29 +73,28 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       firstEnterEmailTF = true;
       firstEnterPasswordTF = true;
+      emailFocus.unfocus();
+      passwordFocus.unfocus();
     });
-
-    if (emailIsCorrect) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          });
-      if (await signIn(context)) {
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MyApp(),
-          ),
-        );
-      } else {
-        setState(() {
-          errorText = "Tài khoản hoặc mật khẩu không chính xác!";
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         });
-      }
+    if (await signIn(context)) {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MyApp(),
+        ),
+      );
+    } else {
+      setState(() {
+        errorText = "Tài khoản hoặc mật khẩu không chính xác!";
+      });
     }
   }
 
@@ -146,7 +144,6 @@ class _LoginPageState extends State<LoginPage> {
     passwordVisible = false;
     firstEnterEmailTF = false;
     firstEnterPasswordTF = false;
-    emailIsCorrect = false;
     errorText = "";
     super.initState();
   }
@@ -303,8 +300,8 @@ class _LoginPageState extends State<LoginPage> {
                                         prefixIcon:
                                             const Icon(Icons.email_outlined),
                                         helperText: " ",
-                                        errorText: validateEmail(
-                                            emailController.value.text),
+                                        // errorText: validateEmail(
+                                        //     emailController.value.text),
                                       ),
                                       obscureText: false,
                                     ),
