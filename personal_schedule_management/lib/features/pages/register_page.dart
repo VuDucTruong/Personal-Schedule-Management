@@ -136,6 +136,10 @@ class _RegisterPageState extends State<RegisterPage> {
       }
       if (result == false)
       {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Đăng kí thành công"))
+        );
+
         // Chuyển hướng sang PINCODE page để xác thực tài khoản
         //Navigator.of(context).push(_createRoute());
       }
