@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
+import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/report_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
@@ -18,7 +19,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDependencies();
   runApp(
-    const MyApp(),
+    const LoginPage(),
   );
 }
 
