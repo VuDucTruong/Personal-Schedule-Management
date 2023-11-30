@@ -28,7 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
   bool firstEnterPasswordTF = false;
   bool passwordVisible = false;
-  bool passwordIsCorrect = false;
   FocusNode passwordFocus = FocusNode();
 
   //Error text
@@ -53,23 +52,23 @@ class _LoginPageState extends State<LoginPage> {
     return emailFocus.hasFocus ? null : errorText;
   }
 
-  String? validatePassword(String value) {
-    String? errorText;
-    if (!firstEnterPasswordTF) {
-      return null;
-    } else {
-      if (value.isEmpty) {
-        passwordIsCorrect = false;
-        errorText = "Vui lòng nhập mật khẩu";
-      } else if (value.length < 8) {
-        passwordIsCorrect = false;
-        errorText = "Mật khẩu phải từ 8 kí tự trở lên";
-      } else {
-        passwordIsCorrect = true;
-      }
-    }
-    return passwordFocus.hasFocus ? null : errorText;
-  }
+  // String? validatePassword(String value) {
+  //   String? errorText;
+  //   if (!firstEnterPasswordTF) {
+  //     return null;
+  //   } else {
+  //     if (value.isEmpty) {
+  //       passwordIsCorrect = false;
+  //       errorText = "Vui lòng nhập mật khẩu";
+  //     } else if (value.length < 8) {
+  //       passwordIsCorrect = false;
+  //       errorText = "Mật khẩu phải từ 8 kí tự trở lên";
+  //     } else {
+  //       passwordIsCorrect = true;
+  //     }
+  //   }
+  //   return passwordFocus.hasFocus ? null : errorText;
+  // }
 
   void signInButtonPressed(BuildContext context) {
     setState(() {
@@ -77,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
       firstEnterPasswordTF = true;
     });
 
-    if (emailIsCorrect && passwordIsCorrect) {
+    if (emailIsCorrect) {
       signIn(context);
     }
   }
@@ -124,7 +123,6 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.of(context).pop();
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const ChangePassPage()));
-    // TODO: forgot password push route
   }
 
   void signUpTextTapped(BuildContext context) {
@@ -146,7 +144,6 @@ class _LoginPageState extends State<LoginPage> {
     firstEnterEmailTF = false;
     firstEnterPasswordTF = false;
     emailIsCorrect = false;
-    passwordIsCorrect = false;
     errorText = "";
     super.initState();
   }
@@ -238,25 +235,6 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               const SizedBox(
                                 height: 40,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 40),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      errorText,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
-                                              fontStyle: FontStyle.italic),
-                                    ),
-                                  ],
-                                ),
                               ),
                               //Email TextField
                               Padding(
@@ -397,12 +375,31 @@ class _LoginPageState extends State<LoginPage> {
                                               ? Icons.visibility
                                               : Icons.visibility_off),
                                         ),
-                                        helperText: " ",
-                                        errorText: validatePassword(
-                                            passwordController.value.text),
+                                        // helperText: " ",
+                                        // errorText: validatePassword(
+                                        //     passwordController.value.text),
                                       ),
                                       obscureText: !passwordVisible,
                                       obscuringCharacter: '*',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 40, right: 10),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      errorText,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                              fontStyle: FontStyle.italic),
                                     ),
                                   ],
                                 ),
