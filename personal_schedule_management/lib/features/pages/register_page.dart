@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:personal_schedule_management/features/pages/pincode_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -108,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
       if (result == false) {
         // Chuyển hướng sang PINCODE page để xác thực tài khoản
-        //Navigator.of(context).push(_createRoute());
+        Navigator.of(context).pushReplacement(_createRoute());
       } else if (_ExceptionText != null) {
         String? message = _ExceptionText;
         ScaffoldMessenger.of(context)
@@ -480,26 +481,28 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // Route _createRoute() {
-  //   return PageRouteBuilder(
-  //     pageBuilder: (context, animation, secondaryAnimation)
-  //            => const PincodePage(_EmailController.value.text, _PasswordController.value.text, _NameController.value.text),
-  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-  //       const begin = Offset(1.0, 0.0);
-  //       const end = Offset.zero;
-  //       const curve = Curves.ease;
-  //
-  //       final tween = Tween(begin: begin, end: end);
-  //       final curvedAnimation = CurvedAnimation(
-  //         parent: animation,
-  //         curve: curve,
-  //       );
-  //
-  //       return SlideTransition(
-  //         position: tween.animate(curvedAnimation),
-  //         child: child,
-  //       );
-  //     },
-  //   );
-  // }
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => PincodePage(
+          _EmailController.value.text,
+          _PasswordController.value.text,
+          _NameController.value.text),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        final tween = Tween(begin: begin, end: end);
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: curve,
+        );
+
+        return SlideTransition(
+          position: tween.animate(curvedAnimation),
+          child: child,
+        );
+      },
+    );
+  }
 }

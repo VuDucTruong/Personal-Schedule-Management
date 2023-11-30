@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
-import 'package:personal_schedule_management/features/pages/changepass_page.dart';
+import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/register_page.dart';
 import 'package:personal_schedule_management/main.dart';
 
@@ -74,15 +74,9 @@ class _LoginPageState extends State<LoginPage> {
       emailFocus.unfocus();
       passwordFocus.unfocus();
     });
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
     if (await signIn(context)) {
       // ignore: use_build_context_synchronously
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -107,7 +101,6 @@ class _LoginPageState extends State<LoginPage> {
       return false;
     }
     // ignore: use_build_context_synchronously
-    Navigator.of(context).pop();
     return true;
   }
 
@@ -121,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
         });
     Navigator.of(context).pop();
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const ChangePassPage()));
+        .push(MaterialPageRoute(builder: (context) => const ForgotPassPage()));
   }
 
   void signUpTextTapped(BuildContext context) {
