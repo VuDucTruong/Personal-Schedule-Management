@@ -27,7 +27,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _EmailController = TextEditingController();
   FocusNode _EmailFocus = FocusNode();
   bool _EmailCorrect = false;
-  String? _EmailAuthError;
   String? _EmailValidateText;
 
   // password field
@@ -74,10 +73,6 @@ class _RegisterPageState extends State<RegisterPage> {
       else if (!EmailValidator.validate(value)) {
         _EmailCorrect = false;
         errorText = "Email không hợp lệ";
-      }
-      else if (_EmailAuthError != null) {
-        errorText = _EmailAuthError;
-        return errorText;
       }
       else
       {
@@ -132,14 +127,10 @@ class _RegisterPageState extends State<RegisterPage> {
       result = await _checkIfEmailInUse(_EmailController.value.text);
       if (result == true)
       {
-          _EmailAuthError = 'Email đã được sử dụng';
+          _EmailValidateText = 'Email đã được sử dụng';
       }
       if (result == false)
       {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Đăng kí thành công"))
-        );
-
         // Chuyển hướng sang PINCODE page để xác thực tài khoản
         //Navigator.of(context).push(_createRoute());
       }
@@ -190,16 +181,13 @@ class _RegisterPageState extends State<RegisterPage> {
     _NameCorrect = false;
     _EmailCorrect = false;
     _PasswordCorrect = false;
-    _EmailAuthError = null;
 
     // add listener
     _NameFocus.addListener(() {
       if(_NameFocus.hasFocus){
-        print("Name got focused.");
         _firstEnterNameField = true;
         _NameValidateText = null;
       }else{
-        print("Name got unfocued.");
         _NameValidateText = _NameValidating(_NameController.value.text);
         setState(() {});
       }
@@ -207,12 +195,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
     _EmailFocus.addListener(() {
       if(_EmailFocus.hasFocus){
-        print("Email got focused.");
         _EmailValidateText = null;
-        _EmailAuthError = null;
         _firstEnterEmailField = true;
       }else{
-        print("Email got unfocued.");
         _EmailValidateText = _EmailValidating(_EmailController.value.text);
         setState(() {});
       }
@@ -220,11 +205,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
     _PasswordFocus.addListener(() {
       if(_PasswordFocus.hasFocus){
-        print("Password got focused.");
         _firstEnterPasswordField = true;
         _PasswordValidateText = null;
       }else{
-        print("Password got unfocued.");
         _PasswordValidateText = _PasswordValidating(_PasswordController.value.text);
         setState(() {});
       }
@@ -351,7 +334,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                             ),
                                             helperText: " ",
-                                            errorText: _NameValidating(_NameController.value.text), // validator
+                                            errorText: _NameValidateText, // validator
                                           ),
                                         )
                                     )
