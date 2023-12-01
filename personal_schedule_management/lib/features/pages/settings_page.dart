@@ -5,6 +5,7 @@ import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
+import 'package:personal_schedule_management/features/pages/changepass_page.dart';
 import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 
@@ -89,7 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   onTap: () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ForgotPassPage(),
+                                        builder: (context) => ChangePassPage(),
                                       )),
                                 ),
                               ];
