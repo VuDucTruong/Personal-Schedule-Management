@@ -23,10 +23,13 @@ class _SettingsPageState extends State<SettingsPage> {
     final Uri _emailLaunchUri = Uri(
       scheme: 'mailto',
       path: email,
+      queryParameters: {
+        'subject': 'Góp_Ý_Của_Người_Dùng',
+      },
     );
 
     try {
-      await launch(_emailLaunchUri.toString());
+      await launchUrl(_emailLaunchUri);
     } catch (e) {
       print('Không thể mở ứng dụng email: $e');
     }
@@ -255,10 +258,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       content: 'Phản hồi',
                       iconData: FontAwesomeIcons.comments,
                       isSwitch: false,
-                      // function: () {
-                      //   launchEmailApp('personalschedulemanager@gmail.com');
-                      // },
-                      function: null,
+                      function: () {
+                        launchEmailApp('personalschedulemanager@gmail.com');
+                      },
                     ),
                   ],
                 ),
