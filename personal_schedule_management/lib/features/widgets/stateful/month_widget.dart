@@ -4,9 +4,9 @@ import 'package:personal_schedule_management/config/text_styles/app_text_style.d
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 
 class MonthWidget extends StatefulWidget {
-  MonthWidget({super.key});
+  MonthWidget(this.monthOfYear, {super.key});
 
-  DateTime monthOfYear = DateTime.now();
+  DateTime monthOfYear;
 
   @override
   _MonthWidgetState createState() {

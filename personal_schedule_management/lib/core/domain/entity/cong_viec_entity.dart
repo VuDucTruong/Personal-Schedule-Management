@@ -1,34 +1,60 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:personal_schedule_management/core/data/dto/cong_viec_dto.dart';
+
 class CongViec {
   String maCV;
   String maND;
-  String maLCV;
   String tieuDe;
   String noiDung;
+  String loaiCongViec;
   DateTime ngayBatDau, ngayKetThuc;
-  DateTime thoiGianBatDau, thoiGianKetThuc;
   bool isCaNgay;
-  int trangThai;
   int doUuTien;
   Color mauSac;
   String diaDiem;
+  String url;
   bool isKhachMoi;
+  String tenCK;
+  String thoiDiemLap;
+  bool isBaoThuc;
 
   CongViec(
       this.maCV,
       this.maND,
-      this.maLCV,
       this.tieuDe,
       this.noiDung,
+      this.loaiCongViec,
       this.ngayBatDau,
       this.ngayKetThuc,
-      this.thoiGianBatDau,
-      this.thoiGianKetThuc,
       this.isCaNgay,
-      this.trangThai,
       this.doUuTien,
       this.mauSac,
       this.diaDiem,
-      this.isKhachMoi);
+      this.url,
+      this.isKhachMoi,
+      this.tenCK,
+      this.thoiDiemLap,
+      this.isBaoThuc);
+
+  toCongViecDTO() {
+    return CongViecDTO(
+        maCV,
+        maND,
+        tieuDe,
+        noiDung,
+        loaiCongViec,
+        Timestamp.fromDate(ngayBatDau),
+        Timestamp.fromDate(ngayKetThuc),
+        isCaNgay,
+        doUuTien,
+        mauSac.value.toString(),
+        diaDiem,
+        url,
+        isKhachMoi,
+        tenCK,
+        thoiDiemLap,
+        this.isBaoThuc);
+  }
 }
