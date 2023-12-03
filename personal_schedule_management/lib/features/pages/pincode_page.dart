@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
+import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
@@ -352,6 +353,8 @@ class _PincodePageState extends State<PincodePage> {
                               );
                             },
                           );
+                          Navigator.of(context)
+                              .pushNamed(CalendarPage.routeName);
                         } else {
                           showDialog(
                             context: context,
@@ -359,7 +362,7 @@ class _PincodePageState extends State<PincodePage> {
                               return AlertDialog(
                                 title: Text('Thông báo'),
                                 content: Text(
-                                  'MÃ XÁC NHẬN KHÔNG CHÍNH XÁC!!!',
+                                  'MÃ XÁC NHẬN KHÔNG CHÍNH XÁC!!!\nVUI LÒNG KIỂM TRA LẠI EMAIL!!!',
                                   style: AppTextStyle.h1,
                                 ),
                                 actions: [

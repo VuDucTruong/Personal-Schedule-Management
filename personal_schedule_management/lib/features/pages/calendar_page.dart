@@ -12,6 +12,7 @@ import 'create_work_page.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
+  static final String routeName = 'calendarpage';
 
   @override
   _CalendarPageState createState() {

@@ -87,8 +87,7 @@ class MyApp extends StatelessWidget {
             children: [
               CalendarPage(),
               ManagementPage(),
-              PincodePage("phamthanhtuong12052003@gmail.com", "123456789",
-                  "Tuong Pham"),
+              PincodePage("21522775@gm.uit.edu.vn", "123456789", "Tuong Pham"),
               SettingsPage(),
             ],
           ),
