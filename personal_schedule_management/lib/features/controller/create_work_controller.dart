@@ -23,7 +23,7 @@ class CreateWorkController {
   List<String> reminderTimeList = [];
   List<String> contentRecurrence = [];
   Map<String, dynamic>? loop;
-  Color colorIcon = lightColorScheme.primary;
+  Color colorIcon = SchemeLight_default.primary;
   DateTime currentDate = DateTime.now();
   NotificationRespositoryImpl notificationRespositoryImpl =
       GetIt.instance<NotificationRespositoryImpl>();

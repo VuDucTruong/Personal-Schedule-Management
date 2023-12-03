@@ -10,6 +10,7 @@ import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/report_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -24,7 +25,10 @@ Future<void> main() async {
   await initializeDependencies();
   tz.initializeTimeZones();
   runApp(
-    const MyApp(),
+      ChangeNotifierProvider(
+        create: (_) => AppTheme(),
+        child: MyApp(),
+      )
   );
 }
 
@@ -60,14 +64,9 @@ class _MyAppState extends State<MyApp> {
           Locale('vi'),
         ],
         locale: const Locale('vi'),
-        theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: lightColorScheme,
-            textTheme: GoogleFonts.robotoTextTheme()),
-        darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: darkColorScheme,
-            textTheme: GoogleFonts.robotoTextTheme()),
+        theme: AppTheme.of(context, listen: true).lightTheme,
+        darkTheme: AppTheme.of(context, listen: true).darkTheme,
+        themeMode: AppTheme.of(context, listen: true).darkMode ? ThemeMode.dark : ThemeMode.light,
         home: SafeArea(
           child: Scaffold(
               bottomNavigationBar: SlidingClippedNavBar(
@@ -85,7 +84,7 @@ class _MyAppState extends State<MyApp> {
                     selectedIndex = index;
                   });
                 },
-                activeColor: lightColorScheme.primary,
+                activeColor: AppTheme.lightColorScheme.primary,
               ),
               body: pageList[selectedIndex]),
         ),

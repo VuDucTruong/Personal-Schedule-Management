@@ -1,11 +1,140 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-ColorScheme lightColorScheme = SchemeLight_default;
-ColorScheme darkColorScheme = SchemeDark_default;
+class AppTheme extends ChangeNotifier {
+  static AppTheme of(BuildContext context, {bool listen = false}) =>
+      Provider.of<AppTheme>(context, listen: listen);
 
-void AppThemeSet_Default() {
-  lightColorScheme = SchemeLight_default;
-  darkColorScheme = SchemeDark_default;
+  static const DEFAULT = 'Default';
+  static const ELECTRIC_VIOLET = 'Electric Violet';
+  static const HIPPIE_BLUE = 'Hippe Blue';
+  static const GREEN_FOREST = 'Green Forest';
+  static const SAKURA = 'Sakura';
+  static const RED_WINE = 'Red Wine';
+  static const GOLD_SUNSET = 'Gold Sunset';
+  static const BLUE_DELIGHT = 'Blue Delight';
+
+  static ColorScheme _lightColorScheme = SchemeLight_default;
+  static ColorScheme _darkColorScheme = SchemeDark_default;
+  static bool _darkMode = false;
+
+  static get lightColorScheme => _lightColorScheme;
+  static get darkColorScheme => _darkColorScheme;
+  static get IsDarkMode => _darkMode;
+  get darkMode => _darkMode;
+
+  static ThemeData CreateThemeData(ColorScheme colorScheme) {
+    return ThemeData(
+        useMaterial3: true,
+        colorScheme: colorScheme,
+        textTheme: GoogleFonts.robotoTextTheme()
+    );
+  }
+
+  void ReloadThemeData() {
+    _lightTheme = CreateThemeData(_lightColorScheme);
+    _darkTheme = CreateThemeData(_darkColorScheme);
+  }
+
+  ThemeData _lightTheme = CreateThemeData(SchemeLight_default);
+  ThemeData _darkTheme = CreateThemeData(SchemeDark_default);
+  get lightTheme => _lightTheme;
+  get darkTheme => _darkTheme;
+
+  void LoadAppTheme(AppThemeName) {
+    switch (AppThemeName)
+    {
+      case AppTheme.DEFAULT:
+        SetTheme_Default();
+        break;
+      case AppTheme.ELECTRIC_VIOLET:
+        SetTheme_ElectricViolet();
+        break;
+      case AppTheme.BLUE_DELIGHT:
+        SetTheme_BlueDelight();
+        break;
+      case AppTheme.HIPPIE_BLUE:
+        SetTheme_HippieBlue();
+        break;
+      case AppTheme.GOLD_SUNSET:
+        SetTheme_GoldSunset();
+        break;
+      case AppTheme.GREEN_FOREST:
+        SetTheme_GreenForest();
+        break;
+      case AppTheme.RED_WINE:
+        SetTheme_RedWine();
+        break;
+      case AppTheme.SAKURA:
+        SetTheme_Sakura();
+        break;
+      default:
+        SetTheme_Default();
+    }
+  }
+
+  // SET THEMES
+  void SetTheme_Default() {
+    _lightColorScheme = SchemeLight_default;
+    _darkColorScheme = SchemeDark_default;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void SetTheme_ElectricViolet() {
+    _lightColorScheme = SchemeLight_ElectricViolet;
+    _darkColorScheme = SchemeDark_ElectricViolet;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void SetTheme_BlueDelight() {
+    _lightColorScheme = SchemeLight_BlueDelight;
+    _darkColorScheme = SchemeDark_BlueDelight;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void SetTheme_GoldSunset() {
+    _lightColorScheme = SchemeLight_GoldSunset;
+    _darkColorScheme = SchemeDark_GoldSunset;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void SetTheme_HippieBlue() {
+    _lightColorScheme = SchemeLight_HippieBlue;
+    _darkColorScheme = SchemeDark_HippieBlue;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void SetTheme_GreenForest() {
+    _lightColorScheme = SchemeLight_GreenForest;
+    _darkColorScheme = SchemeDark_GreenForest;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void SetTheme_RedWine() {
+    _lightColorScheme = SchemeLight_RedWine;
+    _darkColorScheme = SchemeDark_RedWine;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void SetTheme_Sakura() {
+    _lightColorScheme = SchemeLight_Sakura;
+    _darkColorScheme = SchemeDark_Sakura;
+    ReloadThemeData();
+    notifyListeners();
+  }
+
+  void ToggleDarkMode() {
+    _darkMode = !_darkMode;
+    notifyListeners();
+  }
 }
 
 const SchemeLight_default = ColorScheme(
@@ -92,11 +221,6 @@ class Gradients {
 }
 
 // COLOR SCHEMES PACK
-void AppThemeSet_ElectricViolet() {
-  lightColorScheme = SchemeLight_ElectricViolet;
-  darkColorScheme = SchemeDark_ElectricViolet;
-}
-
 const ColorScheme SchemeLight_ElectricViolet = ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xff6d23f9),
@@ -164,11 +288,6 @@ const ColorScheme SchemeDark_ElectricViolet = ColorScheme(
   inversePrimary: Color(0xff6d23f9),
   surfaceTint: Color(0xffcfbdff),
 );
-
-void AppThemeSet_HippieBlue() {
-  lightColorScheme = SchemeLight_HippieBlue;
-  darkColorScheme = SchemeDark_HippieBlue;
-}
 
 const ColorScheme SchemeLight_HippieBlue = ColorScheme(
   brightness: Brightness.light,
@@ -238,11 +357,6 @@ const ColorScheme SchemeDark_HippieBlue = ColorScheme(
   surfaceTint: Color(0xff62d4ff),
 );
 
-void AppThemeSet_GreenForest() {
-  lightColorScheme = SchemeLight_GreenForest;
-  darkColorScheme = SchemeDark_GreenForest;
-}
-
 const ColorScheme SchemeLight_GreenForest = ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xff1b6d24),
@@ -310,11 +424,6 @@ const ColorScheme SchemeDark_GreenForest = ColorScheme(
   inversePrimary: Color(0xff1b6d24),
   surfaceTint: Color(0xff88d982),
 );
-
-void AppThemeSet_Sakura() {
-  lightColorScheme = SchemeLight_Sakura;
-  darkColorScheme = SchemeDark_Sakura;
-}
 
 const ColorScheme SchemeLight_Sakura = ColorScheme(
   brightness: Brightness.light,
@@ -384,11 +493,6 @@ const ColorScheme SchemeDark_Sakura = ColorScheme(
   surfaceTint: Color(0xffffb1c0),
 );
 
-void AppThemeSet_RedWine() {
-  lightColorScheme = SchemeLight_RedWine;
-  darkColorScheme = SchemeDark_RedWine;
-}
-
 const ColorScheme SchemeLight_RedWine = ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xffaf2b3d),
@@ -457,11 +561,6 @@ const ColorScheme SchemeDark_RedWine = ColorScheme(
   surfaceTint: Color(0xffffb3b5),
 );
 
-void AppThemeSet_GoldSunset() {
-  lightColorScheme = SchemeLight_GoldSunset;
-  darkColorScheme = SchemeDark_GoldSunset;
-}
-
 const ColorScheme SchemeLight_GoldSunset = ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xff8f4e00),
@@ -529,11 +628,6 @@ const ColorScheme SchemeDark_GoldSunset = ColorScheme(
   inversePrimary: Color(0xff8f4e00),
   surfaceTint: Color(0xffffb77b),
 );
-
-void AppThemeSet_BlueDelight() {
-  lightColorScheme = SchemeLight_BlueDelight;
-  darkColorScheme = SchemeDark_BlueDelight;
-}
 
 const ColorScheme SchemeLight_BlueDelight = ColorScheme(
   brightness: Brightness.light,

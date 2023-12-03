@@ -35,7 +35,7 @@ class _RecurrencingMonthState extends State<RecurrencingMonth> {
             width: 60,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: lightColorScheme.primaryContainer),
+                color: Theme.of(context).colorScheme.primaryContainer),
             child: Center(
                 child: Text(
               'ngày ${startDate.day}',

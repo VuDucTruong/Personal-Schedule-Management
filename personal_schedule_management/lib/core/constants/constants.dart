@@ -31,17 +31,7 @@ const Map<String, String> weekDaysMap = {
 };
 // shared preferences
 const String THEME = 'theme';
-abstract class AppTheme {
-  static const DEFAULT = 'Default';
-  static const ELECTRIC_VIOLET = 'Electric Violet';
-  static const HIPPIE_BLUE = 'Hippe Blue';
-  static const GREEN_FOREST = 'Green Forest';
-  static const SAKURA = 'Sakura';
-  static const RED_WINE = 'Red wine';
-  static const GOLD_SUNSET = 'Gold sunset';
-  static const BLUE_DELIGHT = 'Blue Delight';
-}
-
+const String DARKMODE = 'darkmode';
 const String DATE_FORMAT = 'date_format';
 abstract class AppDateFormat {
   static const DAY_MONTH_YEAR = 'dd/MM/yyyy';

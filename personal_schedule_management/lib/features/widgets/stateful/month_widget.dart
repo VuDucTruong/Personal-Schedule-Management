@@ -31,7 +31,7 @@ class _MonthWidgetState extends State<MonthWidget> {
           GestureDetector(
             child: Icon(
               FontAwesomeIcons.circleArrowLeft,
-              color: lightColorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.primaryContainer,
             ),
             onTap: () {
               setState(() {
@@ -53,7 +53,7 @@ class _MonthWidgetState extends State<MonthWidget> {
           GestureDetector(
             child: Icon(
               FontAwesomeIcons.circleArrowRight,
-              color: lightColorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.primaryContainer,
             ),
             onTap: () {
               setState(() {

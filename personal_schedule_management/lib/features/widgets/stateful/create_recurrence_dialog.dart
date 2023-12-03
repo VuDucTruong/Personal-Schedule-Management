@@ -104,7 +104,7 @@ class CreateRecurrenceDialogState extends State<CreateRecurrenceDialog>
             },
             child: Text('Hủy'),
             style: FilledButton.styleFrom(
-                backgroundColor: lightColorScheme.error)),
+                backgroundColor: Theme.of(context).colorScheme.error)),
       ],
     );
   }

@@ -79,7 +79,7 @@ class _RecurrencingWeekState extends State<RecurrencingWeek> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: e.value
-                              ? lightColorScheme.primaryContainer
+                              ? Theme.of(context).colorScheme.primaryContainer
                               : Colors.grey),
                     ),
                     onTap: () {
@@ -115,7 +115,7 @@ class _RecurrencingWeekState extends State<RecurrencingWeek> {
               width: 60,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: lightColorScheme.primaryContainer),
+                  color: Theme.of(context).colorScheme.primaryContainer),
               child: Center(
                   child: Text(
                 '${weekNumber} tuần',

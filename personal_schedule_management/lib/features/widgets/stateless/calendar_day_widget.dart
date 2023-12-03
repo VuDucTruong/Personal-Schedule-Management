@@ -67,7 +67,7 @@ class _CalendarDayState extends State<CalendarDay> {
                             isWeatherVisible
                                 ? Icons.cloud_outlined
                                 : Icons.cloud_off_outlined,
-                            color: lightColorScheme.primary),
+                            color: Theme.of(context).colorScheme.primary),
                         onTap: () {
                           setState(() {
                             isWeatherVisible = !isWeatherVisible;
