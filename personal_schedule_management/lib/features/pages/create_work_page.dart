@@ -180,7 +180,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                           false,
                           widget.selectedCongViec?.tenCK ?? '',
                           widget.selectedCongViec?.thoiDiemLap ?? '',
-                          createWorkController.alarmSwitch);
+                          createWorkController.alarmSwitch,
+                          widget.selectedCongViec?.ngayNgoaiLe ?? []);
                       bool result = await chooseAction(congViec);
                       if (update) {
                         Navigator.pop(context, [result, congViec]);

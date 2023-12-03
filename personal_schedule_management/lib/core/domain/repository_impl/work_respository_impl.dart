@@ -78,4 +78,13 @@ class WorkRespositoryImpl extends WorkRespository {
     var data = await _storage.collection(CONGVIEC).doc(maCV);
     await data.update({'trangThai': trangThai});
   }
+
+  @override
+  Future<void> addException(String maCV, DateTime exception) async {
+    CongViec? c = await getCongViecById(maCV);
+    if (c != null) {
+      c.ngayNgoaiLe.add(exception);
+      await updateWorkToRemote(c);
+    }
+  }
 }

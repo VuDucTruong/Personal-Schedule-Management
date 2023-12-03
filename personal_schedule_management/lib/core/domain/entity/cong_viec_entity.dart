@@ -19,6 +19,7 @@ class CongViec {
   String tenCK;
   String thoiDiemLap;
   bool isBaoThuc;
+  List<DateTime> ngayNgoaiLe;
 
   CongViec(
       this.maCV,
@@ -36,7 +37,8 @@ class CongViec {
       this.isKhachMoi,
       this.tenCK,
       this.thoiDiemLap,
-      this.isBaoThuc);
+      this.isBaoThuc,
+      this.ngayNgoaiLe);
 
   toCongViecDTO() {
     return CongViecDTO(
@@ -55,6 +57,7 @@ class CongViec {
         isKhachMoi,
         tenCK,
         thoiDiemLap,
-        this.isBaoThuc);
+        this.isBaoThuc,
+        this.ngayNgoaiLe.map((e) => Timestamp.fromDate(e)).toList());
   }
 }

@@ -59,4 +59,12 @@ class CalendarScheduleController {
   Future<CongViecHT> getCompletedWork(String maCV, DateTime startTime) async {
     return await completedWorkRespositoryImpl.getCompletedWork(maCV, startTime);
   }
+
+  Future<void> removeWork(String maCV) async {
+    await workRespositoryImpl.deleteWorkById(maCV);
+  }
+
+  Future<void> addExceptionInWork(String maCV, DateTime exception) async {
+    await workRespositoryImpl.addException(maCV, exception);
+  }
 }

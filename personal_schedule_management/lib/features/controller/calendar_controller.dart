@@ -2,11 +2,14 @@ import 'package:device_calendar/device_calendar.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/config/calendar_data_source.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
+import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
+import 'package:personal_schedule_management/notification_services.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../config/theme/app_theme.dart';
 import '../../core/domain/entity/cong_viec_entity.dart';
+import '../../core/domain/entity/thong_bao_entity.dart';
 
 class CalendarPageController {
   List<Appointment> appointmentList = [];
@@ -17,6 +20,10 @@ class CalendarPageController {
       GetIt.instance<WorkRespositoryImpl>();
   CompletedWorkRespositoryImpl completedWorkRespositoryImpl =
       GetIt.instance<CompletedWorkRespositoryImpl>();
+  NotificationRespositoryImpl notificationRespositoryImpl =
+      GetIt.instance<NotificationRespositoryImpl>();
+  NotificationServices notificationServices =
+      GetIt.instance<NotificationServices>();
   bool isWeatherVisible = true;
 
   Future<bool> getCalendarEvents() async {
@@ -51,8 +58,21 @@ class CalendarPageController {
 
   CalendarPageController() {}
 
-  void getCalendarDatasource() {
+  Future<void> getCalendarDatasource() async {
     calendarDatasource = MyCalendarDataSource(appointmentList);
+    List<Appointment> appointments =
+        calendarDatasource.getVisibleAppointments(DateTime.now(), '');
+    notificationServices.cancelNotification();
+    for (Appointment i in appointments) {
+      List<ThongBao> thongBao = await notificationRespositoryImpl
+          .getNotificationByWorkId(i.id.toString());
+      for (ThongBao j in thongBao) {
+        DateTime time = i.startTime.subtract(j.thoiGian);
+        if (time.isBefore(DateTime.now())) continue;
+        await notificationServices.createNotification(i, time, j.maTB);
+      }
+      ;
+    }
   }
 
   Future<List<Event>> retrieveEvents(List<String> calendarIds) async {
@@ -105,6 +125,7 @@ class CalendarPageController {
         id: congViec.maCV,
         recurrenceRule: rule,
         location: congViec.diaDiem,
+        recurrenceExceptionDates: congViec.ngayNgoaiLe,
         notes: '1');
     //if (appointmentList.contains(appointment)) return;
     appointmentList.add(appointment);
@@ -113,6 +134,7 @@ class CalendarPageController {
   Future<void> loadAppointment() async {
     List<CongViec> congViecList =
         await workRespositoryImpl.getAllCongViecByUserId('');
+
     for (var element in congViecList) {
       await _createAppointment(element);
     }

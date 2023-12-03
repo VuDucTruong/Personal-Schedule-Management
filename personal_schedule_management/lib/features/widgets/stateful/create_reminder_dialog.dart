@@ -3,9 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 
 class CreateReminderDialog extends StatefulWidget {
-  CreateReminderDialog(this.isAllDay, this.startDate, {super.key});
+  CreateReminderDialog(this.isAllDay, {super.key});
   bool isAllDay;
-  DateTime startDate;
   @override
   State<CreateReminderDialog> createState() => _CreateReminderDialogState();
 }
@@ -17,7 +16,7 @@ class _CreateReminderDialogState extends State<CreateReminderDialog> {
   final _key = GlobalKey<FormState>();
   String durationValue = '1';
   TimeOfDay timeOfDay = TimeOfDay(hour: 9, minute: 0);
-  late DateTime pickedDate;
+  late Duration pickedDuration;
   @override
   void initState() {
     if (!widget.isAllDay)
@@ -152,39 +151,33 @@ class _CreateReminderDialogState extends State<CreateReminderDialog> {
                   }
                   // Chuyen doi thanh ngay
 
-                  pickedDate = widget.startDate
-                      .copyWith(hour: timeOfDay.hour, minute: timeOfDay.minute)
-                      .subtract(Duration(days: period));
+                  pickedDuration = Duration(days: period);
                   Navigator.pop(context, [
                     'Trước $durationValue $time lúc ${timeOfDay.hour}:${timeOfDay.minute.toString().padLeft(2, '0')}',
-                    pickedDate
+                    pickedDuration
                   ]);
                   return;
                 }
                 switch (options.indexOf(isSelected)) {
                   case 0:
                     time = 'Phút';
-                    pickedDate =
-                        widget.startDate.subtract(Duration(minutes: period));
+                    pickedDuration = Duration(minutes: period);
                     break;
                   case 1:
                     time = 'Giờ';
-                    pickedDate =
-                        widget.startDate.subtract(Duration(hours: period));
+                    pickedDuration = Duration(hours: period);
                     break;
                   case 2:
                     time = 'Ngày';
-                    pickedDate =
-                        widget.startDate.subtract(Duration(days: period));
+                    pickedDuration = Duration(days: period);
                     break;
                   case 3:
                     time = 'Tuần';
-                    pickedDate =
-                        widget.startDate.subtract(Duration(days: period * 7));
+                    pickedDuration = Duration(days: period * 7);
                     break;
                 }
                 Navigator.pop(
-                    context, ['Trước $durationValue $time', pickedDate]);
+                    context, ['Trước $durationValue $time', pickedDuration]);
               }
             },
             child: Text('OK'))

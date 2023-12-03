@@ -1,0 +1,81 @@
+import 'package:device_calendar/device_calendar.dart' as tz;
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:personal_schedule_management/main.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+class NotificationServices {
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  final AndroidInitializationSettings _androidFlutterLocalNotificationsPlugin =
+      AndroidInitializationSettings('logo_icon');
+
+  void initialNotification(BuildContext context) async {
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: _androidFlutterLocalNotificationsPlugin);
+    _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+    _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (details) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyApp(),
+            ));
+      },
+    );
+  }
+
+  Future<void> createNotification(Appointment appointment,
+      DateTime notificationTime, String notifyId) async {
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+        tz.getLocation('Asia/Ho_Chi_Minh'),
+        notificationTime.year,
+        notificationTime.month,
+        notificationTime.day,
+        notificationTime.hour,
+        notificationTime.minute,
+        notificationTime.second);
+    AndroidNotificationDetails androidNotificationDetails =
+        const AndroidNotificationDetails(
+      'channelId',
+      'channelName',
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+    );
+    NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    /*await _flutterLocalNotificationsPlugin.show(
+      0,
+      '',
+      '',
+      notificationDetails,
+    );*/
+    print('Thông báo vào ${scheduledDate}');
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        caculateId(notifyId),
+        appointment.subject,
+        'Hãy hoàn thành công việc này nào!!',
+        scheduledDate,
+        notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidScheduleMode: AndroidScheduleMode.exact);
+  }
+
+  Future<void> cancelNotification() async {
+    await _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  int caculateId(String id) {
+    int sum = 0;
+    for (int i = 0; i < id.length; i++) {
+      sum += id.codeUnitAt(i);
+    }
+    return sum;
+  }
+}

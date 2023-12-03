@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/calendar_data_source.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_ht_entity.dart';
 import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
+import 'package:personal_schedule_management/features/widgets/stateless/delete_dialog.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-
-import '../../../core/domain/repository_impl/work_respository_impl.dart';
 
 class CalendarSchedule extends StatefulWidget {
   CalendarSchedule(this.dataSource, this.setStateCallback, {super.key});
@@ -117,6 +115,7 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
           congViecHT = calendarScheduleController
               .congViecHTMap['${appointment.id}-${appointment.startTime}'];
         }
+
         return Card(
           color: appointment.color,
           child: Container(
@@ -197,10 +196,47 @@ class _CalendarScheduleState extends State<CalendarSchedule> {
                   child: InkWell(
                     child: Icon(FontAwesomeIcons.xmark),
                     onTap: () async {
-                      await GetIt.instance<WorkRespositoryImpl>()
-                          .deleteWorkById(appointment.id.toString());
-                      widget.dataSource.notifyListeners(
-                          CalendarDataSourceAction.remove, [appointment]);
+                      if ((appointment.recurrenceRule?.isNotEmpty ?? false)) {
+                        int result = await showDialog(
+                              context: context,
+                              builder: (context) => DeleteDialog(),
+                            ) ??
+                            0;
+                        if (result == 0) return;
+                        if (result == 1) {
+                          await calendarScheduleController
+                              .removeWork(appointment.id.toString());
+                        } else {
+                          await calendarScheduleController.addExceptionInWork(
+                              appointment.id.toString(), appointment.startTime);
+                        }
+                      } else {
+                        bool result = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: Text('Xóa công việc này ?'),
+                                actions: [
+                                  FilledButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: Text('Hủy'),
+                                  )
+                                ],
+                              ),
+                            ) ??
+                            false;
+                        if (result) {
+                          await calendarScheduleController
+                              .removeWork(appointment.id.toString());
+                        }
+                      }
                       widget.setStateCallback();
                     },
                   ),

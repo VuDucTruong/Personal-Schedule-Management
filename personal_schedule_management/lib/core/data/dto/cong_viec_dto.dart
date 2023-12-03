@@ -20,6 +20,7 @@ class CongViecDTO {
   String? tenCK;
   String? thoiDiemLap;
   bool isBaoThuc;
+  List<Timestamp> ngayNgoaiLe;
 
   CongViecDTO(
       this.maCV,
@@ -37,7 +38,8 @@ class CongViecDTO {
       this.isKhachMoi,
       this.tenCK,
       this.thoiDiemLap,
-      this.isBaoThuc);
+      this.isBaoThuc,
+      this.ngayNgoaiLe);
 
   toJson() {
     return {
@@ -57,6 +59,7 @@ class CongViecDTO {
       "tenCK": tenCK,
       "thoiDiemLap": thoiDiemLap,
       "isBaoThuc": isBaoThuc,
+      "ngayNgoaiLe": ngayNgoaiLe,
     };
   }
 
@@ -77,7 +80,8 @@ class CongViecDTO {
         json['isKhachMoi'],
         json['tenCK'],
         json['thoiDiemLap'],
-        json['isBaoThuc']);
+        json['isBaoThuc'],
+        List.from(json['ngayNgoaiLe']));
   }
 
   toCongViec() {
@@ -97,6 +101,7 @@ class CongViecDTO {
         isKhachMoi,
         tenCK ?? '',
         thoiDiemLap ?? '',
-        isBaoThuc);
+        isBaoThuc,
+        ngayNgoaiLe.map((e) => e.toDate()).toList());
   }
 }

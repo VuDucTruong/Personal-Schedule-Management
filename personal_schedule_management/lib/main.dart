@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
@@ -10,15 +11,18 @@ import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/report_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 import 'config/theme/app_theme.dart';
 import 'core/data/datasource/remote/firebase_options.dart';
 import 'injection_container.dart';
+import 'notification_services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDependencies();
+  tz.initializeTimeZones();
   runApp(
     const MyApp(),
   );
@@ -40,6 +44,7 @@ class _MyAppState extends State<MyApp> {
   ];
   @override
   Widget build(BuildContext context) {
+    GetIt.instance<NotificationServices>().initialNotification(context);
     ApiServices apiServices = ApiServices();
     apiServices.fetchWeatherData();
     User? currentUser = FirebaseAuth.instance.currentUser;

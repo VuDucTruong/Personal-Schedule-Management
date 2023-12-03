@@ -125,7 +125,31 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                         child: Text('Xóa'),
                         value: 'Xóa',
                         onTap: () async {
-                          if (timesRemove++ > 0) return;
+                          if (timesRemove > 0) return;
+                          String title = selectedCongViec.thoiDiemLap.isNotEmpty
+                              ? 'Xóa công việc lặp lại'
+                              : 'Xóa công việc';
+                          bool result = await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(title),
+                                  actions: [
+                                    FilledButton(
+                                        onPressed: () {
+                                          Navigator.pop(context, true);
+                                        },
+                                        child: Text('OK')),
+                                    FilledButton(
+                                        onPressed: () {
+                                          Navigator.pop(context, false);
+                                        },
+                                        child: Text('Hủy'))
+                                  ],
+                                ),
+                              ) ??
+                              false;
+                          if (!result) return;
+                          timesRemove++;
                           await controller.deleteWork(selectedCongViec.maCV);
                           isChange = true;
                           Navigator.pop(context, isChange);
