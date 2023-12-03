@@ -51,7 +51,7 @@ class CalendarPageController {
           subject: event.title!,
           notes: '0',
           location: event.location,
-          color: lightColorScheme.primary));
+          color: SchemeLight_default.primary));
     }
     return true;
   }

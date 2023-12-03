@@ -153,14 +153,9 @@ class _LoginPageState extends State<LoginPage> {
         Locale('vi'),
       ],
       locale: const Locale('vi'),
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: lightColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()),
-      darkTheme: ThemeData(
-          useMaterial3: true,
-          colorScheme: darkColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()),
+      theme: AppTheme.of(context, listen: true).lightTheme,
+      darkTheme: AppTheme.of(context, listen: true).darkTheme,
+      themeMode: AppTheme.of(context, listen: true).darkMode ? ThemeMode.dark : ThemeMode.light,
       home: SafeArea(
         child: Builder(
           builder: (context) => Scaffold(

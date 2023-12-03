@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_schedule_management/features/pages/apptheme_page.dart';
 import 'package:personal_schedule_management/features/pages/sync_calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/work_category_page.dart';
 
@@ -13,5 +14,10 @@ class AppRoutes {
       context,
       MaterialPageRoute(
         builder: (context) => SyncCalendarPage(),
+      ));
+  static void toAppThemePage(BuildContext context) => Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AppThemePage(),
       ));
 }

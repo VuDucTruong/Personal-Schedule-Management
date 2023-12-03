@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +31,7 @@ class SettingsController {
     return prefs.getBool(WEATHER);
   }
 
-  Future<void> SetDateFormat(format) async {
+  Future<void> SetDateFormat(String format) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(DATE_FORMAT, format);
   }
@@ -40,7 +41,7 @@ class SettingsController {
     return prefs.getString(DATE_FORMAT);
   }
 
-  Future<void> SetAppTheme(format) async {
+  Future<void> SetAppTheme(String format) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(THEME, format);
   }
@@ -50,35 +51,37 @@ class SettingsController {
     return prefs.getString(THEME);
   }
 
-  void LoadAppTheme(AppThemeName) {
+  Future<void> SetDarkMode(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(DARKMODE, value);
+  }
+
+  Future<bool?> GetDarkMode() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(DARKMODE);
+  }
+
+  ColorScheme GetAppThemeExample(AppThemeName) {
     switch (AppThemeName)
     {
       case AppTheme.DEFAULT:
-        AppThemeSet_Default();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_default : SchemeDark_default;
       case AppTheme.ELECTRIC_VIOLET:
-        AppThemeSet_ElectricViolet();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_ElectricViolet : SchemeDark_ElectricViolet;
       case AppTheme.BLUE_DELIGHT:
-        AppThemeSet_BlueDelight();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_BlueDelight : SchemeDark_BlueDelight;
       case AppTheme.HIPPIE_BLUE:
-        AppThemeSet_HippieBlue();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_HippieBlue : SchemeDark_HippieBlue;
       case AppTheme.GOLD_SUNSET:
-        AppThemeSet_GoldSunset();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_GoldSunset : SchemeDark_GoldSunset;
       case AppTheme.GREEN_FOREST:
-        AppThemeSet_GreenForest();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_GreenForest : SchemeDark_GreenForest;
       case AppTheme.RED_WINE:
-        AppThemeSet_RedWine();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_RedWine : SchemeDark_RedWine;
       case AppTheme.SAKURA:
-        AppThemeSet_Sakura();
-        break;
+        return !AppTheme.IsDarkMode ? SchemeLight_Sakura : SchemeDark_Sakura;
       default:
-        AppThemeSet_Default();
+        return !AppTheme.IsDarkMode ? SchemeLight_default : SchemeDark_default;
     }
   }
 }

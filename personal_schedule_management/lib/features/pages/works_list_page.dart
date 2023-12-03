@@ -25,7 +25,7 @@ class _workslistState extends State<workslist> {
           child: InkWell(
             customBorder: CircleBorder(),
             onHighlightChanged: (param) {},
-            splashColor: lightColorScheme.primaryContainer,
+            splashColor: Theme.of(context).colorScheme.primaryContainer,
             onTap: () {
               Navigator.of(context).pop();
             },

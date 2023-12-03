@@ -71,14 +71,14 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                 },
               ),
               iconTheme: IconThemeData(
-                color: lightColorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               actions: [
                 PopupMenuButton(
                   offset: Offset(0, 30),
                   icon: Icon(
                     Icons.more_horiz,
-                    color: lightColorScheme.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   itemBuilder: (context) {
                     return [
@@ -287,7 +287,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
       children: [
         Icon(
           iconData,
-          color: lightColorScheme.primary,
+          color: Theme.of(context).colorScheme.primary,
         ),
         SizedBox(
           width: 4,

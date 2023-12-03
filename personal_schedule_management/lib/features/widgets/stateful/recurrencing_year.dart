@@ -34,7 +34,7 @@ class _RecurrencingYearState extends State<RecurrencingYear> {
             width: 120,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: lightColorScheme.primaryContainer),
+                color: Theme.of(context).colorScheme.primaryContainer),
             child: Center(
                 child: Text(
               '${startDate.day}/${startDate.month} hàng năm',

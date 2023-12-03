@@ -47,7 +47,7 @@ class _RecurrencingDayState extends State<RecurrencingDay> {
               width: 60,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: lightColorScheme.primaryContainer),
+                  color: Theme.of(context).colorScheme.primaryContainer),
               child: Center(
                   child: Text(
                 '${dayNumber} ngày',

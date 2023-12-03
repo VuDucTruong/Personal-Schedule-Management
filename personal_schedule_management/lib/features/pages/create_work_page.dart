@@ -24,7 +24,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
       urlController;
   final _formKey = GlobalKey<FormState>();
   List<Color> colorList = [
-    lightColorScheme.primary,
+    SchemeLight_default.primary,
     Color.fromRGBO(232, 56, 56, 0.81),
     Color.fromRGBO(56, 232, 216, 0.81),
     Color.fromRGBO(186, 56, 232, 0.81),
@@ -145,7 +145,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                 children: [
                   GestureDetector(
                     child: Icon(FontAwesomeIcons.arrowLeftLong,
-                        color: lightColorScheme.primary),
+                        color: Theme.of(context).colorScheme.primary),
                     onTap: () {
                       Navigator.pop(context);
                     },
@@ -156,7 +156,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                   ),
                   InkWell(
                     child: Icon(FontAwesomeIcons.check,
-                        color: lightColorScheme.primary),
+                        color: Theme.of(context).colorScheme.primary),
                     onTap: () async {
                       try {
                         if (!_formKey.currentState!.validate()) return;

@@ -53,7 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           CircleAvatar(
                             child: Icon(FontAwesomeIcons.userLarge),
-                            backgroundColor: lightColorScheme.primaryContainer,
+                            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                           ),
                           SizedBox(
                             width: 8,
@@ -62,12 +62,12 @@ class _SettingsPageState extends State<SettingsPage> {
                               text: TextSpan(children: [
                             TextSpan(
                                 text: 'Xin chào',
-                                style: TextStyle(color: Colors.black)),
+                                style: TextStyle(color: Theme.of(context).colorScheme.onBackground)),
                             TextSpan(
                                 text: ' ${user.displayName ?? user.email!}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black)),
+                                    color: Theme.of(context).colorScheme.onBackground)),
                           ])),
                           Spacer(),
                           PopupMenuButton(
@@ -113,7 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           CircleAvatar(
                             child: Icon(FontAwesomeIcons.userLarge),
-                            backgroundColor: lightColorScheme.primaryContainer,
+                            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                           ),
                           Text('Đăng nhập'),
                         ],
@@ -133,7 +133,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       margin: EdgeInsets.all(8),
                       child: Text(
                         'Lịch',
-                        style: AppTextStyle.h2_5,
+                        style: AppTextStyle.h2_5.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground
+                        ),
                       ),
                     ),
                     SettingItem(
@@ -186,7 +188,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       margin: EdgeInsets.all(8),
                       child: Text(
                         'Tùy chỉnh',
-                        style: AppTextStyle.h2_5,
+                        style: AppTextStyle.h2_5.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground
+                        ),
                       ),
                     ),
                     SettingItem(
@@ -214,7 +218,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     SettingsDivider(),
                     SettingItem(
-                      function: null,
+                      function: () => AppRoutes.toAppThemePage(context),
                       color: Colors.purpleAccent,
                       content: 'Giao diện',
                       iconData: FontAwesomeIcons.brush,
@@ -231,7 +235,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       margin: EdgeInsets.all(8),
                       child: Text(
                         'Hỗ trợ',
-                        style: AppTextStyle.h2_5,
+                        style: AppTextStyle.h2_5.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground
+                        ),
                       ),
                     ),
                     SettingItem(
