@@ -7,6 +7,7 @@ import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,6 +18,19 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   SettingsController settingsController = SettingsController();
+
+  Future<void> launchEmailApp(String email) async {
+    final Uri _emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: email,
+    );
+
+    try {
+      await launch(_emailLaunchUri.toString());
+    } catch (e) {
+      print('Không thể mở ứng dụng email: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -239,6 +253,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       content: 'Phản hồi',
                       iconData: FontAwesomeIcons.comments,
                       isSwitch: false,
+                      // function: () {
+                      //   launchEmailApp('personalschedulemanager@gmail.com');
+                      // },
                       function: null,
                     ),
                   ],
