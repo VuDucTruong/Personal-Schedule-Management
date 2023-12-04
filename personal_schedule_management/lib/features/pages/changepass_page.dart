@@ -2,10 +2,7 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:personal_schedule_management/config/theme/app_theme.dart';
 
 class ChangePassPage extends StatefulWidget {
   const ChangePassPage({super.key});
@@ -21,7 +18,6 @@ class _ChangePassPageState extends State<ChangePassPage> {
   final _OldPasswordController = TextEditingController();
   FocusNode _OldPasswordFocus = FocusNode();
   String? _OldPasswordValidateText;
-
 
   // PASSWORD
   bool _PasswordVisible = false;
@@ -42,61 +38,49 @@ class _ChangePassPageState extends State<ChangePassPage> {
   String? _ExceptionText;
 
   // VALIDATING
-  String? _PasswordValidating (String value) {
+  String? _PasswordValidating(String value) {
     String? errorText;
-    if (!_firstEnterPasswordField){
+    if (!_firstEnterPasswordField) {
       return null;
-    }
-    else
-    {
+    } else {
       if (value.isEmpty) {
         _PasswordCorrect = false;
         errorText = "Vui lòng nhập mật khẩu";
-      }
-      else if (value.length < 8) {
+      } else if (value.length < 8) {
         _PasswordCorrect = false;
         errorText = "Mật khẩu phải từ 8 kí tự trở lên";
-      }
-      else if (value == _OldPasswordController.value.text) {
+      } else if (value == _OldPasswordController.value.text) {
         _PasswordCorrect = false;
         errorText = "Mật khẩu không được trùng với mật khẩu hiện tại";
-      }
-      else
-      {
+      } else {
         _PasswordCorrect = true;
       }
     }
     return _PasswordFocus.hasFocus ? null : errorText;
   }
 
-  String? _RePasswordValidating (String value) {
+  String? _RePasswordValidating(String value) {
     String? errorText;
-    if (!_firstEnterRePasswordField){
+    if (!_firstEnterRePasswordField) {
       return null;
-    }
-    else
-    {
+    } else {
       if (value.isEmpty) {
         _RePasswordCorrect = false;
         errorText = "Vui lòng nhập lại mật khẩu";
-      }
-      else if (value.toString() != _PasswordController.value.text) {
+      } else if (value.toString() != _PasswordController.value.text) {
         _RePasswordCorrect = false;
         errorText = "Nhập lại mật khẩu không trùng khớp";
-      }
-      else
-      {
+      } else {
         _RePasswordCorrect = true;
       }
     }
     return _RePasswordFocus.hasFocus ? null : errorText;
   }
 
-  void _ChangePassButton (context) async {
+  void _ChangePassButton(context) async {
     _PasswordFocus.unfocus();
     _RePasswordFocus.unfocus();
-    if (_PasswordCorrect && _RePasswordCorrect)
-    {
+    if (_PasswordCorrect && _RePasswordCorrect) {
       // do something
       bool? result = true;
 
@@ -104,30 +88,23 @@ class _ChangePassPageState extends State<ChangePassPage> {
           context: context,
           barrierDismissible: false,
           builder: (context) {
-            return const Center(
-                child: CircularProgressIndicator()
-            );
-          }
-      );
+            return const Center(child: CircularProgressIndicator());
+          });
 
-      result = await _changePassword(_OldPasswordController.value.text, _PasswordController.value.text);
-      if (result == true)
-      {
+      result = await _changePassword(
+          _OldPasswordController.value.text, _PasswordController.value.text);
+      if (result == true) {
         _changeSuccess = true;
       }
-      if (result == false)
-      {
+      if (result == false) {
         _OldPasswordValidateText = 'Mật khẩu hiện tại không đúng';
-      }
-      else if (_ExceptionText != null)
-      {
+      } else if (_ExceptionText != null) {
         String? message;
         message = _ExceptionText;
         _ExceptionText = null;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message.toString()))
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message.toString())));
       }
       Navigator.of(context, rootNavigator: true).pop();
     }
@@ -142,7 +119,8 @@ class _ChangePassPageState extends State<ChangePassPage> {
     try {
       final user = await FirebaseAuth.instance.currentUser;
       print(user?.email);
-      final cred = EmailAuthProvider.credential(email: user?.email ?? '', password: password);
+      final cred = EmailAuthProvider.credential(
+          email: user?.email ?? '', password: password);
       await user?.reauthenticateWithCredential(cred).then((value) {
         user.updatePassword(newPassword);
       });
@@ -155,7 +133,6 @@ class _ChangePassPageState extends State<ChangePassPage> {
         _ExceptionText = e.message;
         return null;
       }
-
     } catch (e) {
       print(e.toString());
       _ExceptionText = e.toString();
@@ -180,7 +157,8 @@ class _ChangePassPageState extends State<ChangePassPage> {
         _firstEnterPasswordField = true;
         _PasswordValidateText = null;
       } else {
-        _PasswordValidateText = _PasswordValidating(_PasswordController.value.text);
+        _PasswordValidateText =
+            _PasswordValidating(_PasswordController.value.text);
         setState(() {});
       }
     });
@@ -190,7 +168,8 @@ class _ChangePassPageState extends State<ChangePassPage> {
         _firstEnterRePasswordField = true;
         _RePasswordValidateText = null;
       } else {
-        _RePasswordValidateText = _RePasswordValidating(_RePasswordController.value.text);
+        _RePasswordValidateText =
+            _RePasswordValidating(_RePasswordController.value.text);
         setState(() {});
       }
     });
@@ -206,362 +185,392 @@ class _ChangePassPageState extends State<ChangePassPage> {
     double maxImageHeightRatio = 0.33;
 
     // TODO: implement change password Widget
-    MaterialApp ChangePasswordPage = MaterialApp(
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'), // English
-        Locale('vi'),
-      ],
-      locale: const Locale('vi'),
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: lightColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()
-      ),
-      darkTheme: ThemeData(
-          useMaterial3: true,
-          colorScheme: darkColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()
-      ),
-      home: SafeArea(
-        child: Builder(
-          builder: (context) => Scaffold(
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text('Đổi mật khẩu', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold)
-              ),
-              leading: IconButton(
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                  },
-                  icon: Icon(FontAwesomeIcons.circleChevronLeft, size: 40,
-                      color: Theme.of(context).colorScheme.primary)
-              ),
-            ),
+    var ChangePasswordPage = SafeArea(
+      child: Builder(
+        builder: (context) => Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text('Đổi mật khẩu',
+                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold)),
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                icon: Icon(FontAwesomeIcons.circleChevronLeft,
+                    size: 40, color: Theme.of(context).colorScheme.primary)),
+          ),
+          body: SingleChildScrollView(
+            reverse: true,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: max(
+                  MediaQuery.of(context).size.height -
+                      AppBar().preferredSize.height * 2,
+                  640),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // image
+                  Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * imageRatio,
+                      height: MediaQuery.of(context).size.width * imageRatio <
+                              MediaQuery.of(context).size.height *
+                                  maxImageHeightRatio
+                          ? MediaQuery.of(context).size.width * imageRatio
+                          : MediaQuery.of(context).size.height *
+                              maxImageHeightRatio,
+                      child: Image.asset('assets/image/changepass_image.png')),
 
-            body: SingleChildScrollView(
-              reverse: true,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: max(MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2, 640),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+                  Container(
+                    // forms
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Mật khẩu hiện tại',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground)),
+                            Container(
+                                height: 70,
+                                width: MediaQuery.of(context).size.width *
+                                    barRatio,
+                                child: Scaffold(
+                                    resizeToAvoidBottomInset: false,
+                                    backgroundColor:
+                                        Colors.redAccent.withOpacity(0.0),
+                                    body: TextField(
+                                      controller: _OldPasswordController,
+                                      focusNode: _OldPasswordFocus,
+                                      obscureText: !_OldPasswordVisible,
+                                      obscuringCharacter: '*',
+                                      keyboardType: TextInputType.text,
+                                      textAlign: TextAlign.left,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground),
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 3, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                        ),
 
-                    // image
-                    Container(
-                        margin: const EdgeInsets.only(top: 20.0),
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _OldPasswordVisible =
+                                                  !_OldPasswordVisible;
+                                            });
+                                          },
+                                          child: Icon(_OldPasswordVisible
+                                              ? Icons.visibility
+                                              : Icons.visibility_off),
+                                        ),
+                                        helperText: " ",
+                                        errorText:
+                                            _OldPasswordValidateText, // validator
+                                      ),
+                                    )))
+                          ],
+                        ),
+
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Mật khẩu mới',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground)),
+                            Container(
+                                height: 70,
+                                width: MediaQuery.of(context).size.width *
+                                    barRatio,
+                                child: Scaffold(
+                                    resizeToAvoidBottomInset: false,
+                                    backgroundColor:
+                                        Colors.redAccent.withOpacity(0.0),
+                                    body: TextField(
+                                      controller: _PasswordController,
+                                      focusNode: _PasswordFocus,
+                                      obscureText: !_PasswordVisible,
+                                      obscuringCharacter: '*',
+                                      keyboardType: TextInputType.text,
+                                      textAlign: TextAlign.left,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground),
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 3, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                        ),
+
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _PasswordVisible =
+                                                  !_PasswordVisible;
+                                            });
+                                          },
+                                          child: Icon(_PasswordVisible
+                                              ? Icons.visibility
+                                              : Icons.visibility_off),
+                                        ),
+                                        helperText: " ",
+                                        errorText:
+                                            _PasswordValidateText, // validator
+                                      ),
+                                    )))
+                          ],
+                        ),
+
+                        // SizedBox(height: 5),
+
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Nhập lại mật khẩu mới',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground)),
+                            Container(
+                                height: 70,
+                                width: MediaQuery.of(context).size.width *
+                                    barRatio,
+                                child: Scaffold(
+                                    resizeToAvoidBottomInset: false,
+                                    backgroundColor:
+                                        Colors.redAccent.withOpacity(0.0),
+                                    body: TextField(
+                                      controller: _RePasswordController,
+                                      focusNode: _RePasswordFocus,
+                                      obscureText: !_RePasswordVisible,
+                                      obscuringCharacter: '*',
+                                      keyboardType: TextInputType.text,
+                                      textAlign: TextAlign.left,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground),
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              width: 3, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                        ),
+
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _RePasswordVisible =
+                                                  !_RePasswordVisible;
+                                            });
+                                          },
+                                          child: Icon(_RePasswordVisible
+                                              ? Icons.visibility
+                                              : Icons.visibility_off),
+                                        ),
+                                        helperText: " ",
+                                        errorText:
+                                            _RePasswordValidateText, // validator
+                                      ),
+                                    )))
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Container(
+                    // Register button
+                    alignment: Alignment.center,
+                    height: 48,
+                    margin: const EdgeInsets.only(bottom: 32.0),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                width: 4,
+                                style: BorderStyle.solid),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(50))),
+                      ),
+                      onPressed: () async {
+                        /* do something */
+                        _ChangePassButton(context);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * buttonRatio,
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width * imageRatio,
-                        height: MediaQuery.of(context).size.width * imageRatio < MediaQuery.of(context).size.height * maxImageHeightRatio ?
-                        MediaQuery.of(context).size.width * imageRatio : MediaQuery.of(context).size.height * maxImageHeightRatio,
-                        child: Image.asset(
-                            'assets/image/changepass_image.png')
-                    ),
-
-                    Container( // forms
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Mật khẩu hiện tại', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.onBackground)
-                              ),
-                              Container(
-                                  height: 70,
-                                  width: MediaQuery.of(context).size.width * barRatio,
-                                  child: Scaffold(
-                                      resizeToAvoidBottomInset: false,
-                                      backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                      body: TextField(
-                                        controller: _OldPasswordController,
-                                        focusNode: _OldPasswordFocus,
-                                        obscureText: !_OldPasswordVisible,
-                                        obscuringCharacter: '*',
-                                        keyboardType: TextInputType.text,
-                                        textAlign: TextAlign.left,
-                                        textAlignVertical: TextAlignVertical.center,
-                                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                            color: Theme.of(context).colorScheme.onBackground),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide(width: 3, color: Colors.black),
-                                            borderRadius: BorderRadius.circular(50.0),
-                                          ),
-
-                                          suffixIcon: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _OldPasswordVisible = !_OldPasswordVisible;
-                                              });
-                                            },
-                                            child: Icon(
-                                                _OldPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                                          ),
-                                          helperText: " ",
-                                          errorText: _OldPasswordValidateText, // validator
-                                        ),
-                                      )
-                                  )
-                              )
-                            ],
-                          ),
-
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Mật khẩu mới', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.onBackground)
-                              ),
-                              Container(
-                                  height: 70,
-                                  width: MediaQuery.of(context).size.width * barRatio,
-                                  child: Scaffold(
-                                      resizeToAvoidBottomInset: false,
-                                      backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                      body: TextField(
-                                        controller: _PasswordController,
-                                        focusNode: _PasswordFocus,
-                                        obscureText: !_PasswordVisible,
-                                        obscuringCharacter: '*',
-                                        keyboardType: TextInputType.text,
-                                        textAlign: TextAlign.left,
-                                        textAlignVertical: TextAlignVertical.center,
-                                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                            color: Theme.of(context).colorScheme.onBackground),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide(width: 3, color: Colors.black),
-                                            borderRadius: BorderRadius.circular(50.0),
-                                          ),
-
-                                          suffixIcon: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _PasswordVisible = !_PasswordVisible;
-                                              });
-                                            },
-                                            child: Icon(
-                                                _PasswordVisible ? Icons.visibility : Icons.visibility_off),
-                                          ),
-                                          helperText: " ",
-                                          errorText: _PasswordValidateText, // validator
-                                        ),
-                                      )
-                                  )
-                              )
-                            ],
-                          ),
-
-                          // SizedBox(height: 5),
-
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Nhập lại mật khẩu mới', style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.onBackground)
-                              ),
-                              Container(
-                                  height: 70,
-                                  width:  MediaQuery.of(context).size.width * barRatio,
-                                  child: Scaffold(
-                                      resizeToAvoidBottomInset: false,
-                                      backgroundColor: Colors.redAccent.withOpacity(0.0),
-                                      body: TextField(
-                                        controller: _RePasswordController,
-                                        focusNode: _RePasswordFocus,
-                                        obscureText: !_RePasswordVisible,
-                                        obscuringCharacter: '*',
-                                        keyboardType: TextInputType.text,
-                                        textAlign: TextAlign.left,
-                                        textAlignVertical: TextAlignVertical.center,
-                                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                            color: Theme.of(context).colorScheme.onBackground),
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 0),
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide(width: 3, color: Colors.black),
-                                            borderRadius: BorderRadius.circular(50.0),
-                                          ),
-
-                                          suffixIcon: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _RePasswordVisible = !_RePasswordVisible;
-                                              });
-                                            },
-                                            child: Icon(
-                                                _RePasswordVisible ? Icons.visibility : Icons.visibility_off),
-                                          ),
-                                          helperText: " ",
-                                          errorText: _RePasswordValidateText, // validator
-                                        ),
-                                      )
-                                  )
-                              )
-                            ],
-                          ),
-                        ],
+                        child: Text("Lưu",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary)),
                       ),
                     ),
-
-                    Container( // Register button
-                      alignment: Alignment.center,
-                      height: 48,
-                      margin: const EdgeInsets.only(bottom: 32.0),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: Theme.of(context).colorScheme.primaryContainer,
-                                  width: 4,
-                                  style: BorderStyle.solid
-                              ),
-                              borderRadius: BorderRadius.all(Radius.circular(50))
-                          ),
-                        ),
-                        onPressed: () async {
-                          /* do something */
-                          _ChangePassButton(context);
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * buttonRatio,
-                          alignment: Alignment.center,
-                          child: Text("Lưu", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary)),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           ),
         ),
       ),
-
-      debugShowCheckedModeBanner: false,
     );
 
-    MaterialApp ChangePasswordSuccessPage = MaterialApp(
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'), // English
-        Locale('vi'),
-      ],
-      locale: const Locale('vi'),
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: lightColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()
-      ),
-      darkTheme: ThemeData(
-          useMaterial3: true,
-          colorScheme: darkColorScheme,
-          textTheme: GoogleFonts.robotoTextTheme()
-      ),
-      home: SafeArea(
-        child: Builder(
-          builder: (context) => Scaffold(
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text('Đổi mật khẩu', style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold)
-              ),
-            ),
-
-            body: SingleChildScrollView(
-              reverse: true,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: max(MediaQuery.of(context).size.height - AppBar().preferredSize.height * 2, 640),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-
-                    // image
-                    Container(
-                        margin: const EdgeInsets.only(top: 20.0),
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width * imageRatio,
-                        height: MediaQuery.of(context).size.width * imageRatio < MediaQuery.of(context).size.height * maxImageHeightRatio ?
-                        MediaQuery.of(context).size.width * imageRatio : MediaQuery.of(context).size.height * maxImageHeightRatio,
-                        child: Image.asset(
-                            'assets/image/changepass_success_image.png')
-                    ),
-
-                    Container(
-                        alignment: Alignment.center,
-                        child: Text('Bạn đã thay đổi mật khẩu thành công!', style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 30
-                            ),
-                          textAlign: TextAlign.center,
-                        )
-                    ),
-
-                    Container( // Finish button
+    var ChangePasswordSuccessPage = SafeArea(
+      child: Builder(
+        builder: (context) => Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text('Đổi mật khẩu',
+                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold)),
+          ),
+          body: SingleChildScrollView(
+            reverse: true,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: max(
+                  MediaQuery.of(context).size.height -
+                      AppBar().preferredSize.height * 2,
+                  640),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // image
+                  Container(
+                      margin: const EdgeInsets.only(top: 20.0),
                       alignment: Alignment.center,
-                      height: 48,
-                      margin: const EdgeInsets.only(bottom: 32.0),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: Theme.of(context).colorScheme.primaryContainer,
-                                  width: 4,
-                                  style: BorderStyle.solid
-                              ),
-                              borderRadius: BorderRadius.all(Radius.circular(50))
-                          ),
-                        ),
-                        onPressed: () async {
-                          Navigator.of(context, rootNavigator: true).pop();
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * buttonRatio,
-                          alignment: Alignment.center,
-                          child: Text("Quay lại", style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary)),
-                        ),
+                      width: MediaQuery.of(context).size.width * imageRatio,
+                      height: MediaQuery.of(context).size.width * imageRatio <
+                              MediaQuery.of(context).size.height *
+                                  maxImageHeightRatio
+                          ? MediaQuery.of(context).size.width * imageRatio
+                          : MediaQuery.of(context).size.height *
+                              maxImageHeightRatio,
+                      child: Image.asset(
+                          'assets/image/changepass_success_image.png')),
+
+                  Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Bạn đã thay đổi mật khẩu thành công!',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30),
+                        textAlign: TextAlign.center,
+                      )),
+
+                  Container(
+                    // Finish button
+                    alignment: Alignment.center,
+                    height: 48,
+                    margin: const EdgeInsets.only(bottom: 32.0),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                width: 4,
+                                style: BorderStyle.solid),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(50))),
                       ),
-                    )
-                  ],
-                ),
+                      onPressed: () async {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * buttonRatio,
+                        alignment: Alignment.center,
+                        child: Text("Quay lại",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary)),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
         ),
       ),
-
-      debugShowCheckedModeBanner: false,
     );
 
     // TODO: implement change password success Widget
