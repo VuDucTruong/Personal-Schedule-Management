@@ -24,12 +24,10 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDependencies();
   tz.initializeTimeZones();
-  runApp(
-      ChangeNotifierProvider(
-        create: (_) => AppTheme(),
-        child: MyApp(),
-      )
-  );
+  runApp(ChangeNotifierProvider(
+    create: (_) => AppTheme(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -66,7 +64,9 @@ class _MyAppState extends State<MyApp> {
         locale: const Locale('vi'),
         theme: AppTheme.of(context, listen: true).lightTheme,
         darkTheme: AppTheme.of(context, listen: true).darkTheme,
-        themeMode: AppTheme.of(context, listen: true).darkMode ? ThemeMode.dark : ThemeMode.light,
+        themeMode: AppTheme.of(context, listen: true).darkMode
+            ? ThemeMode.dark
+            : ThemeMode.light,
         home: SafeArea(
           child: Scaffold(
               bottomNavigationBar: SlidingClippedNavBar(

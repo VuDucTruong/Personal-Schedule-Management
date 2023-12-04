@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/calendar_data_source.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
+import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
 import 'package:personal_schedule_management/core/data/dto/forecast_weather_dto.dart';
 import 'package:personal_schedule_management/core/data/dto/weather_dto.dart';
 import 'package:personal_schedule_management/core/data/dto/weather_location_dto.dart';
 import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
+import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalendarDay extends StatefulWidget {
@@ -23,9 +26,27 @@ class _CalendarDayState extends State<CalendarDay> {
   DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
   PageController pageController = PageController(viewportFraction: 0.95);
-  bool isWeatherVisible = true;
+  bool isWeatherVisible = false;
   CalendarScheduleController calendarScheduleController =
       CalendarScheduleController();
+
+  SettingsController settingsController = SettingsController();
+  bool is24hFormat = false;
+  bool hasCalledGetData = false;
+
+  Future<void> getData() async {
+    is24hFormat = await settingsController.GetTime24hFormatSetting() ?? false;
+    print(is24hFormat);
+    hasCalledGetData = true;
+  }
+
+  Future<void> onTapWeatherIcon() async {
+    setState(() {
+      isWeatherVisible = !isWeatherVisible;
+    });
+    await settingsController.SetWeatherSetting(isWeatherVisible);
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -38,7 +59,8 @@ class _CalendarDayState extends State<CalendarDay> {
             WeatherDTO weatherDTO = snapshot.requireData;
             List<ForecastDay> dayList = weatherDTO.forecast.forecastday;
             WeatherLocationDTO location = weatherDTO.location;
-            bool isVisible = true;
+            bool isVisible = false;
+
             return Container(
               margin: EdgeInsets.all(4),
               child: Column(
@@ -68,11 +90,7 @@ class _CalendarDayState extends State<CalendarDay> {
                                 ? Icons.cloud_outlined
                                 : Icons.cloud_off_outlined,
                             color: Theme.of(context).colorScheme.primary),
-                        onTap: () {
-                          setState(() {
-                            isWeatherVisible = !isWeatherVisible;
-                          });
-                        },
+                        onTap: onTapWeatherIcon,
                       ),
                     ],
                   ),
@@ -262,24 +280,39 @@ class _CalendarDayState extends State<CalendarDay> {
           }
         },
       ),
-      Expanded(
-        child: SfCalendar(
-          view: CalendarView.day,
-          dataSource: widget.dataSource,
-          showTodayButton: true,
-          showDatePickerButton: true,
-          showNavigationArrow: true,
-          showCurrentTimeIndicator: true,
-          onTap: (details) async {
-            //calendarScheduleController.showWorkDetails(context, details.)
-            if ((details.appointments?.length ?? 5) == 1 &&
-                details.date != null) {
-              Appointment appointment = details.appointments!.first;
-              await calendarScheduleController.showWorkDetails(
-                  context, appointment, () => widget.setStateCallback());
-            }
-          },
-        ),
+      FutureBuilder(
+        future: getData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            TimeSlotViewSettings timeSlotViewSettings = TimeSlotViewSettings(
+              timeFormat: is24hFormat
+                  ? AppDateFormat.TIME_24H
+                  : AppDateFormat.TIME_12H, //hiển thị giờ theo định dạng
+            );
+            return Expanded(
+              child: SfCalendar(
+                view: CalendarView.day,
+                dataSource: widget.dataSource,
+                showTodayButton: true,
+                showDatePickerButton: true,
+                showNavigationArrow: true,
+                timeSlotViewSettings: timeSlotViewSettings,
+                showCurrentTimeIndicator: true,
+                onTap: (details) async {
+                  //calendarScheduleController.showWorkDetails(context, details.)
+                  if ((details.appointments?.length ?? 5) == 1 &&
+                      details.date != null) {
+                    Appointment appointment = details.appointments!.first;
+                    await calendarScheduleController.showWorkDetails(
+                        context, appointment, () => widget.setStateCallback());
+                  }
+                },
+              ),
+            );
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
       ),
     ]));
   }
