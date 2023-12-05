@@ -7,4 +7,5 @@ abstract class WorkRespository {
   Future<CongViec?> getCongViecById(String maCV);
   Future<String?> updateWorkToRemote(CongViec congViec);
   Future<void> updateTinhTrangWork(String maCV, int trangThai);
+  Future<void> addException(String maCV, DateTime exception);
 }

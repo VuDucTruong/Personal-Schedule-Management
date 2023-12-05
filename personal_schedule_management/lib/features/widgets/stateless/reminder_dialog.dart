@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:personal_schedule_management/features/widgets/stateful/create_reminder_dialog.dart';
 
 class ReminderDialog extends StatelessWidget {
-  ReminderDialog(this.isAllDay, this.reminder_list, this.startDate,
-      {super.key});
+  ReminderDialog(this.isAllDay, this.reminder_list, {super.key});
   bool isAllDay;
   List<String> reminder_list;
-  DateTime startDate;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -25,7 +23,7 @@ class ReminderDialog extends StatelessWidget {
                 if (index < reminder_list.length - 1) {
                   List<String> splittedTime = reminder_list[index].split(' ');
                   int period = int.tryParse(splittedTime[1]) ?? 0;
-                  DateTime pickedDate;
+                  Duration pickedDuration;
                   if (isAllDay) {
                     switch (splittedTime[2]) {
                       case 'ngày':
@@ -36,32 +34,31 @@ class ReminderDialog extends StatelessWidget {
                     }
                     // Chuyen doi thanh ngay
 
-                    pickedDate = startDate
-                        .copyWith(hour: 9, minute: 0)
-                        .subtract(Duration(days: period));
-                    Navigator.pop(context, [reminder_list[index], pickedDate]);
+                    pickedDuration = Duration(days: period);
+                    Navigator.pop(
+                        context, [reminder_list[index], pickedDuration]);
                     return;
                   }
                   switch (splittedTime[2]) {
                     case 'phút':
-                      pickedDate =
-                          startDate.subtract(Duration(minutes: period));
+                      pickedDuration = Duration(minutes: period);
                       break;
                     case 'giờ':
-                      pickedDate = startDate.subtract(Duration(hours: period));
+                      pickedDuration = Duration(hours: period);
                       break;
                     case 'ngày':
-                      pickedDate = startDate.subtract(Duration(days: period));
+                      pickedDuration = Duration(days: period);
                       break;
                     default:
-                      pickedDate = startDate;
+                      pickedDuration = Duration.zero;
                   }
-                  Navigator.pop(context, [reminder_list[index], pickedDate]);
+                  Navigator.pop(
+                      context, [reminder_list[index], pickedDuration]);
                 } else {
                   List<dynamic>? results = await showDialog(
                     context: context,
                     builder: (context) {
-                      return CreateReminderDialog(isAllDay, startDate);
+                      return CreateReminderDialog(isAllDay);
                     },
                   );
                   if (!context.mounted) return;

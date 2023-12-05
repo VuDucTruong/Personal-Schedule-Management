@@ -17,7 +17,7 @@ class CreateWorkController {
   bool alarmSwitch = false;
   bool reminderSwitch = true;
   String priorityValue = 'Trung bình';
-  List<dynamic> reminderValueList = []; // Luu tru thoi gian thong bao
+  List<Duration> reminderValueList = []; // Luu tru thoi gian thong bao
   String selectedValue = 'Không có';
   DateTime? startDate, endDate;
   List<String> reminderTimeList = [];
@@ -164,7 +164,8 @@ class CreateWorkController {
           year: selectedDate.year,
           month: selectedDate.month,
           day: selectedDate.day);
-      if (startDate!.compareTo(endDate!) > 0) endDate = startDate;
+      if (startDate!.compareTo(endDate!) > 0)
+        endDate = startDate?.add(Duration(hours: 1));
     }
   }
 
@@ -218,13 +219,12 @@ class CreateWorkController {
     if (allDaySwitch) {
       results = await showDialog(
         context: context,
-        builder: (context) =>
-            ReminderDialog(true, REMINDER_DAY_LIST, startDate!),
+        builder: (context) => ReminderDialog(true, REMINDER_DAY_LIST),
       );
     } else {
       results = await showDialog(
         context: context,
-        builder: (context) => ReminderDialog(false, REMINDER_LIST, startDate!),
+        builder: (context) => ReminderDialog(false, REMINDER_LIST),
       );
     }
     if (results != null && !reminderTimeList.contains(results[0])) {

@@ -22,7 +22,6 @@ class ReportController {
 
   Future<String> getAllNumberOfWorks() async {
     congViecHT = await completedWorkRespositoryImpl.getAllCompletedWork();
-    numOfFinish = congViecHT.length;
     congViecHT.forEach((element) {
       if (element.ngayHoanThanh.isBefore(element.ngayKetThuc) &&
           element.ngayKetThuc.isBefore(DateTime.now())) {
@@ -33,9 +32,13 @@ class ReportController {
         await workRespositoryImpl.getAllCongViecByUserId('');
     congViecList.forEach((element) {
       if (element.thoiDiemLap.isNotEmpty) {
+        congViecHT
+            .removeWhere((ht) => element.ngayNgoaiLe.contains(ht.ngayBatDau));
+
         List<DateTime> dateTaskList =
             SfCalendar.getRecurrenceDateTimeCollection(
                 element.thoiDiemLap, element.ngayBatDau);
+        dateTaskList.removeWhere((task) => element.ngayNgoaiLe.contains(task));
         totalNumOfWorks += dateTaskList.length;
         dateTaskList.forEach((element1) {
           DateTime ngayKetThuc =
@@ -52,6 +55,7 @@ class ReportController {
         }
       }
     });
+    numOfFinish = congViecHT.length;
     numOfUnFinish = totalNumOfWorks - numOfFinish;
     return 'Hello';
   }
