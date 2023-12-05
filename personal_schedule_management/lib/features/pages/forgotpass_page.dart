@@ -136,7 +136,9 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold)),
             leading: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
                 icon: Icon(FontAwesomeIcons.circleChevronLeft,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
           ),
@@ -398,7 +400,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                             ),
                             onPressed: () async {
                               /* do something */
-                              Navigator.of(context).pushAndRemoveUntil(
+                              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                                   _createRoute(), (route) => false);
                             },
                             child: Container(

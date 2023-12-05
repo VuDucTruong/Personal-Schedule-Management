@@ -92,6 +92,14 @@ class _RegisterPageState extends State<RegisterPage> {
   // SIGN UP
 
   void _RegisterButton(context) async {
+    _NameFocus.unfocus();
+    _EmailFocus.unfocus();
+    _PasswordFocus.unfocus();
+    setState(() {
+      _NameValidateText = _NameValidating(_NameController.value.text);
+      _EmailValidateText = _EmailValidating(_EmailController.value.text);
+      _PasswordValidateText = _PasswordValidating(_PasswordController.value.text);
+    });
     if (_NameCorrect && _EmailCorrect && _PasswordCorrect) {
       // do something
       bool? result;
@@ -104,18 +112,20 @@ class _RegisterPageState extends State<RegisterPage> {
           });
 
       result = await _checkIfEmailInUse(_EmailController.value.text);
+      Navigator.of(context).pop();
       if (result == true) {
         _EmailValidateText = 'Email đã được sử dụng';
       }
       if (result == false) {
         // Chuyển hướng sang PINCODE page để xác thực tài khoản
-        Navigator.of(context).pushReplacement(_createRoute());
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+            _createRoute(), (route) => false
+        );
       } else if (_ExceptionText != null) {
         String? message = _ExceptionText;
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(message.toString())));
       }
-      Navigator.of(context).pop();
     }
 
     setState(() {
@@ -125,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  Future<bool> _checkIfEmailInUse(String emailAddress) async {
+  Future<bool?> _checkIfEmailInUse(String emailAddress) async {
     try {
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -139,11 +149,11 @@ class _RegisterPageState extends State<RegisterPage> {
         return true;
       } else {
         _ExceptionText = e.code;
-        return false;
+        return null;
       }
     } catch (e) {
       _ExceptionText = e.toString();
-      return false;
+      return null;
     }
   }
 
@@ -204,7 +214,7 @@ class _RegisterPageState extends State<RegisterPage> {
             appBar: AppBar(
               leading: IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.of(context, rootNavigator: true).pop();
                   },
                   icon: Icon(FontAwesomeIcons.circleChevronLeft,
                       size: 40, color: Theme.of(context).colorScheme.primary)),
