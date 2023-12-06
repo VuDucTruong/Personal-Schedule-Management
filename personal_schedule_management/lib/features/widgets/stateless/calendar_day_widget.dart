@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/calendar_data_source.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
-import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
 import 'package:personal_schedule_management/core/data/dto/forecast_weather_dto.dart';
@@ -13,6 +11,7 @@ import 'package:personal_schedule_management/features/controller/calendar_schedu
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+// ignore: must_be_immutable
 class CalendarDay extends StatefulWidget {
   CalendarDay(this.dataSource, this.setStateCallback, {super.key});
   MyCalendarDataSource dataSource;
@@ -59,7 +58,6 @@ class _CalendarDayState extends State<CalendarDay> {
             WeatherDTO weatherDTO = snapshot.requireData;
             List<ForecastDay> dayList = weatherDTO.forecast.forecastday;
             WeatherLocationDTO location = weatherDTO.location;
-            bool isVisible = false;
 
             return Container(
               margin: EdgeInsets.all(4),

@@ -68,6 +68,10 @@ dependencies:
   flutter_local_notifications: ^16.2.0
   #toast
   fluttertoast: ^8.2.4
+  flutter_system_ringtones: ^0.0.6
+  flutter_ringtone_player: ^4.0.0+2
+  audioplayers: ^5.2.1
+  recase: ^4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -100,6 +104,7 @@ flutter:
   assets:
   #   - images/a_dot_ham.jpeg
     - assets/image/
+    - assets/ringtones/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

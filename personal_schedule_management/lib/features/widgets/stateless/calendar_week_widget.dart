@@ -5,6 +5,7 @@ import 'package:personal_schedule_management/features/controller/calendar_schedu
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+// ignore: must_be_immutable
 class CalendarWeek extends StatelessWidget {
   CalendarWeek(this.dataSource, this.setStateCallback, {super.key});
   MyCalendarDataSource dataSource;

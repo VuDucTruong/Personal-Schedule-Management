@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
-import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
@@ -74,23 +73,23 @@ class _SettingsPageState extends State<SettingsPage> {
     User? user = settingsController.currentUser;
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Cài đặt',
             style: AppTextStyle.h2,
           ),
         ),
         body: Container(
-          margin: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(8),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Container(
                   height: 200,
-                  margin: EdgeInsets.only(bottom: 4),
+                  margin: const EdgeInsets.only(bottom: 4),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
+                      image: const DecorationImage(
                           image: AssetImage('assets/image/setting_image.jpg'),
                           fit: BoxFit.cover)),
                 ),
@@ -112,42 +111,43 @@ class _SettingsPageState extends State<SettingsPage> {
                                   .colorScheme
                                   .primaryContainer,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 8,
                             ),
                             RichText(
                                 text: TextSpan(children: [
-                              TextSpan(
+                              const TextSpan(
                                   text: 'Xin chào',
                                   style: TextStyle(color: Colors.black)),
                               TextSpan(
                                   text: ' ${user.displayName ?? user.email!}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black)),
                             ])),
-                            Spacer(),
+                            const Spacer(),
                             PopupMenuButton(
-                              offset: Offset(0, 40),
+                              offset: const Offset(0, 40),
                               itemBuilder: (context) {
                                 return [
                                   PopupMenuItem(
-                                      child: Text('Đăng xuất'),
+                                      child: const Text('Đăng xuất'),
                                       onTap: () async {
                                         await settingsController.signOut();
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => LoginPage(),
+                                              builder: (context) =>
+                                                  const LoginPage(),
                                             ));
                                       }),
                                   PopupMenuItem(
-                                    child: Text('Đổi mật khẩu'),
+                                    child: const Text('Đổi mật khẩu'),
                                     onTap: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              ForgotPassPage(),
+                                              const ForgotPassPage(),
                                         )),
                                   ),
                                 ];
@@ -163,26 +163,26 @@ class _SettingsPageState extends State<SettingsPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LoginPage(),
+                              builder: (context) => const LoginPage(),
                             ));
                       },
                       child: Card(
                         child: Row(
                           children: [
                             CircleAvatar(
-                              child: Icon(FontAwesomeIcons.userLarge),
                               backgroundColor: Theme.of(context)
                                   .colorScheme
                                   .primaryContainer,
+                              child: const Icon(FontAwesomeIcons.userLarge),
                             ),
-                            Text('Đăng nhập'),
+                            const Text('Đăng nhập'),
                           ],
                         ),
                       ),
                     );
                   }
                 }),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
                 Card(
@@ -190,8 +190,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8),
-                        child: Text(
+                        margin: const EdgeInsets.all(8),
+                        child: const Text(
                           'Lịch',
                           style: AppTextStyle.h2_5,
                         ),
@@ -203,7 +203,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         isSwitch: false,
                         function: null,
                       ),
-                      SettingsDivider(),
+                      const SettingsDivider(),
                       SettingItem(
                         content: 'Đồng bộ hóa tài khoản',
                         iconData: Icons.cloud_sync,
@@ -211,7 +211,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         isSwitch: false,
                         function: () => AppRoutes.toSyncCalendarPage(context),
                       ),
-                      SettingsDivider(),
+                      const SettingsDivider(),
                       SettingItem(
                         color: Colors.deepPurpleAccent,
                         content: 'Định dạng ngày',
@@ -219,7 +219,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         isSwitch: false,
                         function: null,
                       ),
-                      SettingsDivider(),
+                      const SettingsDivider(),
                       SettingItem(
                         color: Colors.red,
                         content: 'Định dạng thời gian 24h',
@@ -228,7 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         switchValue: isFormatTime24h,
                         function: formatTime24h,
                       ),
-                      SettingsDivider(),
+                      const SettingsDivider(),
                       SettingItem(
                         color: Colors.lightBlueAccent,
                         content: 'Hiển thị thời tiết',
@@ -245,8 +245,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8),
-                        child: Text(
+                        margin: const EdgeInsets.all(8),
+                        child: const Text(
                           'Tùy chỉnh',
                           style: AppTextStyle.h2_5,
                         ),
@@ -258,15 +258,15 @@ class _SettingsPageState extends State<SettingsPage> {
                         isSwitch: false,
                         function: null,
                       ),
-                      SettingsDivider(),
+                      const SettingsDivider(),
                       SettingItem(
                         color: Colors.orangeAccent,
                         content: 'Nhạc chuông',
                         iconData: FontAwesomeIcons.music,
                         isSwitch: false,
-                        function: null,
+                        function: () => AppRoutes.toRingtonePage(context),
                       ),
-                      SettingsDivider(),
+                      const SettingsDivider(),
                       SettingItem(
                         color: Colors.yellowAccent,
                         content: 'Thông báo & nhắc nhở',
@@ -274,7 +274,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         isSwitch: false,
                         function: null,
                       ),
-                      SettingsDivider(),
+                      const SettingsDivider(),
                       SettingItem(
                         function: null,
                         color: Colors.purpleAccent,
@@ -290,8 +290,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8),
-                        child: Text(
+                        margin: const EdgeInsets.all(8),
+                        child: const Text(
                           'Hỗ trợ',
                           style: AppTextStyle.h2_5,
                         ),
@@ -322,7 +322,7 @@ class SettingsDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Divider(
+    return const Divider(
       height: 0.5,
       color: Colors.grey,
       thickness: 0.25,
@@ -330,6 +330,7 @@ class SettingsDivider extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class SettingItem extends StatefulWidget {
   SettingItem(
       {required this.function,
@@ -389,7 +390,7 @@ class _SettingItem extends State<SettingItem> {
                   borderRadius: BorderRadius.circular(5), color: color),
               child: Icon(iconData, color: Colors.white),
             ),
-            SizedBox(
+            const SizedBox(
               width: 16,
             ),
             Text(
@@ -406,7 +407,7 @@ class _SettingItem extends State<SettingItem> {
                     function!();
                   }
                 })
-            : Icon(FontAwesomeIcons.angleRight),
+            : const Icon(FontAwesomeIcons.angleRight),
       ),
     );
   }
