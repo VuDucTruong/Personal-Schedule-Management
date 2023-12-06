@@ -3,9 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
-import 'package:personal_schedule_management/features/pages/settings_page.dart';
 import '../../config/theme/app_theme.dart';
 
 class AppThemePage extends StatefulWidget {

@@ -73,9 +73,12 @@ class _SettingsPageState extends State<SettingsPage> {
     User? user = settingsController.currentUser;
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             'Cài đặt',
-            style: AppTextStyle.h2,
+            style: AppTextStyle.h2.copyWith(
+              color: Theme.of(context).colorScheme.onBackground,
+              fontWeight: FontWeight.bold
+            ),
           ),
         ),
         body: Container(
@@ -116,14 +119,14 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             RichText(
                                 text: TextSpan(children: [
-                              const TextSpan(
+                              TextSpan(
                                   text: 'Xin chào',
-                                  style: TextStyle(color: Colors.black)),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onBackground)),
                               TextSpan(
                                   text: ' ${user.displayName ?? user.email!}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black)),
+                                      color: Theme.of(context).colorScheme.onBackground)),
                             ])),
                             const Spacer(),
                             PopupMenuButton(
@@ -191,9 +194,11 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Container(
                         margin: const EdgeInsets.all(8),
-                        child: const Text(
-                          'Lịch',
-                          style: AppTextStyle.h2_5,
+                        child: Text(
+                            'Lịch',
+                            style: AppTextStyle.h2_5.copyWith(
+                                color: Theme.of(context).colorScheme.onSecondaryContainer
+                            ),
                         ),
                       ),
                       SettingItem(
@@ -201,7 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         content: 'Lịch của bạn',
                         iconData: FontAwesomeIcons.solidCircleUser,
                         isSwitch: false,
-                        function: null,
+                        function: () => AppRoutes.toYourCalendarPage(context),
                       ),
                       const SettingsDivider(),
                       SettingItem(
@@ -246,9 +251,11 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Container(
                         margin: const EdgeInsets.all(8),
-                        child: const Text(
-                          'Tùy chỉnh',
-                          style: AppTextStyle.h2_5,
+                        child: Text(
+                            'Tùy chỉnh',
+                            style: AppTextStyle.h2_5.copyWith(
+                                color: Theme.of(context).colorScheme.onSecondaryContainer
+                            ),
                         ),
                       ),
                       SettingItem(
@@ -276,7 +283,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       const SettingsDivider(),
                       SettingItem(
-                        function: null,
+                        function: () => AppRoutes.toAppThemePage(context),
                         color: Colors.purpleAccent,
                         content: 'Giao diện',
                         iconData: FontAwesomeIcons.brush,
@@ -291,9 +298,11 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Container(
                         margin: const EdgeInsets.all(8),
-                        child: const Text(
+                        child: Text(
                           'Hỗ trợ',
-                          style: AppTextStyle.h2_5,
+                          style: AppTextStyle.h2_5.copyWith(
+                              color: Theme.of(context).colorScheme.onSecondaryContainer
+                          ),
                         ),
                       ),
                       SettingItem(
