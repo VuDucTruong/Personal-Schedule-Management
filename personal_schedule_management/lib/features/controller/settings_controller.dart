@@ -62,20 +62,29 @@ class SettingsController {
   }
 
   ColorScheme GetAppThemeExample(AppThemeName) {
-    switch (AppThemeName)
-    {
+    switch (AppThemeName) {
       case AppTheme.DEFAULT:
         return !AppTheme.IsDarkMode ? SchemeLight_default : SchemeDark_default;
       case AppTheme.ELECTRIC_VIOLET:
-        return !AppTheme.IsDarkMode ? SchemeLight_ElectricViolet : SchemeDark_ElectricViolet;
+        return !AppTheme.IsDarkMode
+            ? SchemeLight_ElectricViolet
+            : SchemeDark_ElectricViolet;
       case AppTheme.BLUE_DELIGHT:
-        return !AppTheme.IsDarkMode ? SchemeLight_BlueDelight : SchemeDark_BlueDelight;
+        return !AppTheme.IsDarkMode
+            ? SchemeLight_BlueDelight
+            : SchemeDark_BlueDelight;
       case AppTheme.HIPPIE_BLUE:
-        return !AppTheme.IsDarkMode ? SchemeLight_HippieBlue : SchemeDark_HippieBlue;
+        return !AppTheme.IsDarkMode
+            ? SchemeLight_HippieBlue
+            : SchemeDark_HippieBlue;
       case AppTheme.GOLD_SUNSET:
-        return !AppTheme.IsDarkMode ? SchemeLight_GoldSunset : SchemeDark_GoldSunset;
+        return !AppTheme.IsDarkMode
+            ? SchemeLight_GoldSunset
+            : SchemeDark_GoldSunset;
       case AppTheme.GREEN_FOREST:
-        return !AppTheme.IsDarkMode ? SchemeLight_GreenForest : SchemeDark_GreenForest;
+        return !AppTheme.IsDarkMode
+            ? SchemeLight_GreenForest
+            : SchemeDark_GreenForest;
       case AppTheme.RED_WINE:
         return !AppTheme.IsDarkMode ? SchemeLight_RedWine : SchemeDark_RedWine;
       case AppTheme.SAKURA:
@@ -83,5 +92,15 @@ class SettingsController {
       default:
         return !AppTheme.IsDarkMode ? SchemeLight_default : SchemeDark_default;
     }
+  }
+
+  Future<void> SetRingtone(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(RINGTONE, value);
+  }
+
+  Future<String?> GetRingtone() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(RINGTONE);
   }
 }

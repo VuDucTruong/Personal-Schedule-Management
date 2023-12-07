@@ -45,3 +45,5 @@ abstract class AppDateFormat {
 
 const String TIME_24H_FORMAT = 'time_24';
 const String WEATHER = 'weather';
+const String RINGTONE = 'ringtone';
+const String DEFAULT_RINGTONE = 'assets/ringtones/bird_sound.mp3';
