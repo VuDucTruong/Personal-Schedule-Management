@@ -21,6 +21,55 @@ class _SettingsPageState extends State<SettingsPage> {
   bool isShowWeather = false;
   bool hasCalledGetData = false;
 
+  Future<void> updateDateFormat(String newDateFormat) async {
+    SettingsController settingsController = SettingsController();
+    await settingsController.SetDateFormat(newDateFormat);
+  }
+
+  void showDateFormatDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Chọn Định Dạng Ngày'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text('dd/MM/yyyy'),
+                onTap: () {
+                  updateDateFormat('dd/MM/yyyy');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('MM/dd/yyyy'),
+                onTap: () {
+                  updateDateFormat('MM/dd/yyyy');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('yyyy/MM/dd'),
+                onTap: () {
+                  updateDateFormat('yyyy/MM/dd');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('yyyy/dd/MM'),
+                onTap: () {
+                  updateDateFormat('yyyy/dd/MM');
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> getData() async {
     showDialog(
         context: context,
@@ -76,9 +125,8 @@ class _SettingsPageState extends State<SettingsPage> {
           title: Text(
             'Cài đặt',
             style: AppTextStyle.h2.copyWith(
-              color: Theme.of(context).colorScheme.onBackground,
-              fontWeight: FontWeight.bold
-            ),
+                color: Theme.of(context).colorScheme.onBackground,
+                fontWeight: FontWeight.bold),
           ),
         ),
         body: Container(
@@ -121,12 +169,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                 text: TextSpan(children: [
                               TextSpan(
                                   text: 'Xin chào',
-                                  style: TextStyle(color: Theme.of(context).colorScheme.onBackground)),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
                               TextSpan(
                                   text: ' ${user.displayName ?? user.email!}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.onBackground)),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
                             ])),
                             const Spacer(),
                             PopupMenuButton(
@@ -195,10 +248,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       Container(
                         margin: const EdgeInsets.all(8),
                         child: Text(
-                            'Lịch',
-                            style: AppTextStyle.h2_5.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondaryContainer
-                            ),
+                          'Lịch',
+                          style: AppTextStyle.h2_5.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer),
                         ),
                       ),
                       SettingItem(
@@ -222,7 +276,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         content: 'Định dạng ngày',
                         iconData: FontAwesomeIcons.calendarDays,
                         isSwitch: false,
-                        function: null,
+                        function: showDateFormatDialog,
                       ),
                       const SettingsDivider(),
                       SettingItem(
@@ -252,10 +306,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       Container(
                         margin: const EdgeInsets.all(8),
                         child: Text(
-                            'Tùy chỉnh',
-                            style: AppTextStyle.h2_5.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondaryContainer
-                            ),
+                          'Tùy chỉnh',
+                          style: AppTextStyle.h2_5.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer),
                         ),
                       ),
                       SettingItem(
@@ -301,8 +356,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Text(
                           'Hỗ trợ',
                           style: AppTextStyle.h2_5.copyWith(
-                              color: Theme.of(context).colorScheme.onSecondaryContainer
-                          ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer),
                         ),
                       ),
                       SettingItem(
