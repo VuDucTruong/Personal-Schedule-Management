@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
+import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/create_work_controller.dart';
+import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
 import 'package:personal_schedule_management/features/pages/work_category_page.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../core/domain/entity/cong_viec_entity.dart';
 
@@ -69,6 +73,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
 
   bool update = false;
   CreateWorkController createWorkController = CreateWorkController();
+  DataSourceController dataSourceController =
+      GetIt.instance<DataSourceController>();
   @override
   void initState() {
     super.initState();
@@ -101,6 +107,15 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    titleController.dispose();
+    descriptionController.dispose();
+    urlController.dispose();
+    locationController.dispose();
+  }
+
   Future<bool> chooseAction(CongViec congViec) async {
     bool results = false;
     if (widget.selectedCongViec != null) {
@@ -123,6 +138,23 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
       }
     }
     return results;
+  }
+
+  Appointment _createAppointment(CongViec congViec) {
+    String? rule;
+    rule = congViec.thoiDiemLap;
+    Appointment appointment = Appointment(
+        startTime: congViec.ngayBatDau,
+        endTime: congViec.ngayKetThuc,
+        subject: congViec.tieuDe,
+        color: congViec.mauSac,
+        isAllDay: congViec.isCaNgay,
+        id: congViec.maCV,
+        recurrenceRule: rule,
+        location: congViec.diaDiem,
+        recurrenceExceptionDates: congViec.ngayNgoaiLe,
+        notes: '1|${congViec.doUuTien}');
+    return appointment;
   }
 
   @override
@@ -182,11 +214,14 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                           widget.selectedCongViec?.thoiDiemLap ?? '',
                           createWorkController.alarmSwitch,
                           widget.selectedCongViec?.ngayNgoaiLe ?? []);
-                      bool result = await chooseAction(congViec);
+                      await chooseAction(congViec);
+                      Appointment x = _createAppointment(congViec);
                       if (update) {
-                        Navigator.pop(context, [result, congViec]);
+                        dataSourceController.updateAppointment(x);
+                        Navigator.pop(context);
                       } else
-                        Navigator.pop(context, result);
+                        dataSourceController.insertAppointment(x);
+                      Navigator.pop(context);
                     },
                   ),
                 ],
@@ -318,7 +353,23 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                       value: createWorkController.priorityValue,
                       items: [
                         ...priorityList.map((e) => DropdownMenuItem(
-                              child: Text(e),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(e),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                        color: COLOR_LEVEL[priorityMap[e]! - 1],
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
+                                  )
+                                ],
+                              ),
                               value: e,
                             ))
                       ],

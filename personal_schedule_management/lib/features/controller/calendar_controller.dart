@@ -1,6 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:get_it/get_it.dart';
-import 'package:personal_schedule_management/config/calendar_data_source.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
@@ -14,7 +13,7 @@ import '../../core/domain/entity/thong_bao_entity.dart';
 class CalendarPageController {
   List<Appointment> appointmentList = [];
   int times = 0;
-  late MyCalendarDataSource calendarDatasource;
+
   final DeviceCalendarPlugin deviceCalendarPlugin = DeviceCalendarPlugin();
   WorkRespositoryImpl workRespositoryImpl =
       GetIt.instance<WorkRespositoryImpl>();
@@ -28,11 +27,11 @@ class CalendarPageController {
 
   Future<bool> getCalendarEvents() async {
     appointmentList = [];
-
     await loadAppointment();
     if (times++ >= 1) {
       return true;
     }
+
     final calendarsResult = (await deviceCalendarPlugin.retrieveCalendars());
     final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
     List<String> calendarIds = [];
@@ -49,7 +48,7 @@ class CalendarPageController {
           endTime: DateTime.parse(event.end.toString()),
           isAllDay: event.allDay!,
           subject: event.title!,
-          notes: '0',
+          notes: '0|0',
           location: event.location,
           color: lightColorScheme.primary));
     }
@@ -58,10 +57,9 @@ class CalendarPageController {
 
   CalendarPageController() {}
 
-  Future<void> getCalendarDatasource() async {
-    calendarDatasource = MyCalendarDataSource(appointmentList);
+  Future<void> setUpNotification(CalendarDataSource calendarDataSource) async {
     List<Appointment> appointments =
-        calendarDatasource.getVisibleAppointments(DateTime.now(), '');
+        calendarDataSource.getVisibleAppointments(DateTime.now(), '');
     notificationServices.cancelNotification();
     for (Appointment i in appointments) {
       List<ThongBao> thongBao = await notificationRespositoryImpl
@@ -126,7 +124,7 @@ class CalendarPageController {
         recurrenceRule: rule,
         location: congViec.diaDiem,
         recurrenceExceptionDates: congViec.ngayNgoaiLe,
-        notes: '1');
+        notes: '1|${congViec.doUuTien}');
     //if (appointmentList.contains(appointment)) return;
     appointmentList.add(appointment);
   }

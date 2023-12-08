@@ -87,4 +87,19 @@ class WorkRespositoryImpl extends WorkRespository {
       await updateWorkToRemote(c);
     }
   }
+
+  @override
+  Future<List<CongViec>> findWorkByTitle(String title) async {
+    var snapshot = await _storage
+        .collection(CONGVIEC)
+        .where('maND', isEqualTo: _auth.currentUser?.uid)
+        .get();
+    List<CongViec> congViecList = [];
+    for (var i in snapshot.docs) {
+      String tieuDe = i.data()['tieuDe'];
+      if (!tieuDe.toLowerCase().contains(title.toLowerCase())) continue;
+      congViecList.add(CongViecDTO.fromJson(i.data(), i.id).toCongViec());
+    }
+    return congViecList;
+  }
 }

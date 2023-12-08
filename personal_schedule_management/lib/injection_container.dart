@@ -4,6 +4,7 @@ import 'package:personal_schedule_management/core/domain/repository_impl/complet
 import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/report_responsitory_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
+import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
 import 'package:personal_schedule_management/notification_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +19,7 @@ Future<void> initializeDependencies() async {
   instance.registerSingleton<CompletedWorkRespositoryImpl>(
       CompletedWorkRespositoryImpl());
   instance.registerSingleton<NotificationServices>(NotificationServices());
+  instance.registerSingleton<DataSourceController>(DataSourceController());
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   if (!prefs.containsKey('LOAI_CV')) {
     await prefs.setStringList('LOAI_CV', [

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 const String CONGVIEC = 'CONGVIEC';
 const String CHUKY = 'CHUKY';
 const String KHACHMOI = 'KHACHMOI';
@@ -29,3 +31,10 @@ const Map<String, String> weekDaysMap = {
   'T7': 'SA',
   'CN': 'SU'
 };
+const List<Color> COLOR_LEVEL = [
+  Colors.red,
+  Colors.orange,
+  Colors.yellow,
+  Colors.lightGreenAccent,
+  Colors.green
+];
