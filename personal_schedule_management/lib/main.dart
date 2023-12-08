@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
+import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/report_page.dart';
@@ -43,6 +44,26 @@ class _MyAppState extends State<MyApp> {
     ReportPage(),
     SettingsPage(),
   ];
+
+  Future<void> _GetData() async {
+    SettingsController settingsController = SettingsController();
+    String _currentTheme = await settingsController.GetAppTheme() ?? AppTheme.DEFAULT;
+    bool _currentDarkMode = await settingsController.GetDarkMode() ?? false;
+    AppTheme.of(context).LoadAppTheme(_currentTheme);
+    if (AppTheme.IsDarkMode != _currentDarkMode)
+      AppTheme.of(context).ToggleDarkMode();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () {
+      _GetData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     GetIt.instance<NotificationServices>().initialNotification(context);
