@@ -31,7 +31,7 @@ class _AppThemePageState extends State<AppThemePage> {
     AppTheme.RED_WINE
   ];
 
-  Future<void> GetData() async {
+  Future<void> _GetData() async {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -54,7 +54,7 @@ class _AppThemePageState extends State<AppThemePage> {
     super.initState();
 
     Future.delayed(Duration.zero, () {
-      this.GetData();
+      this._GetData();
     });
   }
 

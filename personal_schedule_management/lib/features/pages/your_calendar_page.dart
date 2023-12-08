@@ -28,13 +28,13 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
   List<String> _GoogleAccounts = _ExampleGoogleAccounts;
   Map<String, bool> _GoogleAccountToggles = {};
 
-  void ToggleGoogleAccount(String accountName){
+  void _ToggleGoogleAccount(String accountName){
     bool oldValue = _GoogleAccountToggles[accountName] ?? false;
     _GoogleAccountToggles[accountName] = !oldValue;
     print(_GoogleAccountToggles);
   }
 
-  Future<void> GetData() async {
+  Future<void> _GetData() async {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -60,12 +60,16 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
     setState(() {});
   }
 
+  Future<void> _BackButtonPressed() async {
+    // TODO: Implement method when pressing Back button (set Saved Preferences, etc)
+  }
+
   @override
   void initState() {
     super.initState();
 
     Future.delayed(Duration.zero, () {
-      this.GetData();
+      this._GetData();
     });
   }
 
@@ -90,7 +94,7 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
               trailing: Switch(
                   value: _GoogleAccountToggles[element] ?? false,
                   onChanged: (value) {
-                    ToggleGoogleAccount(element);
+                    _ToggleGoogleAccount(element);
                     setState(() {});
                   }),
             )
@@ -106,6 +110,7 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
             centerTitle: false,
             leading: IconButton(
                 onPressed: () async {
+                  await _BackButtonPressed();
                   Navigator.of(context).pop();
                 },
                 icon: Icon(FontAwesomeIcons.circleChevronLeft,

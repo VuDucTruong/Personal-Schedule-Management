@@ -80,7 +80,7 @@ class _SettingsPageState extends State<SettingsPage> {
     isFormatTime24h =
         await settingsController.GetTime24hFormatSetting() ?? false;
     isShowWeather = await settingsController.GetWeatherSetting() ?? true;
-    Navigator.of(context).pop();
+    Navigator.of(context, rootNavigator: true).pop();
     setState(() {
       isShowWeather = isShowWeather;
     });
@@ -262,14 +262,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         isSwitch: false,
                         function: () => AppRoutes.toYourCalendarPage(context),
                       ),
-                      const SettingsDivider(),
-                      SettingItem(
-                        content: 'Đồng bộ hóa tài khoản',
-                        iconData: Icons.cloud_sync,
-                        color: Colors.tealAccent,
-                        isSwitch: false,
-                        function: () => AppRoutes.toSyncCalendarPage(context),
-                      ),
+                      // const SettingsDivider(),
+                      // SettingItem(
+                      //   content: 'Đồng bộ hóa tài khoản',
+                      //   iconData: Icons.cloud_sync,
+                      //   color: Colors.tealAccent,
+                      //   isSwitch: false,
+                      //   function: () => AppRoutes.toSyncCalendarPage(context),
+                      // ),
                       const SettingsDivider(),
                       SettingItem(
                         color: Colors.deepPurpleAccent,
@@ -330,7 +330,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       const SettingsDivider(),
                       SettingItem(
-                        color: Colors.yellowAccent,
+                        color: Colors.brown,
                         content: 'Thông báo & nhắc nhở',
                         iconData: FontAwesomeIcons.solidBell,
                         isSwitch: false,

@@ -42,7 +42,7 @@ class AppTheme extends ChangeNotifier {
   get lightTheme => _lightTheme;
   get darkTheme => _darkTheme;
 
-  void LoadAppTheme(AppThemeName) {
+  void LoadAppTheme(String? AppThemeName) {
     switch (AppThemeName)
     {
       case AppTheme.DEFAULT:
