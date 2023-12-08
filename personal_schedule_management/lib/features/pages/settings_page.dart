@@ -20,10 +20,12 @@ class _SettingsPageState extends State<SettingsPage> {
   bool isFormatTime24h = false;
   bool isShowWeather = false;
   bool hasCalledGetData = false;
+  String selectedDateFormat = '';
 
   Future<void> updateDateFormat(String newDateFormat) async {
     SettingsController settingsController = SettingsController();
     await settingsController.SetDateFormat(newDateFormat);
+    selectedDateFormat = newDateFormat;
   }
 
   void showDateFormatDialog() {
@@ -31,12 +33,15 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Chọn Định Dạng Ngày'),
+          title: Text('Chọn định dạng ngày:'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 title: Text('dd/MM/yyyy'),
+                trailing: selectedDateFormat == 'dd/MM/yyyy'
+                    ? Icon(Icons.check)
+                    : null,
                 onTap: () {
                   updateDateFormat('dd/MM/yyyy');
                   Navigator.pop(context);
@@ -44,6 +49,9 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               ListTile(
                 title: Text('MM/dd/yyyy'),
+                trailing: selectedDateFormat == 'MM/dd/yyyy'
+                    ? Icon(Icons.check)
+                    : null,
                 onTap: () {
                   updateDateFormat('MM/dd/yyyy');
                   Navigator.pop(context);
@@ -51,6 +59,9 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               ListTile(
                 title: Text('yyyy/MM/dd'),
+                trailing: selectedDateFormat == 'yyyy/MM/dd'
+                    ? Icon(Icons.check)
+                    : null,
                 onTap: () {
                   updateDateFormat('yyyy/MM/dd');
                   Navigator.pop(context);
@@ -58,6 +69,9 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               ListTile(
                 title: Text('yyyy/dd/MM'),
+                trailing: selectedDateFormat == 'yyyy/dd/MM'
+                    ? Icon(Icons.check)
+                    : null,
                 onTap: () {
                   updateDateFormat('yyyy/dd/MM');
                   Navigator.pop(context);
