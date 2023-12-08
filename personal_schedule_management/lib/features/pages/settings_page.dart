@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool isFormatTime24h = false;
   bool isShowWeather = false;
   bool hasCalledGetData = false;
-  String selectedDateFormat = '';
+  String selectedDateFormat = 'dd/MM/yyyy';
 
   Future<void> updateDateFormat(String newDateFormat) async {
     SettingsController settingsController = SettingsController();
