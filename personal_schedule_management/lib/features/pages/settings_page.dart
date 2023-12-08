@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
+import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -20,12 +22,30 @@ class _SettingsPageState extends State<SettingsPage> {
   bool isFormatTime24h = false;
   bool isShowWeather = false;
   bool hasCalledGetData = false;
-  String selectedDateFormat = 'dd/MM/yyyy';
+  String selectedDateFormat = AppDateFormat.DAY_MONTH_YEAR;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedDateFormat();
+  }
+
+  Future<void> _loadSelectedDateFormat() async {
+    SettingsController settingsController = SettingsController();
+    String? savedDateFormat = await settingsController.GetDateFormat();
+    if (savedDateFormat != null) {
+      setState(() {
+        selectedDateFormat = savedDateFormat;
+      });
+    }
+  }
 
   Future<void> updateDateFormat(String newDateFormat) async {
     SettingsController settingsController = SettingsController();
     await settingsController.SetDateFormat(newDateFormat);
-    selectedDateFormat = newDateFormat;
+    setState(() {
+      selectedDateFormat = newDateFormat;
+    });
   }
 
   void showDateFormatDialog() {
@@ -38,42 +58,42 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text('dd/MM/yyyy'),
-                trailing: selectedDateFormat == 'dd/MM/yyyy'
+                title: Text(AppDateFormat.DAY_MONTH_YEAR),
+                trailing: selectedDateFormat == AppDateFormat.DAY_MONTH_YEAR
                     ? Icon(Icons.check)
                     : null,
                 onTap: () {
-                  updateDateFormat('dd/MM/yyyy');
+                  updateDateFormat(AppDateFormat.DAY_MONTH_YEAR);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                title: Text('MM/dd/yyyy'),
-                trailing: selectedDateFormat == 'MM/dd/yyyy'
+                title: Text(AppDateFormat.MONTH_DAY_YEAR),
+                trailing: selectedDateFormat == AppDateFormat.MONTH_DAY_YEAR
                     ? Icon(Icons.check)
                     : null,
                 onTap: () {
-                  updateDateFormat('MM/dd/yyyy');
+                  updateDateFormat(AppDateFormat.MONTH_DAY_YEAR);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                title: Text('yyyy/MM/dd'),
-                trailing: selectedDateFormat == 'yyyy/MM/dd'
+                title: Text(AppDateFormat.YEAR_MONTH_DAY),
+                trailing: selectedDateFormat == AppDateFormat.YEAR_MONTH_DAY
                     ? Icon(Icons.check)
                     : null,
                 onTap: () {
-                  updateDateFormat('yyyy/MM/dd');
+                  updateDateFormat(AppDateFormat.YEAR_MONTH_DAY);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                title: Text('yyyy/dd/MM'),
-                trailing: selectedDateFormat == 'yyyy/dd/MM'
+                title: Text(AppDateFormat.YEAR_DAY_MONTH),
+                trailing: selectedDateFormat == AppDateFormat.YEAR_DAY_MONTH
                     ? Icon(Icons.check)
                     : null,
                 onTap: () {
-                  updateDateFormat('yyyy/dd/MM');
+                  updateDateFormat(AppDateFormat.YEAR_DAY_MONTH);
                   Navigator.pop(context);
                 },
               ),
