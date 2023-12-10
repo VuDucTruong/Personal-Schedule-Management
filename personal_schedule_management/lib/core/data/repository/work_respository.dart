@@ -8,4 +8,5 @@ abstract class WorkRespository {
   Future<String?> updateWorkToRemote(CongViec congViec);
   Future<void> updateTinhTrangWork(String maCV, int trangThai);
   Future<void> addException(String maCV, DateTime exception);
+  Future<List<CongViec>> findWorkByTitle(String title);
 }

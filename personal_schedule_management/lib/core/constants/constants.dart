@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 const String CONGVIEC = 'CONGVIEC';
 const String CHUKY = 'CHUKY';
 const String KHACHMOI = 'KHACHMOI';
@@ -47,3 +49,12 @@ const String TIME_24H_FORMAT = 'time_24';
 const String WEATHER = 'weather';
 const String RINGTONE = 'ringtone';
 const String DEFAULT_RINGTONE = 'assets/ringtones/bird_sound.mp3';
+
+const List<Color> COLOR_LEVEL = [
+  Colors.red,
+  Colors.orange,
+  Colors.yellow,
+  Colors.lightGreenAccent,
+  Colors.green
+];
+

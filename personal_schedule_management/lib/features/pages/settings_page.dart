@@ -5,6 +5,7 @@ import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
+import 'package:personal_schedule_management/features/pages/changepass_page.dart';
 import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,10 +55,9 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Chọn định dạng ngày:',
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: FontWeight.bold)
-                ),
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

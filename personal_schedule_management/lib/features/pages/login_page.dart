@@ -74,14 +74,22 @@ class _LoginPageState extends State<LoginPage> {
       emailFocus.unfocus();
       passwordFocus.unfocus();
     });
-    if (await signIn(context)) {
-      // ignore: use_build_context_synchronously
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MyApp(),
-        ),
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+    bool result = await signIn(context);
+    Navigator.of(context, rootNavigator: true).pop();
+
+    if (result) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+        _createRoute(), (route) => false
       );
     } else {
       setState(() {
@@ -97,7 +105,6 @@ class _LoginPageState extends State<LoginPage> {
           password: passwordController.value.text);
     } on FirebaseAuthException {
       // ignore: use_build_context_synchronously
-      Navigator.of(context).pop();
       return false;
     }
     // ignore: use_build_context_synchronously
@@ -105,28 +112,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void forgetPasswordTextTapped(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
-    Navigator.of(context).pop();
-    Navigator.of(context)
+    Navigator.of(context, rootNavigator: true)
         .push(MaterialPageRoute(builder: (context) => const ForgotPassPage()));
   }
 
   void signUpTextTapped(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
-    Navigator.of(context).pop();
-    Navigator.of(context)
+    Navigator.of(context, rootNavigator: true)
         .push(MaterialPageRoute(builder: (context) => const RegisterPage()));
   }
 
@@ -475,6 +466,20 @@ class _LoginPageState extends State<LoginPage> {
               )),
         ),
       ),
+    );
+  }
+
+  // CHANGE PAGE ANIMATION
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+      const MyApp(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
     );
   }
 }

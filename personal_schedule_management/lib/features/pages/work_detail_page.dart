@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
+import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
+import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
 import 'package:personal_schedule_management/features/controller/work_detail_controller.dart';
 import 'package:personal_schedule_management/features/pages/create_work_page.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../core/domain/entity/cong_viec_ht_entity.dart';
 import '../../core/domain/entity/thong_bao_entity.dart';
+import '../widgets/stateless/delete_dialog.dart';
 
 class WorkDetailPage extends StatefulWidget {
   @override
@@ -16,16 +21,19 @@ class WorkDetailPage extends StatefulWidget {
     return _WorkDetailPageState();
   }
 
-  WorkDetailPage(this.congViec, this.startDay, this.endDay, {super.key});
+  WorkDetailPage(this.congViec, this.appointment, {super.key});
   CongViec congViec;
-  DateTime startDay;
-  DateTime endDay;
+  Appointment appointment;
 }
 
 class _WorkDetailPageState extends State<WorkDetailPage> {
   late CongViec selectedCongViec;
   late DateFormat dayFormat;
   WorkDetailController controller = WorkDetailController();
+  CalendarScheduleController calendarScheduleController =
+      CalendarScheduleController();
+  DataSourceController dataSourceController =
+      GetIt.instance<DataSourceController>();
   @override
   void initState() {
     super.initState();
@@ -51,8 +59,8 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
     int times = 0;
     int timesRemove = 0;
     return FutureBuilder(
-      future:
-          controller.getCompletedWork(selectedCongViec.maCV, widget.startDay),
+      future: controller.getCompletedWork(
+          selectedCongViec.maCV, widget.appointment.startTime),
       builder: (context, snapshot) {
         CongViecHT? congViecHT = snapshot.data;
         String complete =
@@ -89,12 +97,13 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                           if (times++ > 0) return;
                           if (congViecHT != null) {
                             await controller.removeCompletedWork(
-                                selectedCongViec.maCV, widget.startDay);
+                                selectedCongViec.maCV,
+                                widget.appointment.startTime);
                           } else {
                             await controller.addCompletedWork(
                                 selectedCongViec.maCV,
-                                widget.startDay,
-                                widget.endDay);
+                                widget.appointment.startTime,
+                                widget.appointment.endTime);
                           }
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Cập nhật trạng thái thành công')));
@@ -126,32 +135,64 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                         value: 'Xóa',
                         onTap: () async {
                           if (timesRemove > 0) return;
-                          String title = selectedCongViec.thoiDiemLap.isNotEmpty
-                              ? 'Xóa công việc lặp lại'
-                              : 'Xóa công việc';
-                          bool result = await showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text(title),
-                                  actions: [
-                                    FilledButton(
+                          if ((selectedCongViec.thoiDiemLap.isNotEmpty)) {
+                            int result = await showDialog(
+                                  context: context,
+                                  builder: (context) => DeleteDialog(),
+                                ) ??
+                                0;
+                            if (result == 0) return;
+                            if (result == 1) {
+                              await calendarScheduleController
+                                  .removeWork(selectedCongViec.maCV);
+                              dataSourceController
+                                  .removeAppointment(widget.appointment);
+                            } else {
+                              await calendarScheduleController
+                                  .addExceptionInWork(selectedCongViec.maCV,
+                                      widget.appointment.startTime);
+                              if (widget.appointment.recurrenceExceptionDates !=
+                                  null) {
+                                widget.appointment.recurrenceExceptionDates
+                                    ?.add(widget.appointment.startTime);
+                              } else {
+                                widget.appointment.recurrenceExceptionDates = [
+                                  widget.appointment.startTime
+                                ];
+                              }
+                              dataSourceController
+                                  .updateAppointment(widget.appointment);
+                            }
+                          } else {
+                            bool result = await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    content: Text('Xóa công việc này ?'),
+                                    actions: [
+                                      FilledButton(
                                         onPressed: () {
                                           Navigator.pop(context, true);
                                         },
-                                        child: Text('OK')),
-                                    FilledButton(
+                                        child: Text('OK'),
+                                      ),
+                                      FilledButton(
                                         onPressed: () {
                                           Navigator.pop(context, false);
                                         },
-                                        child: Text('Hủy'))
-                                  ],
-                                ),
-                              ) ??
-                              false;
-                          if (!result) return;
+                                        child: Text('Hủy'),
+                                      )
+                                    ],
+                                  ),
+                                ) ??
+                                false;
+                            if (result) {
+                              await calendarScheduleController
+                                  .removeWork(selectedCongViec.maCV);
+                              dataSourceController
+                                  .removeAppointment(widget.appointment);
+                            }
+                          }
                           timesRemove++;
-                          await controller.deleteWork(selectedCongViec.maCV);
-                          isChange = true;
                           Navigator.pop(context, isChange);
                         },
                       ),
@@ -182,14 +223,14 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               'Ngày bắt đầu :',
                             ),
                             Text(
-                              '${dayFormat.format(selectedCongViec.ngayBatDau)}',
+                              '${dayFormat.format(widget.appointment.startTime)}',
                               style: TextStyle(color: Colors.grey.shade600),
                             ),
                             Text(
                               'Ngày kết thúc :',
                             ),
                             Text(
-                              '${dayFormat.format(selectedCongViec.ngayKetThuc)}',
+                              '${dayFormat.format(widget.appointment.endTime)}',
                               style: TextStyle(color: Colors.grey.shade600),
                             ),
                           ],

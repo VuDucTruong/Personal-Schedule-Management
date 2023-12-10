@@ -16,19 +16,17 @@ class CalendarScheduleController {
   Map<String, CongViecHT> congViecHTMap = {};
   Map<String, bool> checkBoxMap = {};
   Future<void> showWorkDetails(BuildContext context, Appointment appointment,
-      VoidCallback voidCallback) async {
+      VoidCallback setState) async {
     CongViec? congViec =
         await workRespositoryImpl.getCongViecById(appointment.id.toString());
     if (congViec != null) {
-      bool? result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WorkDetailPage(
-                congViec, appointment.startTime, appointment.endTime),
-          ));
-      if (result != null && result) {
-        voidCallback();
-      }
+      bool result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WorkDetailPage(congViec, appointment),
+              )) ??
+          false;
+      if (result) setState();
     }
   }
 
