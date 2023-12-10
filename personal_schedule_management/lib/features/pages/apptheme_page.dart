@@ -42,7 +42,6 @@ class _AppThemePageState extends State<AppThemePage> {
         }
     );
     _currentTheme = await settingsController.GetAppTheme();
-    print("CurrentTheme: " + _currentTheme.toString());
     _selectedTheme = _currentTheme ?? AppTheme.DEFAULT;
     _currentDarkMode = await settingsController.GetDarkMode() ?? false;
     Navigator.of(context).pop();
@@ -56,6 +55,15 @@ class _AppThemePageState extends State<AppThemePage> {
     Future.delayed(Duration.zero, () {
       this._GetData();
     });
+  }
+
+  @override
+  void dispose() {
+    _currentTheme = _selectedTheme;
+    settingsController.SetAppTheme(_selectedTheme);
+    _currentDarkMode = AppTheme.IsDarkMode;
+    settingsController.SetDarkMode(_currentDarkMode);
+    super.dispose();
   }
 
   @override
@@ -119,11 +127,8 @@ class _AppThemePageState extends State<AppThemePage> {
           appBar: AppBar(
             centerTitle: false,
             leading: IconButton(
-                onPressed: () async {
-                  AppTheme.of(context, listen: false).LoadAppTheme(_currentTheme);
-                  if (_currentDarkMode != AppTheme.IsDarkMode)
-                    AppTheme.of(context, listen: false).ToggleDarkMode();
-                  Navigator.of(context).pop();
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
                 },
                 icon: Icon(FontAwesomeIcons.circleChevronLeft,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
@@ -131,42 +136,6 @@ class _AppThemePageState extends State<AppThemePage> {
                     style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold)),
-            actions: [
-              // Save button
-              IconButton(
-                  onPressed: () async {
-                    showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) {
-                          return const Center(
-                              child: CircularProgressIndicator()
-                          );
-                        }
-                    );
-                    _currentTheme = _selectedTheme;
-                    await settingsController.SetAppTheme(_selectedTheme);
-                    _currentDarkMode = AppTheme.IsDarkMode;
-                    await settingsController.SetDarkMode(_currentDarkMode);
-                    Navigator.of(context).pop();
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Thông báo',
-                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontWeight: FontWeight.bold)
-                          ),
-                        content: Text('Thay đổi giao diện thành công',
-                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.onBackground)
-                        ),
-                      ),
-                    );
-                  },
-                  icon: Icon(FontAwesomeIcons.solidFloppyDisk,
-                      size: 40, color: Theme.of(context).colorScheme.primary)),
-            ],
           ),
           body: SingleChildScrollView(
             child: Column(

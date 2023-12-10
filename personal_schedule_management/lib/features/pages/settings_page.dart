@@ -53,7 +53,11 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Chọn định dạng ngày:'),
+          title: Text('Chọn định dạng ngày:',
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontWeight: FontWeight.bold)
+                ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
