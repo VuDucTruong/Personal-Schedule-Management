@@ -82,7 +82,8 @@ class _ChangePassPageState extends State<ChangePassPage> {
     _PasswordFocus.unfocus();
     _RePasswordFocus.unfocus();
     _PasswordValidateText = _PasswordValidating(_PasswordController.value.text);
-    _RePasswordValidateText = _RePasswordValidating(_RePasswordController.value.text);
+    _RePasswordValidateText =
+        _RePasswordValidating(_RePasswordController.value.text);
     if (_PasswordCorrect && _RePasswordCorrect) {
       // do something
       bool? result = true;

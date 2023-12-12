@@ -1,12 +1,15 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:get_it/get_it.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:personal_schedule_management/notification_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../config/theme/app_theme.dart';
+import '../../core/constants/constants.dart';
 import '../../core/domain/entity/cong_viec_entity.dart';
 import '../../core/domain/entity/thong_bao_entity.dart';
 
@@ -21,56 +24,35 @@ class CalendarPageController {
       GetIt.instance<CompletedWorkRespositoryImpl>();
   NotificationRespositoryImpl notificationRespositoryImpl =
       GetIt.instance<NotificationRespositoryImpl>();
-  NotificationServices notificationServices =
-      GetIt.instance<NotificationServices>();
   bool isWeatherVisible = true;
 
   Future<bool> getCalendarEvents() async {
+    if (times++ > 0) return false;
     appointmentList = [];
     await loadAppointment();
-    if (times++ >= 1) {
-      return true;
-    }
-
     final calendarsResult = (await deviceCalendarPlugin.retrieveCalendars());
-    final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
-    List<String> calendarIds = [];
-    List<Calendar> calendarSingleList = [];
-    createCalendarWithoutDuplicated(calendars, calendarSingleList);
-    for (Calendar calendar in calendarSingleList) {
-      calendarIds.add(calendar.id.toString());
-    }
-    List<Event> eventList = await retrieveEvents(calendarIds);
-    for (Event event in eventList) {
-      appointmentList.add(Appointment(
-          id: event.eventId,
-          startTime: DateTime.parse(event.start.toString()),
-          endTime: DateTime.parse(event.end.toString()),
-          isAllDay: event.allDay!,
-          subject: event.title!,
-          notes: '0|0',
-          location: event.location,
-          color: lightColorScheme.primary));
+    if (calendarsResult.data != null) {
+      final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
+      List<String> calendarIds = [];
+      List<Calendar> calendarSingleList = [];
+      await createCalendarWithoutDuplicated(calendars, calendarSingleList);
+      for (Calendar calendar in calendarSingleList) {
+        calendarIds.add(calendar.id.toString());
+      }
+      List<Event> eventList = await retrieveEvents(calendarIds);
+      for (Event event in eventList) {
+        appointmentList.add(Appointment(
+            id: event.eventId,
+            startTime: DateTime.parse(event.start.toString()),
+            endTime: DateTime.parse(event.end.toString()),
+            isAllDay: event.allDay!,
+            subject: event.title!,
+            notes: '0|0|0',
+            location: event.location,
+            color: SchemeLight_default.primary));
+      }
     }
     return true;
-  }
-
-  CalendarPageController() {}
-
-  Future<void> setUpNotification(CalendarDataSource calendarDataSource) async {
-    List<Appointment> appointments =
-        calendarDataSource.getVisibleAppointments(DateTime.now(), '');
-    notificationServices.cancelNotification();
-    for (Appointment i in appointments) {
-      List<ThongBao> thongBao = await notificationRespositoryImpl
-          .getNotificationByWorkId(i.id.toString());
-      for (ThongBao j in thongBao) {
-        DateTime time = i.startTime.subtract(j.thoiGian);
-        if (time.isBefore(DateTime.now())) continue;
-        await notificationServices.createNotification(i, time, j.maTB);
-      }
-      ;
-    }
   }
 
   Future<List<Event>> retrieveEvents(List<String> calendarIds) async {
@@ -91,15 +73,19 @@ class CalendarPageController {
         print('Lỗi khi lấy danh sách sự kiện: ${eventsResult.errors}');
       }
     }
-
     return events;
   }
 
-  void createCalendarWithoutDuplicated(
-      List<Calendar> calendarList, List<Calendar> newList) {
+  Future<void> createCalendarWithoutDuplicated(
+      List<Calendar> calendarList, List<Calendar> newList) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> banList = prefs.getStringList(BAN_ACCOUNT) ?? [];
+    bool isSync = prefs.getBool(SYNC) ?? true;
+    if (!isSync) return;
     Set<String?> accountNameSet = Set();
     calendarList.forEach((element) {
-      if (!accountNameSet.contains(element.accountName)) {
+      if (!accountNameSet.contains(element.accountName) &&
+          !banList.contains(element.accountName)) {
         accountNameSet.add(element.accountName);
         newList.add(element);
       }
@@ -124,7 +110,7 @@ class CalendarPageController {
         recurrenceRule: rule,
         location: congViec.diaDiem,
         recurrenceExceptionDates: congViec.ngayNgoaiLe,
-        notes: '1|${congViec.doUuTien}');
+        notes: '1|${congViec.doUuTien}|${congViec.isBaoThuc}');
     //if (appointmentList.contains(appointment)) return;
     appointmentList.add(appointment);
   }
@@ -132,7 +118,6 @@ class CalendarPageController {
   Future<void> loadAppointment() async {
     List<CongViec> congViecList =
         await workRespositoryImpl.getAllCongViecByUserId('');
-
     for (var element in congViecList) {
       await _createAppointment(element);
     }

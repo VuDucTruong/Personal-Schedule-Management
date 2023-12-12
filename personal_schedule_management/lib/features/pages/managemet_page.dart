@@ -72,8 +72,8 @@ class _ManagementPageState extends State<ManagementPage> {
                               Radius.circular(10),
                             ),
                             color: selectedCategory == 'Tất cả'
-                                ? lightColorScheme.primaryContainer
-                                : lightColorScheme.secondaryContainer,
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context).colorScheme.secondaryContainer,
                           ),
                           child: Text(
                             'Tất cả',
@@ -101,8 +101,8 @@ class _ManagementPageState extends State<ManagementPage> {
                               Radius.circular(10),
                             ),
                             color: selectedCategory == 'Công việc'
-                                ? lightColorScheme.primaryContainer
-                                : lightColorScheme.secondaryContainer,
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context).colorScheme.secondaryContainer,
                           ),
                           child: Text(
                             'Công việc',
@@ -129,8 +129,8 @@ class _ManagementPageState extends State<ManagementPage> {
                               Radius.circular(10),
                             ),
                             color: selectedCategory == 'Cá nhân'
-                                ? lightColorScheme.primaryContainer
-                                : lightColorScheme.secondaryContainer,
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context).colorScheme.secondaryContainer,
                           ),
                           child: Text(
                             'Cá nhân',
@@ -304,7 +304,7 @@ class _ManagementPageState extends State<ManagementPage> {
             top: _position.dy,
             child: Draggable(
               child: FloatingActionButton(
-                backgroundColor: lightColorScheme.primaryContainer,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 onPressed: () {
                   // Xử lý khi nút được bấm
                 },
@@ -316,7 +316,7 @@ class _ManagementPageState extends State<ManagementPage> {
                 shape: CircleBorder(),
               ),
               feedback: FloatingActionButton(
-                backgroundColor: lightColorScheme.primaryContainer,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 onPressed: () {},
                 child: Icon(
                   FontAwesomeIcons.plus,

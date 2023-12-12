@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
-import 'package:personal_schedule_management/config/theme/app_theme.dart';
+import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:personal_schedule_management/features/pages/changepass_page.dart';
 import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -18,238 +20,401 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   SettingsController settingsController = SettingsController();
+  bool isFormatTime24h = false;
+  bool isShowWeather = false;
+  bool hasCalledGetData = false;
+  String selectedDateFormat = AppDateFormat.DAY_MONTH_YEAR;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedDateFormat();
+  }
+
+  Future<void> _loadSelectedDateFormat() async {
+    SettingsController settingsController = SettingsController();
+    String? savedDateFormat = await settingsController.GetDateFormat();
+    if (savedDateFormat != null) {
+      setState(() {
+        selectedDateFormat = savedDateFormat;
+      });
+    }
+  }
+
+  Future<void> updateDateFormat(String newDateFormat) async {
+    SettingsController settingsController = SettingsController();
+    await settingsController.SetDateFormat(newDateFormat);
+    setState(() {
+      selectedDateFormat = newDateFormat;
+    });
+  }
+
+  void showDateFormatDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Chọn định dạng ngày:',
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.bold)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(AppDateFormat.DAY_MONTH_YEAR),
+                trailing: selectedDateFormat == AppDateFormat.DAY_MONTH_YEAR
+                    ? Icon(Icons.check)
+                    : null,
+                onTap: () {
+                  updateDateFormat(AppDateFormat.DAY_MONTH_YEAR);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(AppDateFormat.MONTH_DAY_YEAR),
+                trailing: selectedDateFormat == AppDateFormat.MONTH_DAY_YEAR
+                    ? Icon(Icons.check)
+                    : null,
+                onTap: () {
+                  updateDateFormat(AppDateFormat.MONTH_DAY_YEAR);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(AppDateFormat.YEAR_MONTH_DAY),
+                trailing: selectedDateFormat == AppDateFormat.YEAR_MONTH_DAY
+                    ? Icon(Icons.check)
+                    : null,
+                onTap: () {
+                  updateDateFormat(AppDateFormat.YEAR_MONTH_DAY);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(AppDateFormat.YEAR_DAY_MONTH),
+                trailing: selectedDateFormat == AppDateFormat.YEAR_DAY_MONTH
+                    ? Icon(Icons.check)
+                    : null,
+                onTap: () {
+                  updateDateFormat(AppDateFormat.YEAR_DAY_MONTH);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> getData() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return const Center(child: CircularProgressIndicator());
+        });
+    isFormatTime24h =
+        await settingsController.GetTime24hFormatSetting() ?? false;
+    isShowWeather = await settingsController.GetWeatherSetting() ?? true;
+    Navigator.of(context, rootNavigator: true).pop();
+    setState(() {
+      isShowWeather = isShowWeather;
+    });
+    hasCalledGetData = true;
+  }
+
+  Future<void> launchEmailApp(String email) async {
+    final Uri _emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      queryParameters: {
+        'subject': 'Góp_Ý_Của_Người_Dùng',
+      },
+    );
+
+    try {
+      await launchUrl(_emailLaunchUri);
+    } catch (e) {
+      print('Không thể mở ứng dụng email: $e');
+    }
+  }
+
+  Future<void> formatTime24h() async {
+    setState(() {
+      isFormatTime24h = !isFormatTime24h;
+    });
+    await settingsController.SetTime24hFormatSetting(isFormatTime24h);
+  }
+
+  Future<void> showWeather() async {
+    setState(() {
+      isShowWeather = !isShowWeather;
+    });
+    await settingsController.SetWeatherSetting(isShowWeather);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     User? user = settingsController.currentUser;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Cài đặt',
-          style: AppTextStyle.h2,
-        ),
-      ),
-      body: Container(
-        margin: EdgeInsets.all(8),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: 200,
-                margin: EdgeInsets.only(bottom: 4),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                        image: AssetImage('assets/image/setting_image.jpg'),
-                        fit: BoxFit.cover)),
-              ),
-              Builder(builder: (context) {
-                if (user != null) {
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            child: Icon(FontAwesomeIcons.userLarge),
-                            backgroundColor: lightColorScheme.primaryContainer,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          RichText(
-                              text: TextSpan(children: [
-                            TextSpan(
-                                text: 'Xin chào',
-                                style: TextStyle(color: Colors.black)),
-                            TextSpan(
-                                text: ' ${user.displayName ?? user.email!}',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black)),
-                          ])),
-                          Spacer(),
-                          PopupMenuButton(
-                            offset: Offset(0, 40),
-                            itemBuilder: (context) {
-                              return [
-                                PopupMenuItem(
-                                    child: Text('Đăng xuất'),
-                                    onTap: () async {
-                                      await settingsController.signOut();
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => LoginPage(),
-                                          ));
-                                    }),
-                                PopupMenuItem(
-                                  child: Text('Đổi mật khẩu'),
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ChangePassPage(),
-                                      )),
-                                ),
-                              ];
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginPage(),
-                          ));
-                    },
-                    child: Card(
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            child: Icon(FontAwesomeIcons.userLarge),
-                            backgroundColor: lightColorScheme.primaryContainer,
-                          ),
-                          Text('Đăng nhập'),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-              }),
-              SizedBox(
-                height: 12,
-              ),
-              Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(8),
-                      child: Text(
-                        'Lịch',
-                        style: AppTextStyle.h2_5,
-                      ),
-                    ),
-                    SettingItem(
-                      color: Colors.pinkAccent,
-                      content: 'Lịch của bạn',
-                      iconData: FontAwesomeIcons.solidCircleUser,
-                      isSwitch: false,
-                      function: null,
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      content: 'Đồng bộ hóa tài khoản',
-                      iconData: Icons.cloud_sync,
-                      color: Colors.tealAccent,
-                      isSwitch: false,
-                      function: () => AppRoutes.toSyncCalendarPage(context),
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      color: Colors.deepPurpleAccent,
-                      content: 'Định dạng ngày',
-                      iconData: FontAwesomeIcons.calendarDays,
-                      isSwitch: false,
-                      function: null,
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      color: Colors.red,
-                      content: 'Định dạng thời gian 24h',
-                      iconData: Icons.av_timer,
-                      isSwitch: true,
-                      function: null,
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      color: Colors.lightBlueAccent,
-                      content: 'Hiển thị thời tiết',
-                      iconData: FontAwesomeIcons.cloudSun,
-                      isSwitch: true,
-                      function: null,
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(8),
-                      child: Text(
-                        'Tùy chỉnh',
-                        style: AppTextStyle.h2_5,
-                      ),
-                    ),
-                    SettingItem(
-                      color: Colors.blue,
-                      content: 'Tiện ích',
-                      iconData: FontAwesomeIcons.mobile,
-                      isSwitch: false,
-                      function: null,
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      color: Colors.orangeAccent,
-                      content: 'Nhạc chuông',
-                      iconData: FontAwesomeIcons.music,
-                      isSwitch: false,
-                      function: null,
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      color: Colors.yellowAccent,
-                      content: 'Thông báo & nhắc nhở',
-                      iconData: FontAwesomeIcons.solidBell,
-                      isSwitch: false,
-                      function: null,
-                    ),
-                    SettingsDivider(),
-                    SettingItem(
-                      function: null,
-                      color: Colors.purpleAccent,
-                      content: 'Giao diện',
-                      iconData: FontAwesomeIcons.brush,
-                      isSwitch: false,
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(8),
-                      child: Text(
-                        'Hỗ trợ',
-                        style: AppTextStyle.h2_5,
-                      ),
-                    ),
-                    SettingItem(
-                      color: Colors.lightGreenAccent,
-                      content: 'Phản hồi',
-                      iconData: FontAwesomeIcons.comments,
-                      isSwitch: false,
-                      function: null,
-                    ),
-                  ],
-                ),
-              )
-            ],
+        appBar: AppBar(
+          title: Text(
+            'Cài đặt',
+            style: AppTextStyle.h2.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontWeight: FontWeight.bold),
           ),
         ),
-      ),
-    );
+        body: Container(
+          margin: const EdgeInsets.all(8),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  height: 200,
+                  margin: const EdgeInsets.only(bottom: 4),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: const DecorationImage(
+                          image: AssetImage('assets/image/setting_image.jpg'),
+                          fit: BoxFit.cover)),
+                ),
+                Builder(builder: (context) {
+                  if (!hasCalledGetData) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      getData(); // Gọi hàm getData sau khi frame đã hoàn thành
+                    });
+                  }
+                  if (user != null) {
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              child: Icon(FontAwesomeIcons.userLarge),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            RichText(
+                                text: TextSpan(children: [
+                              TextSpan(
+                                  text: 'Xin chào',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
+                              TextSpan(
+                                  text: ' ${user.displayName ?? user.email!}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
+                            ])),
+                            const Spacer(),
+                            PopupMenuButton(
+                              offset: const Offset(0, 40),
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                      child: const Text('Đăng xuất'),
+                                      onTap: () async {
+                                        await settingsController.signOut();
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginPage(),
+                                            ));
+                                      }),
+                                  PopupMenuItem(
+                                    child: const Text('Đổi mật khẩu'),
+                                    onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ForgotPassPage(),
+                                        )),
+                                  ),
+                                ];
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ));
+                      },
+                      child: Card(
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              child: const Icon(FontAwesomeIcons.userLarge),
+                            ),
+                            const Text('Đăng nhập'),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                }),
+                const SizedBox(
+                  height: 12,
+                ),
+                Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        child: Text(
+                          'Lịch',
+                          style: AppTextStyle.h2_5.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer),
+                        ),
+                      ),
+                      SettingItem(
+                        color: Colors.pinkAccent,
+                        content: 'Lịch của bạn',
+                        iconData: FontAwesomeIcons.solidCircleUser,
+                        isSwitch: false,
+                        function: () => AppRoutes.toYourCalendarPage(context),
+                      ),
+                      // const SettingsDivider(),
+                      // SettingItem(
+                      //   content: 'Đồng bộ hóa tài khoản',
+                      //   iconData: Icons.cloud_sync,
+                      //   color: Colors.tealAccent,
+                      //   isSwitch: false,
+                      //   function: () => AppRoutes.toSyncCalendarPage(context),
+                      // ),
+                      const SettingsDivider(),
+                      SettingItem(
+                        color: Colors.deepPurpleAccent,
+                        content: 'Định dạng ngày',
+                        iconData: FontAwesomeIcons.calendarDays,
+                        isSwitch: false,
+                        function: showDateFormatDialog,
+                      ),
+                      const SettingsDivider(),
+                      SettingItem(
+                        color: Colors.red,
+                        content: 'Định dạng thời gian 24h',
+                        iconData: Icons.av_timer,
+                        isSwitch: true,
+                        switchValue: isFormatTime24h,
+                        function: formatTime24h,
+                      ),
+                      const SettingsDivider(),
+                      SettingItem(
+                        color: Colors.lightBlueAccent,
+                        content: 'Hiển thị thời tiết',
+                        iconData: FontAwesomeIcons.cloudSun,
+                        isSwitch: true,
+                        switchValue: isShowWeather,
+                        function: showWeather,
+                      ),
+                    ],
+                  ),
+                ),
+                Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        child: Text(
+                          'Tùy chỉnh',
+                          style: AppTextStyle.h2_5.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer),
+                        ),
+                      ),
+                      /*SettingItem(
+                        color: Colors.blue,
+                        content: 'Tiện ích',
+                        iconData: FontAwesomeIcons.mobile,
+                        isSwitch: false,
+                        function: null,
+                      ),
+                      const SettingsDivider(),*/
+                      SettingItem(
+                        color: Colors.orangeAccent,
+                        content: 'Nhạc chuông',
+                        iconData: FontAwesomeIcons.music,
+                        isSwitch: false,
+                        function: () => AppRoutes.toRingtonePage(context),
+                      ),
+                      const SettingsDivider(),
+                      SettingItem(
+                        color: Colors.brown,
+                        content: 'Thông báo & nhắc nhở',
+                        iconData: FontAwesomeIcons.solidBell,
+                        isSwitch: false,
+                        function: null,
+                      ),
+                      const SettingsDivider(),
+                      SettingItem(
+                        function: () => AppRoutes.toAppThemePage(context),
+                        color: Colors.purpleAccent,
+                        content: 'Giao diện',
+                        iconData: FontAwesomeIcons.brush,
+                        isSwitch: false,
+                      ),
+                    ],
+                  ),
+                ),
+                Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        child: Text(
+                          'Hỗ trợ',
+                          style: AppTextStyle.h2_5.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer),
+                        ),
+                      ),
+                      SettingItem(
+                        color: Colors.lightGreenAccent,
+                        content: 'Phản hồi',
+                        iconData: FontAwesomeIcons.comments,
+                        isSwitch: false,
+                        function: () {
+                          launchEmailApp('personalschedulemanager@gmail.com');
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -260,7 +425,7 @@ class SettingsDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Divider(
+    return const Divider(
       height: 0.5,
       color: Colors.grey,
       thickness: 0.25,
@@ -268,12 +433,52 @@ class SettingsDivider extends StatelessWidget {
   }
 }
 
-class SettingItem extends StatelessWidget {
+// ignore: must_be_immutable
+class SettingItem extends StatefulWidget {
+  SettingItem(
+      {required this.function,
+      required this.content,
+      required this.iconData,
+      required this.color,
+      required this.isSwitch,
+      this.switchValue = false,
+      super.key});
+
   String content;
   IconData iconData;
   Color color;
   bool isSwitch;
+  bool switchValue;
   VoidCallback? function;
+
+  @override
+  State<StatefulWidget> createState() => _SettingItem(
+      function: function,
+      content: content,
+      iconData: iconData,
+      color: color,
+      isSwitch: isSwitch,
+      switchValue: switchValue);
+}
+
+class _SettingItem extends State<SettingItem> {
+  String content;
+  IconData iconData;
+  Color color;
+  bool isSwitch;
+  bool switchValue;
+  VoidCallback? function;
+
+  @override
+  void didUpdateWidget(covariant SettingItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.switchValue != oldWidget.switchValue) {
+      setState(() {
+        switchValue = widget.switchValue;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -288,7 +493,7 @@ class SettingItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5), color: color),
               child: Icon(iconData, color: Colors.white),
             ),
-            SizedBox(
+            const SizedBox(
               width: 16,
             ),
             Text(
@@ -298,17 +503,23 @@ class SettingItem extends StatelessWidget {
           ],
         ),
         trailing: isSwitch
-            ? Switch(value: false, onChanged: (_) {})
-            : Icon(FontAwesomeIcons.angleRight),
+            ? Switch(
+                value: switchValue,
+                onChanged: (value) {
+                  if (function != null) {
+                    function!();
+                  }
+                })
+            : const Icon(FontAwesomeIcons.angleRight),
       ),
     );
   }
 
-  SettingItem(
+  _SettingItem(
       {required this.function,
       required this.content,
       required this.iconData,
       required this.color,
       required this.isSwitch,
-      super.key});
+      required this.switchValue});
 }

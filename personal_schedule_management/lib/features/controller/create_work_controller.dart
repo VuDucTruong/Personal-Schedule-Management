@@ -23,7 +23,7 @@ class CreateWorkController {
   List<String> reminderTimeList = [];
   List<String> contentRecurrence = [];
   Map<String, dynamic>? loop;
-  Color colorIcon = lightColorScheme.primary;
+  Color colorIcon = SchemeLight_default.primary;
   DateTime currentDate = DateTime.now();
   NotificationRespositoryImpl notificationRespositoryImpl =
       GetIt.instance<NotificationRespositoryImpl>();
@@ -81,14 +81,13 @@ class CreateWorkController {
     }
   }
 
-  Future<bool> createWork(CongViec congViec) async {
+  Future<String?> createWork(CongViec congViec) async {
     await getRecurrenceInfo(congViec);
     String? maCV = await workRespositoryImpl.insertWorkToRemote(congViec);
     if (maCV != null && reminderSwitch) {
       createNotification(maCV);
-      return true;
     }
-    return false;
+    return maCV;
   }
 
   Future<void> getRecurrenceInfo(CongViec congViec) async {

@@ -63,7 +63,7 @@ class _WorkCategoryDialogState extends State<WorkCategoryDialog> {
               Navigator.pop(context);
             },
             style:
-                FilledButton.styleFrom(backgroundColor: lightColorScheme.error),
+                FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: Text('Hủy'))
       ],
     );

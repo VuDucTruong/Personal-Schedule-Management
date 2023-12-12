@@ -4,11 +4,13 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
+import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
 import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
 import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
 import 'package:personal_schedule_management/features/controller/work_detail_controller.dart';
 import 'package:personal_schedule_management/features/pages/create_work_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../core/domain/entity/cong_viec_ht_entity.dart';
@@ -38,15 +40,27 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
   void initState() {
     super.initState();
     selectedCongViec = widget.congViec;
-    if (selectedCongViec.isCaNgay) {
-      dayFormat = DateFormat('EE, dd/MM/yyyy', 'vi_VN');
-    } else
-      dayFormat = DateFormat("EE, dd/MM/yyyy hh:mm a", 'vi_VN');
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<CongViecHT> getData_DateTimeFormat() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String timeFormatString = (prefs.getBool(TIME_24H_FORMAT) ?? false)
+        ? AppDateFormat.TIME_24H
+        : AppDateFormat.TIME_12H;
+    String dayFormatString =
+        prefs.getString(DATE_FORMAT) ?? AppDateFormat.DAY_MONTH_YEAR;
+    if (selectedCongViec.isCaNgay) {
+      dayFormat = DateFormat(dayFormatString, 'vi_VN');
+    } else {
+      dayFormat = DateFormat("$dayFormatString $timeFormatString", 'vi_VN');
+    }
+    return await controller.getCompletedWork(
+        selectedCongViec.maCV, widget.appointment.startTime);
   }
 
   final List<String> options = ['Chỉnh sửa', 'Hoàn thành'];
@@ -59,8 +73,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
     int times = 0;
     int timesRemove = 0;
     return FutureBuilder(
-      future: controller.getCompletedWork(
-          selectedCongViec.maCV, widget.appointment.startTime),
+      future: getData_DateTimeFormat(),
       builder: (context, snapshot) {
         CongViecHT? congViecHT = snapshot.data;
         String complete =
@@ -79,14 +92,14 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                 },
               ),
               iconTheme: IconThemeData(
-                color: lightColorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               actions: [
                 PopupMenuButton(
                   offset: Offset(0, 30),
                   icon: Icon(
                     Icons.more_horiz,
-                    color: lightColorScheme.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   itemBuilder: (context) {
                     return [
@@ -116,18 +129,12 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                         child: Text('Chỉnh sửa'),
                         value: 'Chỉnh sửa',
                         onTap: () async {
-                          List<dynamic> results = await showModalBottomSheet(
+                          await showModalBottomSheet(
                             isScrollControlled: true,
                             context: context,
                             builder: (context) =>
                                 CreateWorkPage(selectedCongViec),
                           );
-                          if (results.length > 1 && results[0]) {
-                            setState(() {
-                              isChange = true;
-                              selectedCongViec = results[1];
-                            });
-                          }
                         },
                       ),
                       PopupMenuItem(
@@ -245,6 +252,28 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          IconWithText(Icons.category, 'Loại công việc'),
+                          Text(
+                            selectedCongViec.loaiCongViec.isNotEmpty
+                                ? selectedCongViec.loaiCongViec
+                                : notSet,
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          IconWithText(Icons.priority_high, 'Độ ưu tiên'),
+                          Text(
+                            PRIORITY_MAP.keys
+                                .toList()[selectedCongViec.doUuTien - 1],
+                            style: TextStyle(
+                                color:
+                                    COLOR_LEVEL[selectedCongViec.doUuTien - 1],
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
                           IconWithText(Icons.description, 'Chi tiết'),
                           Text(
                             selectedCongViec.noiDung.isNotEmpty
@@ -328,7 +357,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
       children: [
         Icon(
           iconData,
-          color: lightColorScheme.primary,
+          color: Theme.of(context).colorScheme.primary,
         ),
         SizedBox(
           width: 4,

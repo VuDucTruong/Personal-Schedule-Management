@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/core/data/datasource/remote/api_services.dart';
+import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/report_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -23,9 +24,10 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDependencies();
   tz.initializeTimeZones();
-  runApp(
-    const MyApp(),
-  );
+  runApp(ChangeNotifierProvider(
+    create: (_) => AppTheme(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -42,6 +44,26 @@ class _MyAppState extends State<MyApp> {
     ReportPage(),
     SettingsPage(),
   ];
+
+  Future<void> _GetData() async {
+    SettingsController settingsController = SettingsController();
+    String _currentTheme = await settingsController.GetAppTheme() ?? AppTheme.DEFAULT;
+    bool _currentDarkMode = await settingsController.GetDarkMode() ?? false;
+    AppTheme.of(context).LoadAppTheme(_currentTheme);
+    if (AppTheme.IsDarkMode != _currentDarkMode)
+      AppTheme.of(context).ToggleDarkMode();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () {
+      _GetData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     GetIt.instance<NotificationServices>().initialNotification(context);
@@ -60,14 +82,11 @@ class _MyAppState extends State<MyApp> {
           Locale('vi'),
         ],
         locale: const Locale('vi'),
-        theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: lightColorScheme,
-            textTheme: GoogleFonts.robotoTextTheme()),
-        darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: darkColorScheme,
-            textTheme: GoogleFonts.robotoTextTheme()),
+        theme: AppTheme.of(context, listen: true).lightTheme,
+        darkTheme: AppTheme.of(context, listen: true).darkTheme,
+        themeMode: AppTheme.of(context, listen: true).darkMode
+            ? ThemeMode.dark
+            : ThemeMode.light,
         home: SafeArea(
           child: Scaffold(
               bottomNavigationBar: SlidingClippedNavBar(
@@ -85,7 +104,7 @@ class _MyAppState extends State<MyApp> {
                     selectedIndex = index;
                   });
                 },
-                activeColor: lightColorScheme.primary,
+                activeColor: AppTheme.lightColorScheme.primary,
               ),
               body: pageList[selectedIndex]),
         ),
@@ -93,6 +112,5 @@ class _MyAppState extends State<MyApp> {
       );
     } else
       return LoginPage();
-    // TODO: implement build
   }
 }

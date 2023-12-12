@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/calendar_data_source.dart';
 import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
 import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../config/text_styles/app_text_style.dart';
@@ -36,6 +37,10 @@ class _CalendarPageState extends State<CalendarPage>
   CalendarController calendarController = CalendarController();
   DataSourceController dataSourceController =
       GetIt.instance<DataSourceController>();
+  DateFormat timeFormat = DateFormat('HH:mm', 'vi_VN');
+  String timeFormatString = 'HH:mm';
+  DateFormat dayFormat = DateFormat(AppDateFormat.DAY_MONTH_YEAR);
+  bool isWeatherOn = true;
   @override
   void initState() {
     super.initState();
@@ -56,24 +61,36 @@ class _CalendarPageState extends State<CalendarPage>
   }
 
   void getAllCompleteWork() {
-    calendarScheduleController.getAllCompletedWork(
-      () {
-        setState(() {
-          //isNeedSetUp = true;
-        });
-      },
-    );
+    calendarScheduleController.getAllCompletedWork(() {});
+  }
+
+  bool isLoad = false;
+  Future<bool> tempFunc() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    timeFormatString =
+        (prefs.getBool(TIME_24H_FORMAT) ?? false) ? ('HH:mm') : ("hh:mm a");
+    timeFormat = DateFormat(timeFormatString, 'vi_VN');
+    dayFormat = DateFormat(
+        prefs.getString(DATE_FORMAT) ?? AppDateFormat.DAY_MONTH_YEAR);
+    isWeatherOn = prefs.getBool(WEATHER) ?? true;
+    if (!isLoad) {
+      getAllCompleteWork();
+      await calendarPageController.getCalendarEvents();
+      isLoad = true;
+    }
+    return true;
   }
 
   bool isNeedSetUp = true;
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     print('build!');
     return Scaffold(
-      drawer: MyDrawer(calendarController),
+      drawer: MyDrawer(calendarController, dayFormat, isWeatherOn),
       appBar: AppBar(
-        title: Text('Lịch'),
+        title: const Text('Lịch'),
         actions: [
           //Search
           IconButton(
@@ -84,11 +101,12 @@ class _CalendarPageState extends State<CalendarPage>
                       dataSourceController.calendarDataSource,
                       calendarScheduleController,
                       context,
-                      getAllCompleteWork),
+                      getAllCompleteWork,
+                      timeFormatString),
                 );
                 setState(() {});
               },
-              icon: Icon(FontAwesomeIcons.magnifyingGlass)),
+              icon: const Icon(FontAwesomeIcons.magnifyingGlass)),
           //Add
           IconButton(
               onPressed: () async {
@@ -100,24 +118,23 @@ class _CalendarPageState extends State<CalendarPage>
                   },
                 );
               },
-              icon: Icon(Icons.add_circle)),
+              icon: const Icon(Icons.add_circle)),
         ],
       ),
       body: FutureBuilder(
-        future: calendarPageController.getCalendarEvents(),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        future: tempFunc(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasData) {
             if (isNeedSetUp) {
               dataSourceController.appointmentList =
                   calendarPageController.appointmentList;
+              dataSourceController.setUpNotification();
               isNeedSetUp = false;
             }
-            calendarPageController
-                .setUpNotification(dataSourceController.calendarDataSource);
             return SfCalendar(
               controller: calendarController,
               view: CalendarView.schedule,
-              scheduleViewSettings: ScheduleViewSettings(
+              scheduleViewSettings: const ScheduleViewSettings(
                 appointmentItemHeight: 70,
               ),
               monthViewSettings: MonthViewSettings(
@@ -127,259 +144,26 @@ class _CalendarPageState extends State<CalendarPage>
                     todayBackgroundColor: Theme.of(context).colorScheme.primary,
                   )),
               dataSource: dataSourceController.calendarDataSource,
-              scheduleViewMonthHeaderBuilder: (BuildContext buildContext,
-                  ScheduleViewMonthHeaderDetails details) {
-                final String monthName = monthMap[details.date.month]!;
-                return Stack(
-                  children: [
-                    Image(
-                        image: AssetImage('assets/image/' + monthName + '.jpg'),
-                        fit: BoxFit.cover,
-                        width: details.bounds.width,
-                        height: details.bounds.height),
-                    Positioned(
-                      left: 55,
-                      right: 0,
-                      top: 20,
-                      bottom: 0,
-                      child: Text(
-                        monthName + ' ' + details.date.year.toString(),
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                );
+              onTap: (calendarTapDetails) {
+                print(dataSourceController.calendarDataSource.appointments
+                    ?.map((e) {
+                  Appointment x = e;
+                  print('${x.id} ${x.subject}');
+                }));
+                print(dataSourceController
+                    .calendarDataSource.appointments?.length);
               },
-              appointmentBuilder: (context, calendarAppointmentDetails) {
-                Appointment appointment = calendarAppointmentDetails
-                    .appointments.first as Appointment;
-                Duration duration = DateTime(appointment.startTime.year,
-                        appointment.startTime.month, appointment.startTime.day)
-                    .difference(DateTime(
-                        calendarAppointmentDetails.date.year,
-                        calendarAppointmentDetails.date.month,
-                        calendarAppointmentDetails.date.day));
-                Duration duration2 = DateTime(appointment.endTime.year,
-                        appointment.endTime.month, appointment.endTime.day)
-                    .difference(DateTime(
-                        appointment.endTime.year,
-                        appointment.startTime.month,
-                        appointment.startTime.day));
-                String durationString = '';
-                if (duration2.inDays > 0) {
-                  durationString =
-                      '(${-duration.inDays + 1} / ${duration2.inDays + 1})';
-                }
-                int? isFinished = (int.tryParse(appointment.notes![0]));
-                int? priority = (int.tryParse(appointment.notes![2]));
-                if (calendarController.view == CalendarView.day ||
-                    calendarController.view == CalendarView.week) {
-                  return InkWell(
-                    onTap: () async {
-                      Appointment appointment =
-                          calendarAppointmentDetails.appointments.first;
-                      await calendarScheduleController.showWorkDetails(
-                          context, appointment, getAllCompleteWork);
-                    },
-                    child: Container(
-                      child: Center(
-                        child: Text(
-                          appointment.subject,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      color: appointment.color,
-                    ),
-                  );
-                }
-                return InkWell(
-                  onTap: () async {
-                    Appointment appointment =
-                        calendarAppointmentDetails.appointments.first;
-                    await calendarScheduleController
-                        .showWorkDetails(context, appointment, () {
-                      calendarScheduleController.getAllCompletedWork(() {
-                        setState(() {});
-                      });
-                    });
-                  },
-                  child: Card(
-                    color: appointment.color,
-                    child: Container(
-                      margin: EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          if (isFinished == 1)
-                            Checkbox(
-                                side: BorderSide(color: Colors.white),
-                                value: calendarScheduleController.checkBoxMap[
-                                        '${appointment.startTime}'] ??
-                                    false,
-                                onChanged: (value) async {
-                                  if (value != null) {
-                                    setState(() {
-                                      calendarScheduleController.checkBoxMap[
-                                          '${appointment.startTime}'] = value;
-                                    });
-                                    if (value) {
-                                      await calendarScheduleController
-                                          .addCompletedWork(appointment);
-                                    } else {
-                                      await calendarScheduleController
-                                          .removeCompletedWork(
-                                              appointment.id.toString(),
-                                              appointment.startTime);
-                                    }
-                                  }
-                                }),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 180,
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          appointment.subject,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              overflow: TextOverflow.ellipsis),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 50,
-                                        child: Text(
-                                          '  $durationString',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              overflow: TextOverflow.ellipsis),
-                                        ),
-                                      )
-                                    ]),
-                              ),
-                              Builder(
-                                builder: (context) {
-                                  if (appointment.isAllDay) {
-                                    return Text(
-                                      'Cả ngày',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 14),
-                                    );
-                                  } else {
-                                    return Text(
-                                      '${timeFormat.format(appointment.startTime)} - ${timeFormat.format(appointment.endTime)}',
-                                      style: TextStyle(color: Colors.white),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                          Spacer(),
-                          Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                                color: COLOR_LEVEL[priority ?? 0],
-                                borderRadius: BorderRadius.circular(50)),
-                          ),
-                          Visibility(
-                            visible: isFinished == 1,
-                            child: InkWell(
-                              child: Icon(FontAwesomeIcons.xmark),
-                              onTap: () async {
-                                if ((appointment.recurrenceRule?.isNotEmpty ??
-                                    false)) {
-                                  int result = await showDialog(
-                                        context: context,
-                                        builder: (context) => DeleteDialog(),
-                                      ) ??
-                                      0;
-                                  if (result == 0) return;
-                                  calendarPageController.appointmentList
-                                      .remove(appointment);
-                                  if (result == 1) {
-                                    await calendarScheduleController
-                                        .removeWork(appointment.id.toString());
-                                    setState(() {
-                                      dataSourceController
-                                          .removeAppointment(appointment);
-                                    });
-                                  } else {
-                                    await calendarScheduleController
-                                        .addExceptionInWork(
-                                            appointment.id.toString(),
-                                            appointment.startTime);
-                                    if (appointment.recurrenceExceptionDates !=
-                                        null) {
-                                      appointment.recurrenceExceptionDates
-                                          ?.add(appointment.startTime);
-                                    } else {
-                                      appointment.recurrenceExceptionDates = [
-                                        appointment.startTime
-                                      ];
-                                    }
-                                    setState(() {
-                                      dataSourceController
-                                          .updateAppointment(appointment);
-                                    });
-                                  }
-                                } else {
-                                  bool result = await showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          content: Text('Xóa công việc này ?'),
-                                          actions: [
-                                            FilledButton(
-                                              onPressed: () {
-                                                Navigator.pop(context, true);
-                                              },
-                                              child: Text('OK'),
-                                            ),
-                                            FilledButton(
-                                              onPressed: () {
-                                                Navigator.pop(context, false);
-                                              },
-                                              child: Text('Hủy'),
-                                            )
-                                          ],
-                                        ),
-                                      ) ??
-                                      false;
-                                  if (result) {
-                                    await calendarScheduleController
-                                        .removeWork(appointment.id.toString());
-                                    setState(() {
-                                      dataSourceController
-                                          .removeAppointment(appointment);
-                                    });
-                                  }
-                                }
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+              scheduleViewMonthHeaderBuilder: (context, details) =>
+                  CustomMonthView(context, details),
+              appointmentBuilder: (context, calendarAppointmentDetails) =>
+                  CustomAppointment(context, calendarAppointmentDetails),
             );
           } else
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
         },
       ),
     );
   }
-
-  final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
 
   final Map<int, String> monthMap = {
     1: 'January',
@@ -395,6 +179,234 @@ class _CalendarPageState extends State<CalendarPage>
     11: 'November',
     12: 'December',
   };
+
+  Widget CustomAppointment(context, calendarAppointmentDetails) {
+    Appointment appointment =
+        calendarAppointmentDetails.appointments.first as Appointment;
+    Duration duration = DateTime(appointment.startTime.year,
+            appointment.startTime.month, appointment.startTime.day)
+        .difference(DateTime(
+            calendarAppointmentDetails.date.year,
+            calendarAppointmentDetails.date.month,
+            calendarAppointmentDetails.date.day));
+    Duration duration2 = DateTime(appointment.endTime.year,
+            appointment.endTime.month, appointment.endTime.day)
+        .difference(DateTime(appointment.endTime.year,
+            appointment.startTime.month, appointment.startTime.day));
+    String durationString = '';
+    if (duration2.inDays > 0) {
+      durationString = '(${-duration.inDays + 1} / ${duration2.inDays + 1})';
+    }
+    int? isFinished = (int.tryParse(appointment.notes![0]));
+    int? priority = (int.tryParse(appointment.notes![2]));
+    if (calendarController.view == CalendarView.day ||
+        calendarController.view == CalendarView.week) {
+      return InkWell(
+        onTap: () async {
+          Appointment appointment =
+              calendarAppointmentDetails.appointments.first;
+          await calendarScheduleController.showWorkDetails(
+              context, appointment, getAllCompleteWork);
+        },
+        child: Container(
+          child: Center(
+            child: Text(
+              appointment.subject,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          color: appointment.color,
+        ),
+      );
+    }
+    return InkWell(
+      onTap: () async {
+        Appointment appointment = calendarAppointmentDetails.appointments.first;
+        await calendarScheduleController.showWorkDetails(context, appointment,
+            () {
+          calendarScheduleController.getAllCompletedWork(() {
+            setState(() {});
+          });
+        });
+      },
+      child: Card(
+        color: appointment.color,
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              if (isFinished == 1)
+                Checkbox(
+                    side: const BorderSide(color: Colors.white),
+                    value: calendarScheduleController
+                            .checkBoxMap['${appointment.startTime}'] ??
+                        false,
+                    onChanged: (value) async {
+                      if (value != null) {
+                        setState(() {
+                          calendarScheduleController
+                              .checkBoxMap['${appointment.startTime}'] = value;
+                        });
+                        if (value) {
+                          await calendarScheduleController
+                              .addCompletedWork(appointment);
+                        } else {
+                          await calendarScheduleController.removeCompletedWork(
+                              appointment.id.toString(), appointment.startTime);
+                        }
+                      }
+                    }),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 180,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              appointment.subject,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 50,
+                            child: Text(
+                              '  $durationString',
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          )
+                        ]),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      if (appointment.isAllDay) {
+                        return const Text(
+                          'Cả ngày',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        );
+                      } else {
+                        return Text(
+                          '${timeFormat.format(appointment.startTime)} - ${timeFormat.format(appointment.endTime)}',
+                          style: const TextStyle(color: Colors.white),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                    color: COLOR_LEVEL[priority ?? 0],
+                    borderRadius: BorderRadius.circular(50)),
+              ),
+              Visibility(
+                visible: isFinished == 1,
+                child: InkWell(
+                  child: const Icon(FontAwesomeIcons.xmark),
+                  onTap: () async {
+                    if ((appointment.recurrenceRule?.isNotEmpty ?? false)) {
+                      int result = await showDialog(
+                            context: context,
+                            builder: (context) => DeleteDialog(),
+                          ) ??
+                          0;
+                      if (result == 0) return;
+                      if (result == 1) {
+                        await calendarScheduleController
+                            .removeWork(appointment.id.toString());
+                        setState(() {
+                          dataSourceController.removeAppointment(appointment);
+                        });
+                      } else {
+                        await calendarScheduleController.addExceptionInWork(
+                            appointment.id.toString(), appointment.startTime);
+                        if (appointment.recurrenceExceptionDates != null) {
+                          appointment.recurrenceExceptionDates
+                              ?.add(appointment.startTime);
+                        } else {
+                          appointment.recurrenceExceptionDates = [
+                            appointment.startTime
+                          ];
+                        }
+                        setState(() {
+                          dataSourceController.updateAppointment(appointment);
+                        });
+                      }
+                    } else {
+                      bool result = await showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              content: const Text('Xóa công việc này ?'),
+                              actions: [
+                                FilledButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                                FilledButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, false);
+                                  },
+                                  child: const Text('Hủy'),
+                                )
+                              ],
+                            ),
+                          ) ??
+                          false;
+                      if (result) {
+                        await calendarScheduleController
+                            .removeWork(appointment.id.toString());
+                        setState(() {
+                          dataSourceController.removeAppointment(appointment);
+                        });
+                      }
+                    }
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget CustomMonthView(buildContext, details) {
+    final String monthName = monthMap[details.date.month]!;
+    return Stack(
+      children: [
+        Image(
+            image: AssetImage('assets/image/' + monthName + '.jpg'),
+            fit: BoxFit.cover,
+            width: details.bounds.width,
+            height: details.bounds.height),
+        Positioned(
+          left: 55,
+          right: 0,
+          top: 20,
+          bottom: 0,
+          child: Text(
+            monthName + ' ' + details.date.year.toString(),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        )
+      ],
+    );
+  }
 }
 
 class CustomSearchDelegate extends SearchDelegate {
@@ -402,6 +414,7 @@ class CustomSearchDelegate extends SearchDelegate {
   CalendarScheduleController calendarScheduleController;
   BuildContext context;
   VoidCallback getAllCompleteWork;
+  String timeFormatString;
   late List<Appointment> appointmentList;
   Future<void> onTap(details) async {
     if ((details.appointments?.length ?? 5) == 1 && details.date != null) {
@@ -418,7 +431,7 @@ class CustomSearchDelegate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-          icon: Icon(Icons.clear))
+          icon: const Icon(Icons.clear))
     ];
   }
 
@@ -428,7 +441,7 @@ class CustomSearchDelegate extends SearchDelegate {
         onPressed: () {
           close(context, true);
         },
-        icon: Icon(Icons.arrow_back));
+        icon: const Icon(Icons.arrow_back));
   }
 
   @override
@@ -444,8 +457,9 @@ class CustomSearchDelegate extends SearchDelegate {
       onTap: (calendarTapDetails) async {
         await onTap(calendarTapDetails);
       },
+      appointmentTimeTextFormat: timeFormatString,
       dataSource: MyCalendarDataSource(matchQuery),
-      scheduleViewSettings: ScheduleViewSettings(
+      scheduleViewSettings: const ScheduleViewSettings(
           hideEmptyScheduleWeek: true,
           monthHeaderSettings: MonthHeaderSettings(height: 0)),
     );
@@ -463,14 +477,15 @@ class CustomSearchDelegate extends SearchDelegate {
       view: CalendarView.schedule,
       onTap: onTap,
       dataSource: MyCalendarDataSource(matchQuery),
-      scheduleViewSettings: ScheduleViewSettings(
+      appointmentTimeTextFormat: timeFormatString,
+      scheduleViewSettings: const ScheduleViewSettings(
           hideEmptyScheduleWeek: true,
           monthHeaderSettings: MonthHeaderSettings(height: 0)),
     );
   }
 
   CustomSearchDelegate(this.dataSource, this.calendarScheduleController,
-      this.context, this.getAllCompleteWork) {
+      this.context, this.getAllCompleteWork, this.timeFormatString) {
     appointmentList = dataSource.appointments as List<Appointment>;
   }
 }
@@ -500,14 +515,15 @@ class MyDrawer extends StatefulWidget {
     return _MyDrawerState();
   }
 
-  MyDrawer(this.calendarController, {super.key});
+  MyDrawer(this.calendarController, this.dateFormat, this.isWeatherOn,
+      {super.key});
   CalendarController calendarController;
+  DateFormat dateFormat;
+  bool isWeatherOn;
 }
 
 class _MyDrawerState extends State<MyDrawer> {
   ApiServices apiServices = ApiServices();
-  DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-  final DateFormat timeFormat = DateFormat("hh:mm a", 'vi_VN');
   bool isWeatherVisible = true;
   @override
   void initState() {
@@ -530,13 +546,13 @@ class _MyDrawerState extends State<MyDrawer> {
             ? Colors.lightGreenAccent
             : null,
         child: ListTile(
-          leading: Image(
+          leading: const Image(
             image: AssetImage('assets/image/schedule_icon.png'),
             width: 25,
             height: 25,
           ),
           style: ListTileStyle.drawer,
-          title: Text(
+          title: const Text(
             'Lịch biểu',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -546,19 +562,19 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
       ),
-      DividerWorkItem(),
+      const DividerWorkItem(),
       Container(
         color: widget.calendarController.view == CalendarView.day
             ? Colors.lightGreenAccent
             : null,
         child: ListTile(
-          leading: Image(
+          leading: const Image(
             image: AssetImage('assets/image/day_icon.png'),
             width: 25,
             height: 25,
           ),
           style: ListTileStyle.drawer,
-          title: Text(
+          title: const Text(
             'Ngày',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -568,19 +584,19 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
       ),
-      DividerWorkItem(),
+      const DividerWorkItem(),
       Container(
         color: widget.calendarController.view == CalendarView.week
             ? Colors.lightGreenAccent
             : null,
         child: ListTile(
-          leading: Image(
+          leading: const Image(
             image: AssetImage('assets/image/week_icon.png'),
             width: 25,
             height: 25,
           ),
           style: ListTileStyle.drawer,
-          title: Text(
+          title: const Text(
             'Tuần',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -590,14 +606,14 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
       ),
-      DividerWorkItem(),
+      const DividerWorkItem(),
       Container(
         color: widget.calendarController.view == CalendarView.month
             ? Colors.lightGreenAccent
             : null,
         child: ListTile(
-          leading: Icon(Icons.grid_on_rounded),
-          title: Text(
+          leading: const Icon(Icons.grid_on_rounded),
+          title: const Text(
             'Tháng',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -607,21 +623,21 @@ class _MyDrawerState extends State<MyDrawer> {
           },
         ),
       ),
-      DividerWorkItem(),
-      SizedBox(
+      const DividerWorkItem(),
+      const SizedBox(
         height: 8,
       ),
-      Text(
+      const Text(
         'Dự báo thời tiết',
         style: AppTextStyle.h2,
       ),
-      SizedBox(
+      const SizedBox(
         height: 8,
       ),
       FutureBuilder(
         future: apiServices.fetchWeatherData(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && widget.isWeatherOn) {
             WeatherDTO weatherDTO = snapshot.requireData;
             List<ForecastDay> dayList = weatherDTO.forecast.forecastday;
             WeatherLocationDTO location = weatherDTO.location;
@@ -632,61 +648,62 @@ class _MyDrawerState extends State<MyDrawer> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     RichText(
                         text: TextSpan(
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                             children: [
                           TextSpan(text: location.name),
-                          TextSpan(text: ','),
+                          const TextSpan(text: ','),
                           TextSpan(text: location.country),
                         ])),
-                    Spacer(),
+                    const Spacer(),
                     InkWell(
                       child: Icon(
                           isWeatherVisible
                               ? Icons.cloud_outlined
                               : Icons.cloud_off_outlined,
-                          color: lightColorScheme.primary),
+                          color: AppTheme.lightColorScheme.primary),
                       onTap: () {
                         setState(() {
                           isWeatherVisible = !isWeatherVisible;
                         });
                       },
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 4,
                     )
                   ],
                 ),
                 Visibility(
+                  visible: isWeatherVisible,
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     ...dayList.map(
                       (e) => Container(
-                        margin: EdgeInsets.all(4),
+                        margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             //color: Color.fromRGBO(32, 34, 85, 0.7),
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [Color(0xff5bb85f), Color(0xff89f2ff)],
                               stops: [0.1, 1],
                               begin: Alignment.bottomRight,
                               end: Alignment.topLeft,
                             )),
                         child: Container(
-                          margin: EdgeInsets.all(4),
+                          margin: const EdgeInsets.all(4),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                dateFormat.format(e.date),
-                                style: TextStyle(fontSize: 18),
+                                widget.dateFormat.format(e.date),
+                                style: const TextStyle(fontSize: 18),
                               ),
                               Row(
                                 children: [
@@ -697,7 +714,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                         image: NetworkImage(
                                             e.weatherDay.condition.icon)),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
                                   Column(
@@ -720,18 +737,18 @@ class _MyDrawerState extends State<MyDrawer> {
                                 ],
                               ),
                               Container(
-                                margin: EdgeInsets.symmetric(vertical: 4),
+                                margin: const EdgeInsets.symmetric(vertical: 4),
                                 child: GridView(
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2,
                                           mainAxisExtent: 30),
                                   shrinkWrap: true,
                                   children: [
                                     RichText(
                                       text: TextSpan(children: [
-                                        TextSpan(
+                                        const TextSpan(
                                             text: 'Nhiệt độ tối đa: ',
                                             style: TextStyle(
                                               fontStyle: FontStyle.italic,
@@ -740,13 +757,13 @@ class _MyDrawerState extends State<MyDrawer> {
                                             text: e.weatherDay.maxtemp_c
                                                     .toString() +
                                                 '\u00B0C',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        TextSpan(
+                                        const TextSpan(
                                             text: 'Nhiệt độ tối thiểu: ',
                                             style: TextStyle(
                                                 fontStyle: FontStyle.italic)),
@@ -754,13 +771,13 @@ class _MyDrawerState extends State<MyDrawer> {
                                             text: e.weatherDay.mintemp_c
                                                     .toString() +
                                                 '\u00B0C',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        TextSpan(
+                                        const TextSpan(
                                             text: 'Độ ẩm: ',
                                             style: TextStyle(
                                                 fontStyle: FontStyle.italic)),
@@ -768,14 +785,14 @@ class _MyDrawerState extends State<MyDrawer> {
                                           text: e.weatherDay.avghumidity
                                                   .toString() +
                                               '%',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         )
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        TextSpan(
+                                        const TextSpan(
                                             text: 'Tầm nhìn: ',
                                             style: TextStyle(
                                                 fontStyle: FontStyle.italic)),
@@ -783,21 +800,21 @@ class _MyDrawerState extends State<MyDrawer> {
                                           text: e.weatherDay.avgvis_km
                                                   .toString() +
                                               ' km',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        TextSpan(
+                                        const TextSpan(
                                             text: 'Gió tối đa: ',
                                             style: TextStyle(
                                                 fontStyle: FontStyle.italic)),
                                         TextSpan(
                                           text:
                                               '${e.weatherDay.maxwind_kph.toString()} km/h',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         )
                                       ]),
@@ -811,13 +828,25 @@ class _MyDrawerState extends State<MyDrawer> {
                       ),
                     )
                   ]),
-                  visible: isWeatherVisible,
                 ),
               ],
             );
-          } else {
-            return CircularProgressIndicator();
+          } else if (!widget.isWeatherOn) {
+            return const Column(
+              children: [
+                Image(
+                    image: AssetImage('assets/image/no_weather.png'),
+                    fit: BoxFit.contain,
+                    width: 100,
+                    height: 100),
+                SizedBox(
+                  height: 8,
+                ),
+                Text('Thời tiết đã bị tắt...')
+              ],
+            );
           }
+          return const CircularProgressIndicator();
         },
       ),
     ])));
