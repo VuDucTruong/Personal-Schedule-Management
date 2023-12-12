@@ -81,14 +81,13 @@ class CreateWorkController {
     }
   }
 
-  Future<bool> createWork(CongViec congViec) async {
+  Future<String?> createWork(CongViec congViec) async {
     await getRecurrenceInfo(congViec);
     String? maCV = await workRespositoryImpl.insertWorkToRemote(congViec);
     if (maCV != null && reminderSwitch) {
       createNotification(maCV);
-      return true;
     }
-    return false;
+    return maCV;
   }
 
   Future<void> getRecurrenceInfo(CongViec congViec) async {

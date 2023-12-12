@@ -1,8 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:device_calendar/device_calendar.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:personal_schedule_management/main.dart';
+import 'package:recase/recase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import 'core/constants/constants.dart';
 
 class NotificationServices {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
@@ -30,7 +36,7 @@ class NotificationServices {
   }
 
   Future<void> createNotification(Appointment appointment,
-      DateTime notificationTime, String notifyId) async {
+      DateTime notificationTime, String notifyId, bool isAlarm) async {
     tz.TZDateTime scheduledDate = tz.TZDateTime(
         tz.getLocation('Asia/Ho_Chi_Minh'),
         notificationTime.year,
@@ -39,14 +45,12 @@ class NotificationServices {
         notificationTime.hour,
         notificationTime.minute,
         notificationTime.second);
+    ;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String musicPath = prefs.getString(RINGTONE) ?? DEFAULT_RINGTONE;
+    List<String> musics = musicPath.split('/').last.split('.');
     AndroidNotificationDetails androidNotificationDetails =
-        const AndroidNotificationDetails(
-      'channelId',
-      'channelName',
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: true,
-    );
+        chooseNotificationChannel(musics.first, isAlarm);
     NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
     /*await _flutterLocalNotificationsPlugin.show(
@@ -77,5 +81,17 @@ class NotificationServices {
       sum += id.codeUnitAt(i);
     }
     return sum;
+  }
+
+  AndroidNotificationDetails chooseNotificationChannel(
+      String musicPath, bool isAlarm) {
+    const int insistentFlag = 4;
+    return AndroidNotificationDetails(musicPath, musicPath,
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        additionalFlags:
+            isAlarm ? Int32List.fromList(<int>[insistentFlag]) : null,
+        sound: RawResourceAndroidNotificationSound(musicPath));
   }
 }

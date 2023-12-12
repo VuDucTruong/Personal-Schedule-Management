@@ -36,20 +36,19 @@ const String THEME = 'theme';
 const String DARKMODE = 'darkmode';
 const String DATE_FORMAT = 'date_format';
 
-abstract class AppDateFormat {
+class AppDateFormat {
   static const DAY_MONTH_YEAR = 'dd/MM/yyyy';
   static const MONTH_DAY_YEAR = 'MM/dd/yyyy';
   static const YEAR_MONTH_DAY = 'yyyy/MM/dd';
   static const YEAR_DAY_MONTH = 'yyyy/dd/MM';
   static const TIME_24H = 'HH:mm';
-  static const TIME_12H = 'h a';
+  static const TIME_12H = 'hh:mm a';
 }
 
 const String TIME_24H_FORMAT = 'time_24';
 const String WEATHER = 'weather';
 const String RINGTONE = 'ringtone';
 const String DEFAULT_RINGTONE = 'assets/ringtones/bird_sound.mp3';
-
 const List<Color> COLOR_LEVEL = [
   Colors.red,
   Colors.orange,
@@ -57,4 +56,10 @@ const List<Color> COLOR_LEVEL = [
   Colors.lightGreenAccent,
   Colors.green
 ];
-
+const Map<String, int> PRIORITY_MAP = {
+  'Cao nhất': 1,
+  'Cao': 2,
+  'Trung bình': 3,
+  'Thấp': 4,
+  'Thấp nhất': 5
+};

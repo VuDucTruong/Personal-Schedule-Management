@@ -21,17 +21,12 @@ class CalendarPageController {
       GetIt.instance<CompletedWorkRespositoryImpl>();
   NotificationRespositoryImpl notificationRespositoryImpl =
       GetIt.instance<NotificationRespositoryImpl>();
-  NotificationServices notificationServices =
-      GetIt.instance<NotificationServices>();
   bool isWeatherVisible = true;
 
   Future<bool> getCalendarEvents() async {
+    if (times++ > 0) return false;
     appointmentList = [];
     await loadAppointment();
-    if (times++ >= 1) {
-      return true;
-    }
-
     final calendarsResult = (await deviceCalendarPlugin.retrieveCalendars());
     final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
     List<String> calendarIds = [];
@@ -48,29 +43,11 @@ class CalendarPageController {
           endTime: DateTime.parse(event.end.toString()),
           isAllDay: event.allDay!,
           subject: event.title!,
-          notes: '0|0',
+          notes: '0|0|0',
           location: event.location,
           color: SchemeLight_default.primary));
     }
     return true;
-  }
-
-  CalendarPageController() {}
-
-  Future<void> setUpNotification(CalendarDataSource calendarDataSource) async {
-    List<Appointment> appointments =
-        calendarDataSource.getVisibleAppointments(DateTime.now(), '');
-    notificationServices.cancelNotification();
-    for (Appointment i in appointments) {
-      List<ThongBao> thongBao = await notificationRespositoryImpl
-          .getNotificationByWorkId(i.id.toString());
-      for (ThongBao j in thongBao) {
-        DateTime time = i.startTime.subtract(j.thoiGian);
-        if (time.isBefore(DateTime.now())) continue;
-        await notificationServices.createNotification(i, time, j.maTB);
-      }
-      ;
-    }
   }
 
   Future<List<Event>> retrieveEvents(List<String> calendarIds) async {
@@ -91,7 +68,6 @@ class CalendarPageController {
         print('Lỗi khi lấy danh sách sự kiện: ${eventsResult.errors}');
       }
     }
-
     return events;
   }
 
@@ -124,7 +100,7 @@ class CalendarPageController {
         recurrenceRule: rule,
         location: congViec.diaDiem,
         recurrenceExceptionDates: congViec.ngayNgoaiLe,
-        notes: '1|${congViec.doUuTien}');
+        notes: '1|${congViec.doUuTien}|${congViec.isBaoThuc}');
     //if (appointmentList.contains(appointment)) return;
     appointmentList.add(appointment);
   }
@@ -132,7 +108,6 @@ class CalendarPageController {
   Future<void> loadAppointment() async {
     List<CongViec> congViecList =
         await workRespositoryImpl.getAllCongViecByUserId('');
-
     for (var element in congViecList) {
       await _createAppointment(element);
     }

@@ -8,6 +8,7 @@ import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/create_work_controller.dart';
 import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
 import 'package:personal_schedule_management/features/pages/work_category_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../core/domain/entity/cong_viec_entity.dart';
@@ -34,16 +35,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     Color.fromRGBO(186, 56, 232, 0.81),
     Color.fromRGBO(189, 232, 56, 0.81),
   ];
-  Map<String, int> priorityMap = {
-    'Cao nhất': 1,
-    'Cao': 2,
-    'Trung bình': 3,
-    'Thấp': 4,
-    'Thấp nhất': 5
-  };
-  DateFormat dayFormat = DateFormat("EE, dd/MM/yyyy", 'vi_VN');
-  DateFormat time12Format = DateFormat("hh:mm a", 'vi_VN');
-  DateFormat time24Format = DateFormat("HH:mm", 'vi_VN');
+  late DateFormat dayFormat;
+  late DateFormat timeFormat;
   late List<String> priorityList;
   String getDateTimeFromString(String thoiDiemLap) {
     String input = thoiDiemLap;
@@ -78,7 +71,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
   @override
   void initState() {
     super.initState();
-    priorityList = priorityMap.keys.toList();
+    priorityList = PRIORITY_MAP.keys.toList();
     titleController = TextEditingController();
     descriptionController = TextEditingController();
     locationController = TextEditingController();
@@ -128,7 +121,9 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
             .showSnackBar(SnackBar(content: Text('Sửa thất bại')));
       }
     } else {
-      if (await createWorkController.createWork(congViec)) {
+      String? maCV = await createWorkController.createWork(congViec);
+      if (maCV != null) {
+        congViec.maCV = maCV;
         results = true;
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Thêm thành công')));
@@ -153,8 +148,17 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
         recurrenceRule: rule,
         location: congViec.diaDiem,
         recurrenceExceptionDates: congViec.ngayNgoaiLe,
-        notes: '1|${congViec.doUuTien}');
+        notes: '1|${congViec.doUuTien}|${congViec.isBaoThuc}');
     return appointment;
+  }
+
+  Future<void> getDateTimeFormat() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    timeFormat = (prefs.getBool(TIME_24H_FORMAT) ?? false)
+        ? DateFormat("HH:mm", 'vi_VN')
+        : DateFormat("hh:mm a", 'vi_VN');
+    dayFormat =
+        DateFormat(prefs.getString(DATE_FORMAT) ?? 'dd/MM/yyyy', 'vi_VN');
   }
 
   @override
@@ -162,134 +166,143 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     // TODO: implement build
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double height = mediaQuery.size.height;
-
-    return Container(
-      margin: EdgeInsets.all(8),
-      height: height * 5 / 6,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 4, left: 8, right: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    child: Icon(FontAwesomeIcons.arrowLeftLong,
-                        color: Theme.of(context).colorScheme.primary),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  Text(
-                    'Công việc',
-                    style: AppTextStyle.h2,
-                  ),
-                  InkWell(
-                    child: Icon(FontAwesomeIcons.check,
-                        color: Theme.of(context).colorScheme.primary),
-                    onTap: () async {
-                      try {
-                        if (!_formKey.currentState!.validate()) return;
-                      } catch (e) {
-                        return;
-                      }
-
-                      CongViec congViec = CongViec(
-                          widget.selectedCongViec?.maCV ?? '',
-                          widget.selectedCongViec?.maND ?? '',
-                          titleController.text,
-                          descriptionController.text,
-                          createWorkController.selectedValue,
-                          createWorkController.startDate!,
-                          createWorkController.endDate!,
-                          createWorkController.allDaySwitch,
-                          priorityMap[createWorkController.priorityValue]!,
-                          createWorkController.colorIcon,
-                          locationController.text,
-                          urlController.text,
-                          false,
-                          widget.selectedCongViec?.tenCK ?? '',
-                          widget.selectedCongViec?.thoiDiemLap ?? '',
-                          createWorkController.alarmSwitch,
-                          widget.selectedCongViec?.ngayNgoaiLe ?? []);
-                      await chooseAction(congViec);
-                      Appointment x = _createAppointment(congViec);
-                      if (update) {
-                        dataSourceController.updateAppointment(x);
-                        Navigator.pop(context);
-                      } else
-                        dataSourceController.insertAppointment(x);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+    return FutureBuilder(
+      future: getDateTimeFormat(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        return Container(
+          margin: EdgeInsets.all(8),
+          height: height * 5 / 6,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 4, left: 8, right: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Card(
-                        elevation: 5,
-                        child: Container(
-                          margin: EdgeInsets.all(4),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Form(
-                                      key: _formKey,
-                                      child: TextFormField(
-                                        controller: titleController,
-                                        validator: (value) {
-                                          if (value != null && value.isNotEmpty)
-                                            return null;
-                                          else
-                                            return 'Không được bỏ trống !';
-                                        },
-                                        maxLines: 1,
-                                        minLines: 1,
-                                        decoration: InputDecoration(
-                                            hintText: 'Tiêu đề',
-                                            border: InputBorder.none),
-                                        style: AppTextStyle.h2,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                height: 100,
-                                child: TextFormField(
-                                  controller: descriptionController,
-                                  expands: true,
-                                  maxLines: null,
-                                  minLines: null,
-                                  decoration: InputDecoration(
-                                      hintText: 'Thêm chi tiết',
-                                      border: InputBorder.none),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                      GestureDetector(
+                        child: Icon(FontAwesomeIcons.arrowLeftLong,
+                            color: Theme.of(context).colorScheme.primary),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                       ),
-                      OptionWork(),
+                      Text(
+                        'Công việc',
+                        style: AppTextStyle.h2,
+                      ),
+                      InkWell(
+                        child: Icon(FontAwesomeIcons.check,
+                            color: Theme.of(context).colorScheme.primary),
+                        onTap: () async {
+                          try {
+                            if (!_formKey.currentState!.validate()) return;
+                          } catch (e) {
+                            return;
+                          }
+
+                          CongViec congViec = CongViec(
+                              widget.selectedCongViec?.maCV ?? '',
+                              widget.selectedCongViec?.maND ?? '',
+                              titleController.text,
+                              descriptionController.text,
+                              createWorkController.selectedValue,
+                              createWorkController.startDate!,
+                              createWorkController.endDate!,
+                              createWorkController.allDaySwitch,
+                              PRIORITY_MAP[createWorkController.priorityValue]!,
+                              createWorkController.colorIcon,
+                              locationController.text,
+                              urlController.text,
+                              false,
+                              widget.selectedCongViec?.tenCK ?? '',
+                              widget.selectedCongViec?.thoiDiemLap ?? '',
+                              createWorkController.alarmSwitch,
+                              widget.selectedCongViec?.ngayNgoaiLe ?? []);
+                          await chooseAction(congViec);
+                          Appointment x = _createAppointment(congViec);
+                          if (update) {
+                            dataSourceController.updateAppointment(x);
+                          } else
+                            dataSourceController.insertAppointment(x);
+                          Navigator.pop(context);
+                        },
+                      ),
                     ],
                   ),
                 ),
-              ),
+                Expanded(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Card(
+                            elevation: 5,
+                            child: Container(
+                              margin: EdgeInsets.all(4),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Form(
+                                          key: _formKey,
+                                          child: TextFormField(
+                                            controller: titleController,
+                                            validator: (value) {
+                                              if (value != null &&
+                                                  value.isNotEmpty)
+                                                return null;
+                                              else
+                                                return 'Không được bỏ trống !';
+                                            },
+                                            maxLines: 1,
+                                            minLines: 1,
+                                            decoration: InputDecoration(
+                                                hintText: 'Tiêu đề',
+                                                border: InputBorder.none),
+                                            style: AppTextStyle.h2,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    height: 100,
+                                    child: TextFormField(
+                                      controller: descriptionController,
+                                      expands: true,
+                                      maxLines: null,
+                                      minLines: null,
+                                      decoration: InputDecoration(
+                                          hintText: 'Thêm chi tiết',
+                                          border: InputBorder.none),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          OptionWork(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -364,7 +377,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                     width: 12,
                                     height: 12,
                                     decoration: BoxDecoration(
-                                        color: COLOR_LEVEL[priorityMap[e]! - 1],
+                                        color:
+                                            COLOR_LEVEL[PRIORITY_MAP[e]! - 1],
                                         borderRadius:
                                             BorderRadius.circular(50)),
                                   )
@@ -611,7 +625,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
   }
 
   String toTimeString(DateTime? time) {
-    return time24Format.format(time!);
+    return timeFormat.format(time!);
   }
 
   Widget ListTitleWork(

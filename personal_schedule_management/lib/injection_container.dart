@@ -33,5 +33,7 @@ Future<void> initializeDependencies() async {
       'Thói quen'
     ]);
   }
-  prefs.setBool('isLoadCalendar', false);
+  if (!prefs.containsKey('sound_type')) {
+    await prefs.setInt('sound_type', 0);
+  }
 }

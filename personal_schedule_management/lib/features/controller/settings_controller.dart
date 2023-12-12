@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
+import 'package:recase/recase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsController {
