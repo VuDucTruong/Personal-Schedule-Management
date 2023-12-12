@@ -1,12 +1,15 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:get_it/get_it.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:personal_schedule_management/notification_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../config/theme/app_theme.dart';
+import '../../core/constants/constants.dart';
 import '../../core/domain/entity/cong_viec_entity.dart';
 import '../../core/domain/entity/thong_bao_entity.dart';
 
@@ -28,24 +31,26 @@ class CalendarPageController {
     appointmentList = [];
     await loadAppointment();
     final calendarsResult = (await deviceCalendarPlugin.retrieveCalendars());
-    final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
-    List<String> calendarIds = [];
-    List<Calendar> calendarSingleList = [];
-    createCalendarWithoutDuplicated(calendars, calendarSingleList);
-    for (Calendar calendar in calendarSingleList) {
-      calendarIds.add(calendar.id.toString());
-    }
-    List<Event> eventList = await retrieveEvents(calendarIds);
-    for (Event event in eventList) {
-      appointmentList.add(Appointment(
-          id: event.eventId,
-          startTime: DateTime.parse(event.start.toString()),
-          endTime: DateTime.parse(event.end.toString()),
-          isAllDay: event.allDay!,
-          subject: event.title!,
-          notes: '0|0|0',
-          location: event.location,
-          color: SchemeLight_default.primary));
+    if (calendarsResult.data != null) {
+      final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
+      List<String> calendarIds = [];
+      List<Calendar> calendarSingleList = [];
+      await createCalendarWithoutDuplicated(calendars, calendarSingleList);
+      for (Calendar calendar in calendarSingleList) {
+        calendarIds.add(calendar.id.toString());
+      }
+      List<Event> eventList = await retrieveEvents(calendarIds);
+      for (Event event in eventList) {
+        appointmentList.add(Appointment(
+            id: event.eventId,
+            startTime: DateTime.parse(event.start.toString()),
+            endTime: DateTime.parse(event.end.toString()),
+            isAllDay: event.allDay!,
+            subject: event.title!,
+            notes: '0|0|0',
+            location: event.location,
+            color: SchemeLight_default.primary));
+      }
     }
     return true;
   }
@@ -71,11 +76,16 @@ class CalendarPageController {
     return events;
   }
 
-  void createCalendarWithoutDuplicated(
-      List<Calendar> calendarList, List<Calendar> newList) {
+  Future<void> createCalendarWithoutDuplicated(
+      List<Calendar> calendarList, List<Calendar> newList) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> banList = prefs.getStringList(BAN_ACCOUNT) ?? [];
+    bool isSync = prefs.getBool(SYNC) ?? true;
+    if (!isSync) return;
     Set<String?> accountNameSet = Set();
     calendarList.forEach((element) {
-      if (!accountNameSet.contains(element.accountName)) {
+      if (!accountNameSet.contains(element.accountName) &&
+          !banList.contains(element.accountName)) {
         accountNameSet.add(element.accountName);
         newList.add(element);
       }

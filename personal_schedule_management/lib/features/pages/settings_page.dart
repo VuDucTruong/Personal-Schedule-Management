@@ -351,14 +351,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                   .onSecondaryContainer),
                         ),
                       ),
-                      SettingItem(
+                      /*SettingItem(
                         color: Colors.blue,
                         content: 'Tiện ích',
                         iconData: FontAwesomeIcons.mobile,
                         isSwitch: false,
                         function: null,
                       ),
-                      const SettingsDivider(),
+                      const SettingsDivider(),*/
                       SettingItem(
                         color: Colors.orangeAccent,
                         content: 'Nhạc chuông',

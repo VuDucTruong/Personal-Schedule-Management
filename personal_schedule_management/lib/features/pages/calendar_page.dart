@@ -64,6 +64,7 @@ class _CalendarPageState extends State<CalendarPage>
     calendarScheduleController.getAllCompletedWork(() {});
   }
 
+  bool isLoad = false;
   Future<bool> tempFunc() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     timeFormatString =
@@ -72,12 +73,16 @@ class _CalendarPageState extends State<CalendarPage>
     dayFormat = DateFormat(
         prefs.getString(DATE_FORMAT) ?? AppDateFormat.DAY_MONTH_YEAR);
     isWeatherOn = prefs.getBool(WEATHER) ?? true;
-    await Future.delayed(Duration(seconds: 2));
+    if (!isLoad) {
+      getAllCompleteWork();
+      await calendarPageController.getCalendarEvents();
+      isLoad = true;
+    }
     return true;
   }
 
   bool isNeedSetUp = true;
-  bool isLoad = false;
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -116,57 +121,47 @@ class _CalendarPageState extends State<CalendarPage>
               icon: const Icon(Icons.add_circle)),
         ],
       ),
-      body: Builder(builder: (context) {
-        if (!isLoad) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            getAllCompleteWork();
-            await calendarPageController.getCalendarEvents();
-          });
-          isLoad = true;
-        }
-        return FutureBuilder(
-          future: tempFunc(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData) {
-              if (isNeedSetUp) {
-                dataSourceController.appointmentList =
-                    calendarPageController.appointmentList;
-                dataSourceController.setUpNotification();
-                isNeedSetUp = false;
-              }
-              return SfCalendar(
-                controller: calendarController,
-                view: CalendarView.schedule,
-                scheduleViewSettings: const ScheduleViewSettings(
-                  appointmentItemHeight: 70,
-                ),
-                monthViewSettings: MonthViewSettings(
-                    showAgenda: true,
-                    agendaItemHeight: 65,
-                    monthCellStyle: MonthCellStyle(
-                      todayBackgroundColor:
-                          Theme.of(context).colorScheme.primary,
-                    )),
-                dataSource: dataSourceController.calendarDataSource,
-                onTap: (calendarTapDetails) {
-                  print(dataSourceController.calendarDataSource.appointments
-                      ?.map((e) {
-                    Appointment x = e;
-                    print('${x.id} ${x.subject}');
-                  }));
-                  print(dataSourceController
-                      .calendarDataSource.appointments?.length);
-                },
-                scheduleViewMonthHeaderBuilder: (context, details) =>
-                    CustomMonthView(context, details),
-                appointmentBuilder: (context, calendarAppointmentDetails) =>
-                    CustomAppointment(context, calendarAppointmentDetails),
-              );
-            } else
-              return const Center(child: CircularProgressIndicator());
-          },
-        );
-      }),
+      body: FutureBuilder(
+        future: tempFunc(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.hasData) {
+            if (isNeedSetUp) {
+              dataSourceController.appointmentList =
+                  calendarPageController.appointmentList;
+              dataSourceController.setUpNotification();
+              isNeedSetUp = false;
+            }
+            return SfCalendar(
+              controller: calendarController,
+              view: CalendarView.schedule,
+              scheduleViewSettings: const ScheduleViewSettings(
+                appointmentItemHeight: 70,
+              ),
+              monthViewSettings: MonthViewSettings(
+                  showAgenda: true,
+                  agendaItemHeight: 65,
+                  monthCellStyle: MonthCellStyle(
+                    todayBackgroundColor: Theme.of(context).colorScheme.primary,
+                  )),
+              dataSource: dataSourceController.calendarDataSource,
+              onTap: (calendarTapDetails) {
+                print(dataSourceController.calendarDataSource.appointments
+                    ?.map((e) {
+                  Appointment x = e;
+                  print('${x.id} ${x.subject}');
+                }));
+                print(dataSourceController
+                    .calendarDataSource.appointments?.length);
+              },
+              scheduleViewMonthHeaderBuilder: (context, details) =>
+                  CustomMonthView(context, details),
+              appointmentBuilder: (context, calendarAppointmentDetails) =>
+                  CustomAppointment(context, calendarAppointmentDetails),
+            );
+          } else
+            return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
 
