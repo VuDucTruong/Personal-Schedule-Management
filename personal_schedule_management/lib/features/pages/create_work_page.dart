@@ -197,7 +197,9 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                       ),
                       Text(
                         'Công việc',
-                        style: AppTextStyle.h2,
+                        style: AppTextStyle.h2.copyWith(
+                              color: Theme.of(context).colorScheme.primary
+                            ),
                       ),
                       InkWell(
                         child: Icon(FontAwesomeIcons.check,
@@ -270,10 +272,12 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                             },
                                             maxLines: 1,
                                             minLines: 1,
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                                 hintText: 'Tiêu đề',
                                                 border: InputBorder.none),
-                                            style: AppTextStyle.h2,
+                                            style: AppTextStyle.h2.copyWith(
+                                                    color: Theme.of(context).colorScheme.secondary
+                                                  ),
                                           ),
                                         ),
                                       ),
@@ -286,6 +290,9 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                       expands: true,
                                       maxLines: null,
                                       minLines: null,
+                                      style: TextStyle(
+                                            color: Theme.of(context).colorScheme.onBackground
+                                      ),
                                       decoration: InputDecoration(
                                           hintText: 'Thêm chi tiết',
                                           border: InputBorder.none),
@@ -368,11 +375,12 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                       value: createWorkController.priorityValue,
                       items: [
                         ...priorityList.map((e) => DropdownMenuItem(
+                              value: e,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(e),
-                                  SizedBox(
+                                  Text(e, style: TextStyle(color: Theme.of(context).colorScheme.onBackground)),
+                                  const SizedBox(
                                     width: 4,
                                   ),
                                   Container(
@@ -386,7 +394,6 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                   )
                                 ],
                               ),
-                              value: e,
                             ))
                       ],
                       onChanged: (value) {

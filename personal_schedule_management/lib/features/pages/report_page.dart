@@ -84,13 +84,17 @@ class ReportBoxWidget extends StatelessWidget {
               child: Text(
                 textAlign: TextAlign.center,
                 content,
-                style: AppTextStyle.normal,
+                style: AppTextStyle.normal.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground
+                  ),
               ),
             ),
             Spacer(),
             Text(
               '$quantity',
-              style: AppTextStyle.h2,
+              style: AppTextStyle.h2.copyWith(
+                  color: Theme.of(context).colorScheme.onBackground
+                ),
             ),
             SizedBox(
               height: 8,
@@ -223,7 +227,7 @@ class _PieChartState extends State<PieChart> {
           CircularChartAnnotation(
               widget: Container(
                   child: Text('${widget.numofFinish + widget.numOfUnfinish}',
-                      style: TextStyle(color: Colors.black, fontSize: 20))))
+                      style: TextStyle(color: Theme.of(context).colorScheme.onBackground, fontSize: 20))))
         ],
             series: <CircularSeries>[
           DoughnutSeries<ChartData, String>(
