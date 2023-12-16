@@ -44,7 +44,7 @@ class NotificationServices {
         notificationTime.day,
         notificationTime.hour,
         notificationTime.minute,
-        notificationTime.second);
+        0);
     ;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String musicPath = prefs.getString(RINGTONE) ?? DEFAULT_RINGTONE;
