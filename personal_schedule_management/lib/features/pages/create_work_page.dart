@@ -152,13 +152,16 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     return appointment;
   }
 
-  Future<void> getDateTimeFormat() async {
+  int times = 0;
+  Future<bool> getDateTimeFormat() async {
+    if (times++ > 1) return true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     timeFormat = (prefs.getBool(TIME_24H_FORMAT) ?? false)
         ? DateFormat("HH:mm", 'vi_VN')
         : DateFormat("hh:mm a", 'vi_VN');
     dayFormat =
         DateFormat(prefs.getString(DATE_FORMAT) ?? 'dd/MM/yyyy', 'vi_VN');
+    return true;
   }
 
   @override
@@ -169,7 +172,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     return FutureBuilder(
       future: getDateTimeFormat(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
+        if (!snapshot.hasData)
           return Center(
             child: CircularProgressIndicator(),
           );
@@ -185,7 +188,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
+                      InkWell(
                         child: Icon(FontAwesomeIcons.arrowLeftLong,
                             color: Theme.of(context).colorScheme.primary),
                         onTap: () {
@@ -307,7 +310,6 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
   }
 
   Widget OptionWork() {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
     int index = 0;
     return Card(
       elevation: 5,

@@ -27,21 +27,21 @@ class _ReportPageState extends State<ReportPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      body: FutureBuilder(
-          future: reportController.getAllNumberOfWorks(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData)
-              return Center(child: CircularProgressIndicator());
-            int numOfFinish = reportController.numOfFinish;
-            int numOfUnfinish = reportController.numOfUnFinish;
-            int numOfLate = reportController.numOfLate;
-            return Container(
-              margin: EdgeInsets.all(4),
-              child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: FutureBuilder(
+            future: reportController.getAllNumberOfWorks(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData)
+                return Center(child: CircularProgressIndicator());
+              int numOfFinish = reportController.numOfFinish;
+              int numOfUnfinish = reportController.numOfUnFinish;
+              int numOfLate = reportController.numOfLate;
+              return Container(
+                margin: EdgeInsets.all(4),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
+                      alignment: WrapAlignment.center,
                       children: [
                         ReportBoxWidget('Số công việc hoàn thành', numOfFinish),
                         ReportBoxWidget(
@@ -58,9 +58,9 @@ class _ReportPageState extends State<ReportPage> {
                     ),
                   ],
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+      ),
     );
   }
 }
