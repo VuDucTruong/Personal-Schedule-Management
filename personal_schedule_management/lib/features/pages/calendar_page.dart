@@ -425,6 +425,16 @@ class CustomSearchDelegate extends SearchDelegate {
   }
 
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+      inputDecorationTheme: searchFieldDecorationTheme,
+      textTheme: Theme.of(context).textTheme.copyWith(
+        titleLarge: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+    );
+  }
+
+  @override
   List<Widget>? buildActions(BuildContext context) {
     return [
       IconButton(

@@ -176,7 +176,9 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               bool result = await showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      content: Text('Xóa công việc này ?'),
+                                      content: Text('Xóa công việc này ?',
+                                          style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                                      ),
                                       actions: [
                                         FilledButton(
                                           onPressed: () {
@@ -226,10 +228,13 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                             children: [
                               Text(
                                 selectedCongViec.tieuDe,
-                                style: AppTextStyle.h2,
+                                style: AppTextStyle.h2.copyWith(
+                                  color: Theme.of(context).colorScheme.primary
+                                ),
                               ),
                               Text(
                                 'Ngày bắt đầu :',
+                                style: TextStyle(color: Theme.of(context).colorScheme.onBackground)
                               ),
                               Text(
                                 '${dayFormat.format(widget.appointment.startTime)}',
@@ -237,6 +242,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               ),
                               Text(
                                 'Ngày kết thúc :',
+                                style: TextStyle(color: Theme.of(context).colorScheme.onBackground)
                               ),
                               Text(
                                 '${dayFormat.format(widget.appointment.endTime)}',
@@ -372,7 +378,9 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
         ),
         Text(
           text,
-          style: AppTextStyle.h2_5,
+          style: AppTextStyle.h2_5.copyWith(
+            color: Theme.of(context).colorScheme.onBackground
+          ),
         )
       ],
     );

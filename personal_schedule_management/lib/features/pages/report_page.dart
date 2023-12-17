@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
+import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/features/controller/report_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -54,7 +55,43 @@ class _ReportPageState extends State<ReportPage> {
                         child: SplineChart(reportController.congViecHT)),
                     SizedBox(
                       height: 350,
-                      child: PieChart(numOfFinish, numOfUnfinish, numOfLate),
+                      child: numOfFinish != 0 || numOfUnfinish != 0 || numOfLate != 0
+                              ? PieChart(numOfFinish, numOfUnfinish, numOfLate)
+                              : Card(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        margin: const EdgeInsets.only(top: 16.0),
+                                        child: Text('Tổng quan',
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyle.h2.copyWith(
+                                            color: Theme.of(context).colorScheme.onBackground,
+                                            fontSize: 26
+                                          ),
+                                        ),
+                                      ),
+                                      ColorFiltered(
+                                        colorFilter: ColorFilter.mode(
+                                            Theme.of(context).colorScheme.error,
+                                            BlendMode.srcIn
+                                        ),
+                                        child: const Image(
+                                          image: AssetImage('assets/image/no_chart.png'),
+                                          width: 250,
+                                          height: 250,
+                                        ),
+                                      ),
+                                      Text('Không có thông tin để hiển thị',
+                                        textAlign: TextAlign.center,
+                                        style: AppTextStyle.h2_5.copyWith(
+                                            color: Theme.of(context).colorScheme.error,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                )
                     ),
                   ],
                 ),
