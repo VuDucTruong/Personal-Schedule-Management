@@ -785,7 +785,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                       Text(
                                         e.weatherDay.condition.text,
                                         style: AppTextStyle.h2.copyWith(
-                                            color: Theme.of(context).colorScheme.secondary
+                                            color: Theme.of(context).colorScheme.primary
                                         ),
                                       ),
                                     ],
