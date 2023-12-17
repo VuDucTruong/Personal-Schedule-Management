@@ -54,7 +54,7 @@ class _ReportPageState extends State<ReportPage> {
                         height: 400,
                         child: SplineChart(reportController.congViecHT)),
                     SizedBox(
-                      height: 350,
+                      height: null,
                       child: numOfFinish != 0 || numOfUnfinish != 0 || numOfLate != 0
                               ? PieChart(numOfFinish, numOfUnfinish, numOfLate)
                               : Card(
@@ -89,6 +89,7 @@ class _ReportPageState extends State<ReportPage> {
                                             color: Theme.of(context).colorScheme.error,
                                         ),
                                       ),
+                                      const SizedBox(height: 20)
                                     ],
                                   )
                                 )
