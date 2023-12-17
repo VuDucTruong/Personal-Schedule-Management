@@ -109,31 +109,40 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
                                 yourCalendarController.accountList.length,
                             itemBuilder: (context, index) {
                               return ListTile(
-                                title: Text(yourCalendarController
-                                        .accountList[index].accountName ??
-                                    'No name'),
-                                trailing: Switch(
-                                  value: yourCalendarController.accountMap[
-                                          yourCalendarController
-                                              .accountList[index]
-                                              .accountName] ??
-                                      false,
-                                  onChanged: (value) async {
-                                    if (!value) {
-                                      yourCalendarController.addToBanList(
-                                          yourCalendarController
-                                                  .accountList[index]
-                                                  .accountName ??
-                                              '');
-                                    } else {
-                                      yourCalendarController.removeToBanList(
-                                          yourCalendarController
-                                                  .accountList[index]
-                                                  .accountName ??
-                                              '');
-                                    }
-                                    setState(() {});
-                                  },
+                                title: Text(
+                                  yourCalendarController.accountList[index].key,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                subtitle: Column(
+                                  children: [
+                                    ...yourCalendarController
+                                        .accountList[index].value
+                                        .map((e) => CheckboxListTile(
+                                              value: yourCalendarController
+                                                  .accountMap[e.name],
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  if (!value) {
+                                                    yourCalendarController
+                                                        .addToBanList(e.id);
+                                                  } else {
+                                                    yourCalendarController
+                                                        .removeToBanList(e.id);
+                                                  }
+                                                  try {
+                                                    yourCalendarController
+                                                            .accountMap[
+                                                        e.name ?? ''] = value;
+                                                  } catch (e) {
+                                                    print(e);
+                                                  }
+                                                }
+                                              },
+                                              title: Text(e.name ?? ''),
+                                            ))
+                                  ],
                                 ),
                               );
                             },

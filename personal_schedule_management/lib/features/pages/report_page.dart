@@ -54,46 +54,50 @@ class _ReportPageState extends State<ReportPage> {
                         height: 400,
                         child: SplineChart(reportController.congViecHT)),
                     SizedBox(
-                      height: 370,
-                      child: numOfFinish != 0 || numOfUnfinish != 0 || numOfLate != 0
-                              ? PieChart(numOfFinish, numOfUnfinish, numOfLate)
-                              : Card(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: double.infinity,
-                                        margin: const EdgeInsets.only(top: 16.0),
-                                        child: Text('Tổng quan',
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyle.h2.copyWith(
-                                            color: Theme.of(context).colorScheme.onBackground,
-                                            fontSize: 26
-                                          ),
-                                        ),
-                                      ),
-                                      ColorFiltered(
-                                        colorFilter: ColorFilter.mode(
-                                            Theme.of(context).colorScheme.error,
-                                            BlendMode.srcIn
-                                        ),
-                                        child: const Image(
-                                          image: AssetImage('assets/image/no_chart.png'),
-                                          width: 250,
-                                          height: 250,
-                                        ),
-                                      ),
-                                      Text('Không có thông tin để hiển thị',
-                                        textAlign: TextAlign.center,
-                                        style: AppTextStyle.h2_5.copyWith(
-                                            color: Theme.of(context).colorScheme.error,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20)
-                                    ],
-                                  )
-                                )
-                    ),
+                        height: 370,
+                        child: numOfFinish != 0 ||
+                                numOfUnfinish != 0 ||
+                                numOfLate != 0
+                            ? PieChart(numOfFinish, numOfUnfinish, numOfLate)
+                            : Card(
+                                child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    margin: const EdgeInsets.only(top: 16.0),
+                                    child: Text(
+                                      'Tổng quan',
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyle.h2.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onBackground,
+                                          fontSize: 26),
+                                    ),
+                                  ),
+                                  ColorFiltered(
+                                    colorFilter: ColorFilter.mode(
+                                        Theme.of(context).colorScheme.error,
+                                        BlendMode.srcIn),
+                                    child: const Image(
+                                      image: AssetImage(
+                                          'assets/image/no_chart.png'),
+                                      width: 250,
+                                      height: 250,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Không có thông tin để hiển thị',
+                                    textAlign: TextAlign.center,
+                                    style: AppTextStyle.h2_5.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20)
+                                ],
+                              ))),
                   ],
                 ),
               );
@@ -123,16 +127,14 @@ class ReportBoxWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
                 content,
                 style: AppTextStyle.normal.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground
-                  ),
+                    color: Theme.of(context).colorScheme.onBackground),
               ),
             ),
             Spacer(),
             Text(
               '$quantity',
-              style: AppTextStyle.h2.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground
-                ),
+              style: AppTextStyle.h2
+                  .copyWith(color: Theme.of(context).colorScheme.onBackground),
             ),
             SizedBox(
               height: 8,
@@ -265,7 +267,9 @@ class _PieChartState extends State<PieChart> {
           CircularChartAnnotation(
               widget: Container(
                   child: Text('${widget.numofFinish + widget.numOfUnfinish}',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onBackground, fontSize: 20))))
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onBackground,
+                          fontSize: 20))))
         ],
             series: <CircularSeries>[
           DoughnutSeries<ChartData, String>(

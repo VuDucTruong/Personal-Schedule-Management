@@ -31,8 +31,8 @@ class DataSourceController {
   }
 
   void removeAppointment(Appointment x) {
-    appointmentList.remove(x);
     calendarDataSource.notifyListeners(CalendarDataSourceAction.remove, [x]);
+    appointmentList.remove(x);
   }
 
   void updateAppointment(Appointment x) {

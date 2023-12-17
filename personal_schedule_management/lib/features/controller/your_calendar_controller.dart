@@ -8,9 +8,10 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class YourCalendarController {
   final DeviceCalendarPlugin deviceCalendarPlugin = DeviceCalendarPlugin();
   bool isSync = true;
-  List<Calendar> accountList = [];
+  Map<String, List<Calendar>> accountMapList = {};
+  List<MapEntry<String, List<Calendar>>> accountList = [];
   Map<String, bool> accountMap = {};
-  Future<List<Calendar>> getAllGoogleAccounts() async {
+  Future<void> getAllGoogleAccounts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? result = prefs.getBool(SYNC);
     if (result != null) {
@@ -23,34 +24,35 @@ class YourCalendarController {
       accountList.clear();
       final calendarsResult = (await deviceCalendarPlugin.retrieveCalendars());
       final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
-      createCalendarWithoutDuplicated(calendars, accountList);
+      getAccountListFromCalendar(calendars);
       await getAccountMap();
     }
-    return accountList;
   }
 
   Future<void> getAccountMap() async {
     accountMap.clear();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> banList = prefs.getStringList(BAN_ACCOUNT) ?? [];
+
     for (var element in accountList) {
-      if (element.accountName != null && element.accountName!.isNotEmpty) {
-        accountMap.addAll({
-          element.accountName ?? '': (!banList.contains(element.accountName))
-        });
+      for (var i in element.value) {
+        accountMap.addAll({i.name ?? '': !banList.contains(i.id)});
       }
     }
   }
 
-  void createCalendarWithoutDuplicated(
-      List<Calendar> calendarList, List<Calendar> newList) {
-    Set<String?> accountNameSet = Set();
-    calendarList.forEach((element) {
-      if (!accountNameSet.contains(element.accountName)) {
-        accountNameSet.add(element.accountName);
-        newList.add(element);
+  void getAccountListFromCalendar(List<Calendar> calendarList) {
+    accountMapList.clear();
+    for (var element in calendarList) {
+      if (accountMapList.containsKey(element.accountName)) {
+        accountMapList[element.accountName]?.add(element);
+      } else {
+        accountMapList.addAll({
+          element.accountName ?? '': [element]
+        });
       }
-    });
+    }
+    accountList = accountMapList.entries.toList();
   }
 
   Future<bool> changeSync(value) async {
@@ -73,7 +75,8 @@ class YourCalendarController {
     return true;
   }
 
-  Future<void> addToBanList(String account) async {
+  Future<void> addToBanList(String? account) async {
+    if (account == null) return;
     accountMap[account] = false;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> currentAccount = prefs.getStringList(BAN_ACCOUNT) ?? [];
@@ -82,7 +85,8 @@ class YourCalendarController {
     print(currentAccount);
   }
 
-  Future<void> removeToBanList(String account) async {
+  Future<void> removeToBanList(String? account) async {
+    if (account == null) return;
     accountMap[account] = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> currentAccount = prefs.getStringList(BAN_ACCOUNT) ?? [];

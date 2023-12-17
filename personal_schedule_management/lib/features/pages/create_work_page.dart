@@ -68,17 +68,31 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
   CreateWorkController createWorkController = CreateWorkController();
   DataSourceController dataSourceController =
       GetIt.instance<DataSourceController>();
+  late Future<bool> getDateFormat;
   @override
   void initState() {
     super.initState();
+    getDateFormat = getDateTimeFormat();
     priorityList = PRIORITY_MAP.keys.toList();
     titleController = TextEditingController();
     descriptionController = TextEditingController();
     locationController = TextEditingController();
     urlController = TextEditingController();
-    if (widget.selectedCongViec != null) {
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    titleController.dispose();
+    descriptionController.dispose();
+    urlController.dispose();
+    locationController.dispose();
+  }
+
+  Future<void> getSelectedCV_data(CongViec? selectedCV) async {
+    if (selectedCV != null) {
       update = true;
-      CongViec congViec = widget.selectedCongViec!;
+      CongViec congViec = selectedCV;
       titleController.text = congViec.tieuDe;
       descriptionController.text = congViec.noiDung;
       locationController.text = congViec.diaDiem;
@@ -95,18 +109,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
             .add(getDateTimeFromString(congViec.thoiDiemLap));
         createWorkController.loop = {};
       }
-      createWorkController.fulfillReminderList(
-          congViec.maCV, () => setState(() {}));
+      await createWorkController.fulfillReminderList(congViec.maCV);
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    titleController.dispose();
-    descriptionController.dispose();
-    urlController.dispose();
-    locationController.dispose();
   }
 
   Future<bool> chooseAction(CongViec congViec) async {
@@ -152,15 +156,14 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     return appointment;
   }
 
-  int times = 0;
   Future<bool> getDateTimeFormat() async {
-    if (times++ > 1) return true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     timeFormat = (prefs.getBool(TIME_24H_FORMAT) ?? false)
         ? DateFormat("HH:mm", 'vi_VN')
         : DateFormat("hh:mm a", 'vi_VN');
     dayFormat =
         DateFormat(prefs.getString(DATE_FORMAT) ?? 'dd/MM/yyyy', 'vi_VN');
+    await getSelectedCV_data(widget.selectedCongViec);
     return true;
   }
 
@@ -170,7 +173,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double height = mediaQuery.size.height;
     return FutureBuilder(
-      future: getDateTimeFormat(),
+      future: getDateFormat,
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(
@@ -233,9 +236,11 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                           Appointment x = _createAppointment(congViec);
                           if (update) {
                             dataSourceController.updateAppointment(x);
-                          } else
+                            Navigator.pop(context, congViec);
+                          } else {
                             dataSourceController.insertAppointment(x);
-                          Navigator.pop(context);
+                            Navigator.pop(context);
+                          }
                         },
                       ),
                     ],
