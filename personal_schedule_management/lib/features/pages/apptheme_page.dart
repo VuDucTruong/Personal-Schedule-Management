@@ -32,7 +32,6 @@ class _AppThemePageState extends State<AppThemePage> {
   ];
 
   Future<void> _GetData() async {
-    print('AppTheme Build!');
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -43,10 +42,8 @@ class _AppThemePageState extends State<AppThemePage> {
         }
     );
     _currentTheme = await settingsController.GetAppTheme();
-    print('pass get theme!');
     _selectedTheme = _currentTheme ?? AppTheme.DEFAULT;
     _currentDarkMode = await settingsController.GetDarkMode() ?? false;
-    print('pass get dark mode!');
     Navigator.of(context, rootNavigator: true).pop();
     setState(() {});
   }
