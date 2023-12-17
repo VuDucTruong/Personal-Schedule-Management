@@ -10,10 +10,10 @@ import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/report_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
+import 'package:personal_schedule_management/features/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 import 'package:timezone/data/latest.dart' as tz;
-
 import 'config/theme/app_theme.dart';
 import 'core/data/datasource/remote/firebase_options.dart';
 import 'injection_container.dart';
@@ -26,7 +26,7 @@ Future<void> main() async {
   tz.initializeTimeZones();
   runApp(ChangeNotifierProvider(
     create: (_) => AppTheme(),
-    child: MyApp(),
+    child: SplashScreen(),
   ));
 }
 
@@ -47,7 +47,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _GetData() async {
     SettingsController settingsController = SettingsController();
-    String _currentTheme = await settingsController.GetAppTheme() ?? AppTheme.DEFAULT;
+    String _currentTheme =
+        await settingsController.GetAppTheme() ?? AppTheme.DEFAULT;
     bool _currentDarkMode = await settingsController.GetDarkMode() ?? false;
     AppTheme.of(context).LoadAppTheme(_currentTheme);
     if (AppTheme.IsDarkMode != _currentDarkMode)
