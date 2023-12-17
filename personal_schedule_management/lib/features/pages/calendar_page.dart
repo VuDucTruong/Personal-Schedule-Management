@@ -40,7 +40,7 @@ class _CalendarPageState extends State<CalendarPage>
   DateFormat timeFormat = DateFormat('HH:mm', 'vi_VN');
   String timeFormatString = 'HH:mm';
   DateFormat dayFormat = DateFormat(AppDateFormat.DAY_MONTH_YEAR);
-  bool isWeatherOn = true;
+  // bool isWeatherOn = true;
   @override
   void initState() {
     super.initState();
@@ -67,12 +67,13 @@ class _CalendarPageState extends State<CalendarPage>
   bool isLoad = false;
   Future<bool> tempFunc() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(prefs.getBool(WEATHER) ?? 'null');
     timeFormatString =
         (prefs.getBool(TIME_24H_FORMAT) ?? false) ? ('HH:mm') : ("hh:mm a");
     timeFormat = DateFormat(timeFormatString, 'vi_VN');
     dayFormat = DateFormat(
         prefs.getString(DATE_FORMAT) ?? AppDateFormat.DAY_MONTH_YEAR);
-    isWeatherOn = prefs.getBool(WEATHER) ?? true;
+    // isWeatherOn = prefs.getBool(WEATHER) ?? true;
     if (!isLoad) {
       getAllCompleteWork();
       await calendarPageController.getCalendarEvents();
@@ -88,7 +89,7 @@ class _CalendarPageState extends State<CalendarPage>
     // TODO: implement build
     print('build!');
     return Scaffold(
-      drawer: MyDrawer(calendarController, dayFormat, isWeatherOn),
+      drawer: MyDrawer(calendarController, dayFormat),
       appBar: AppBar(
         title: const Text('Lịch'),
         actions: [
@@ -525,16 +526,24 @@ class MyDrawer extends StatefulWidget {
     return _MyDrawerState();
   }
 
-  MyDrawer(this.calendarController, this.dateFormat, this.isWeatherOn,
+  MyDrawer(this.calendarController, this.dateFormat,
       {super.key});
   CalendarController calendarController;
   DateFormat dateFormat;
-  bool isWeatherOn;
+  bool isWeatherOn = true;
 }
 
 class _MyDrawerState extends State<MyDrawer> {
   ApiServices apiServices = ApiServices();
   bool isWeatherVisible = true;
+
+  Future<WeatherDTO> fetchWeatherDataFunc() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    widget.isWeatherOn = prefs.getBool(WEATHER) ?? true;
+    WeatherDTO data = await apiServices.fetchWeatherData();
+    return data;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -693,7 +702,7 @@ class _MyDrawerState extends State<MyDrawer> {
         height: 8,
       ),
       FutureBuilder(
-        future: apiServices.fetchWeatherData(),
+        future: fetchWeatherDataFunc(),
         builder: (context, snapshot) {
           if (snapshot.hasData && widget.isWeatherOn) {
             WeatherDTO weatherDTO = snapshot.requireData;
