@@ -88,7 +88,7 @@ class _CalendarPageState extends State<CalendarPage>
     // TODO: implement build
     print('build!');
     return Scaffold(
-      drawer: MyDrawer(calendarController, dayFormat),
+      drawer: MyDrawer(calendarController),
       appBar: AppBar(
         title: const Text('Lịch'),
         actions: [
@@ -349,7 +349,9 @@ class _CalendarPageState extends State<CalendarPage>
                       bool result = await showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              content: const Text('Xóa công việc này ?'),
+                              content: Text('Xóa công việc này ?',
+                                        style: TextStyle(color: Theme.of(context).colorScheme.onBackground)
+                                      ),
                               actions: [
                                 FilledButton(
                                   onPressed: () {
@@ -525,10 +527,10 @@ class MyDrawer extends StatefulWidget {
     return _MyDrawerState();
   }
 
-  MyDrawer(this.calendarController, this.dateFormat,
+  MyDrawer(this.calendarController,
       {super.key});
   CalendarController calendarController;
-  DateFormat dateFormat;
+  DateFormat dateFormat = DateFormat(AppDateFormat.DAY_MONTH_YEAR);
   bool isWeatherOn = true;
 }
 
@@ -539,6 +541,10 @@ class _MyDrawerState extends State<MyDrawer> {
   Future<WeatherDTO> fetchWeatherDataFunc() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     widget.isWeatherOn = prefs.getBool(WEATHER) ?? true;
+    String? format = prefs.getString(DATE_FORMAT);
+    if (format != null){
+      widget.dateFormat = DateFormat(format);
+    }
     WeatherDTO data = await apiServices.fetchWeatherData();
     return data;
   }

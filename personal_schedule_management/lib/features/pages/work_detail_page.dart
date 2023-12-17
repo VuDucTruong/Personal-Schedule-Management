@@ -238,7 +238,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               ),
                               Text(
                                 '${dayFormat.format(widget.appointment.startTime)}',
-                                style: TextStyle(color: Colors.grey.shade600),
+                                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                               ),
                               Text(
                                 'Ngày kết thúc :',
@@ -246,7 +246,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               ),
                               Text(
                                 '${dayFormat.format(widget.appointment.endTime)}',
-                                style: TextStyle(color: Colors.grey.shade600),
+                                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                               ),
                             ],
                           ),
@@ -265,7 +265,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               selectedCongViec.loaiCongViec.isNotEmpty
                                   ? selectedCongViec.loaiCongViec
                                   : notSet,
-                              style: TextStyle(color: Colors.grey.shade600),
+                              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                             ),
                             SizedBox(
                               height: 8,
@@ -287,7 +287,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               selectedCongViec.noiDung.isNotEmpty
                                   ? selectedCongViec.noiDung
                                   : notSet,
-                              style: TextStyle(color: Colors.grey.shade600),
+                              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                             ),
                             SizedBox(
                               height: 8,
@@ -306,13 +306,13 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                                         itemBuilder: (context, index) => Text(
                                             list[index].tenTB,
                                             style: TextStyle(
-                                                color: Colors.grey.shade600)),
+                                                color: Theme.of(context).colorScheme.secondary)),
                                       );
                                     }
                                   }
                                   return Text(notSet,
                                       style: TextStyle(
-                                          color: Colors.grey.shade600));
+                                          color: Theme.of(context).colorScheme.secondary));
                                 }),
                             SizedBox(
                               height: 8,
@@ -322,7 +322,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               selectedCongViec.tenCK.isNotEmpty
                                   ? '${selectedCongViec.tenCK}\nThời điểm kết thúc lặp: ${controller.getDateTimeFromString(selectedCongViec.thoiDiemLap)}'
                                   : notSet,
-                              style: TextStyle(color: Colors.grey.shade600),
+                              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                             ),
                             SizedBox(
                               height: 8,
@@ -332,7 +332,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               selectedCongViec.url.isNotEmpty
                                   ? selectedCongViec.url
                                   : notSet,
-                              style: TextStyle(color: Colors.grey.shade600),
+                              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                             ),
                             SizedBox(
                               height: 8,
@@ -342,7 +342,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               selectedCongViec.diaDiem.isNotEmpty
                                   ? selectedCongViec.diaDiem
                                   : notSet,
-                              style: TextStyle(color: Colors.grey.shade600),
+                              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                             ),
                             SizedBox(
                               height: 8,
