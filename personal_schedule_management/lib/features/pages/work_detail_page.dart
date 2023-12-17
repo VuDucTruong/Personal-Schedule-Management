@@ -36,10 +36,12 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
       CalendarScheduleController();
   DataSourceController dataSourceController =
       GetIt.instance<DataSourceController>();
+  late Future<CongViecHT> getData;
   @override
   void initState() {
     super.initState();
     selectedCongViec = widget.congViec;
+    getData = getData_DateTimeFormat();
   }
 
   @override
@@ -73,7 +75,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
     int times = 0;
     int timesRemove = 0;
     return FutureBuilder(
-      future: getData_DateTimeFormat(),
+      future: getData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           CongViecHT? congViecHT = snapshot.data;
@@ -131,12 +133,17 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                           child: Text('Chỉnh sửa'),
                           value: 'Chỉnh sửa',
                           onTap: () async {
-                            await showModalBottomSheet(
+                            CongViec? i = await showModalBottomSheet(
                               isScrollControlled: true,
                               context: context,
                               builder: (context) =>
                                   CreateWorkPage(selectedCongViec),
                             );
+                            if (i != null) {
+                              setState(() {
+                                selectedCongViec = i;
+                              });
+                            }
                           },
                         ),
                         PopupMenuItem(
@@ -172,6 +179,8 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                                 dataSourceController
                                     .updateAppointment(widget.appointment);
                               }
+                              timesRemove++;
+                              Navigator.pop(context, isChange);
                             } else {
                               bool result = await showDialog(
                                     context: context,
@@ -199,10 +208,10 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                                     .removeWork(selectedCongViec.maCV);
                                 dataSourceController
                                     .removeAppointment(widget.appointment);
+                                timesRemove++;
+                                Navigator.pop(context, isChange);
                               }
                             }
-                            timesRemove++;
-                            Navigator.pop(context, isChange);
                           },
                         ),
                       ];

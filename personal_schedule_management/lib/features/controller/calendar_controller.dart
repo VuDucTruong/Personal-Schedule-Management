@@ -1,5 +1,6 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
@@ -34,9 +35,10 @@ class CalendarPageController {
     if (calendarsResult.data != null) {
       final List<Calendar> calendars = calendarsResult.data as List<Calendar>;
       List<String> calendarIds = [];
-      List<Calendar> calendarSingleList = [];
-      await createCalendarWithoutDuplicated(calendars, calendarSingleList);
-      for (Calendar calendar in calendarSingleList) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String> banList = prefs.getStringList(BAN_ACCOUNT) ?? [];
+      for (Calendar calendar in calendars) {
+        if (banList.contains(calendar.id)) continue;
         calendarIds.add(calendar.id.toString());
       }
       List<Event> eventList = await retrieveEvents(calendarIds);
@@ -48,6 +50,7 @@ class CalendarPageController {
             isAllDay: event.allDay!,
             subject: event.title!,
             notes: '0|0|0',
+            recurrenceRule: null,
             location: event.location,
             color: SchemeLight_default.primary));
       }
@@ -57,8 +60,8 @@ class CalendarPageController {
 
   Future<List<Event>> retrieveEvents(List<String> calendarIds) async {
     List<Event> events = [];
-    DateTime startDate = DateTime(2023);
-    DateTime endDate = DateTime(2024);
+    DateTime startDate = DateTime(DateTime.now().year - 1);
+    DateTime endDate = DateTime(DateTime.now().year + 1);
     RetrieveEventsParams params = RetrieveEventsParams(
       startDate: startDate,
       endDate: endDate,
@@ -74,22 +77,6 @@ class CalendarPageController {
       }
     }
     return events;
-  }
-
-  Future<void> createCalendarWithoutDuplicated(
-      List<Calendar> calendarList, List<Calendar> newList) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> banList = prefs.getStringList(BAN_ACCOUNT) ?? [];
-    bool isSync = prefs.getBool(SYNC) ?? true;
-    if (!isSync) return;
-    Set<String?> accountNameSet = Set();
-    calendarList.forEach((element) {
-      if (!accountNameSet.contains(element.accountName) &&
-          !banList.contains(element.accountName)) {
-        accountNameSet.add(element.accountName);
-        newList.add(element);
-      }
-    });
   }
 
   void changeWeatherVisibility() {

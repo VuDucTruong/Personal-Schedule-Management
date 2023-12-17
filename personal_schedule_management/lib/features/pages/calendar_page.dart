@@ -41,11 +41,12 @@ class _CalendarPageState extends State<CalendarPage>
   String timeFormatString = 'HH:mm';
   DateFormat dayFormat = DateFormat(AppDateFormat.DAY_MONTH_YEAR);
   bool isWeatherOn = true;
+  late Future<bool> fetchData;
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 4, vsync: this);
-    getAllCompleteWork();
+    fetchData = tempFunc();
   }
 
   @override
@@ -122,9 +123,9 @@ class _CalendarPageState extends State<CalendarPage>
         ],
       ),
       body: FutureBuilder(
-        future: tempFunc(),
+        future: fetchData,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.done) {
             if (isNeedSetUp) {
               dataSourceController.appointmentList =
                   calendarPageController.appointmentList;
@@ -209,6 +210,7 @@ class _CalendarPageState extends State<CalendarPage>
               context, appointment, getAllCompleteWork);
         },
         child: Container(
+          color: appointment.color,
           child: Center(
             child: Text(
               appointment.subject,
@@ -217,7 +219,6 @@ class _CalendarPageState extends State<CalendarPage>
               style: const TextStyle(color: Colors.white),
             ),
           ),
-          color: appointment.color,
         ),
       );
     }
@@ -309,7 +310,7 @@ class _CalendarPageState extends State<CalendarPage>
                 width: 20,
                 height: 20,
                 decoration: BoxDecoration(
-                    color: COLOR_LEVEL[priority ?? 0],
+                    color: COLOR_LEVEL[priority ?? 2],
                     borderRadius: BorderRadius.circular(50)),
               ),
               Visibility(

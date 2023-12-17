@@ -59,15 +59,13 @@ class CreateWorkController {
     alarmSwitch = value;
   }
 
-  Future<void> fulfillReminderList(
-      String maCV, VoidCallback setStateCallBack) async {
+  Future<void> fulfillReminderList(String maCV) async {
     List<ThongBao> thongBaoList =
         await notificationRespositoryImpl.getNotificationByWorkId(maCV);
     thongBaoList.forEach((element) {
       reminderValueList.add(element.thoiGian);
       reminderTimeList.add(element.tenTB);
     });
-    setStateCallBack();
   }
 
   Future<void> createNotification(String maCV) async {

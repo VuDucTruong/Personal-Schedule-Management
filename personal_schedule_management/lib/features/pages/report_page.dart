@@ -52,9 +52,12 @@ class _ReportPageState extends State<ReportPage> {
                     SizedBox(
                         height: 400,
                         child: SplineChart(reportController.congViecHT)),
-                    SizedBox(
-                      height: 350,
-                      child: PieChart(numOfFinish, numOfUnfinish, numOfLate),
+                    Visibility(
+                      visible: (numOfUnfinish + numOfFinish != 0),
+                      child: SizedBox(
+                        height: 350,
+                        child: PieChart(numOfFinish, numOfUnfinish, numOfLate),
+                      ),
                     ),
                   ],
                 ),
