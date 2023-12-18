@@ -103,6 +103,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
       createWorkController.priorityValue = priorityList[congViec.doUuTien - 1];
       createWorkController.allDaySwitch = congViec.isCaNgay;
       createWorkController.selectedValue = congViec.loaiCongViec;
+      createWorkController.alarmSwitch = congViec.isBaoThuc;
+      createWorkController.reminderSwitch = true;
       if (congViec.tenCK.isNotEmpty) {
         createWorkController.contentRecurrence.add(congViec.tenCK);
         createWorkController.contentRecurrence
@@ -482,14 +484,15 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                     ListTitleWork(
                       Text('Thiết lập nhắc nhở'),
                       Icons.message,
-                      Switch(
-                        onChanged: (value) {
-                          createWorkController.changeReminderSwitch(value);
-                          setState(() {});
-                        },
-                        value: createWorkController.reminderSwitch,
-                        activeColor: createWorkController.colorIcon,
-                      ),
+                      null
+                      // Switch(
+                      //   onChanged: (value) {
+                      //     createWorkController.changeReminderSwitch(value);
+                      //     setState(() {});
+                      //   },
+                      //   value: createWorkController.reminderSwitch,
+                      //   activeColor: createWorkController.colorIcon,
+                      // ),
                     ),
                     Builder(builder: (context) {
                       int max =
