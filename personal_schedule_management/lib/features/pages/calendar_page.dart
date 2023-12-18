@@ -62,7 +62,9 @@ class _CalendarPageState extends State<CalendarPage>
   }
 
   void getAllCompleteWork() {
-    calendarScheduleController.getAllCompletedWork(() {});
+    calendarScheduleController.getAllCompletedWork(() {
+      setState(() {});
+    });
   }
 
   bool isLoad = false;
@@ -225,12 +227,8 @@ class _CalendarPageState extends State<CalendarPage>
     return InkWell(
       onTap: () async {
         Appointment appointment = calendarAppointmentDetails.appointments.first;
-        await calendarScheduleController.showWorkDetails(context, appointment,
-            () {
-          calendarScheduleController.getAllCompletedWork(() {
-            setState(() {});
-          });
-        });
+        await calendarScheduleController.showWorkDetails(
+            context, appointment, getAllCompleteWork);
       },
       child: Card(
         color: appointment.color,

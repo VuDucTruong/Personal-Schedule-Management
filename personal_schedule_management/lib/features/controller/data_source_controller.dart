@@ -31,8 +31,8 @@ class DataSourceController {
   }
 
   void removeAppointment(Appointment x) {
-    calendarDataSource.notifyListeners(CalendarDataSourceAction.remove, [x]);
     appointmentList.remove(x);
+    calendarDataSource.notifyListeners(CalendarDataSourceAction.remove, [x]);
   }
 
   void updateAppointment(Appointment x) {
@@ -43,8 +43,8 @@ class DataSourceController {
   }
 
   Future<void> setUpNotification() async {
-    List<Appointment> appointments =
-        calendarDataSource.getVisibleAppointments(DateTime.now(), '');
+    List<Appointment> appointments = calendarDataSource.getVisibleAppointments(
+        DateTime.now(), '', DateTime.now().add(const Duration(days: 2)));
     notificationServices.cancelNotification();
     for (Appointment i in appointments) {
       List<ThongBao> thongBao = await notificationRespositoryImpl
@@ -55,7 +55,6 @@ class DataSourceController {
         await notificationServices.createNotification(
             i, time, j.maTB, bool.tryParse(i.notes![4]) ?? false);
       }
-      ;
     }
   }
 }
