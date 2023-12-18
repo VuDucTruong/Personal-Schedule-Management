@@ -49,7 +49,7 @@ class CalendarPageController {
             endTime: DateTime.parse(event.end.toString()),
             isAllDay: event.allDay!,
             subject: event.title!,
-            notes: '0|0|0',
+            notes: '0|2|0', //is ReadOnly - priority - is alarm
             recurrenceRule: null,
             location: event.location,
             color: SchemeLight_default.primary));

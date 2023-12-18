@@ -36,7 +36,8 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
       CalendarScheduleController();
   DataSourceController dataSourceController =
       GetIt.instance<DataSourceController>();
-  late Future<CongViecHT> getData;
+  late Future<CongViecHT?> getData;
+  CongViecHT? congViecHT;
   @override
   void initState() {
     super.initState();
@@ -49,7 +50,7 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
     super.dispose();
   }
 
-  Future<CongViecHT> getData_DateTimeFormat() async {
+  Future<CongViecHT?> getData_DateTimeFormat() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String timeFormatString = (prefs.getBool(TIME_24H_FORMAT) ?? false)
         ? AppDateFormat.TIME_24H
@@ -61,12 +62,15 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
     } else {
       dayFormat = DateFormat("$dayFormatString $timeFormatString", 'vi_VN');
     }
-    return await controller.getCompletedWork(
+    congViecHT = await controller.getCompletedWork(
         selectedCongViec.maCV, widget.appointment.startTime);
+    completeStatus = (congViecHT != null);
+    return congViecHT;
   }
 
   final List<String> options = ['Chỉnh sửa', 'Hoàn thành'];
   final String notSet = 'Chưa đặt';
+  bool completeStatus = false;
   bool isChange = false;
   @override
   Widget build(BuildContext context) {
@@ -78,9 +82,8 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
       future: getData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          CongViecHT? congViecHT = snapshot.data;
           String complete =
-              (congViecHT == null ? 'Hoàn thành' : 'Chưa hoàn thành');
+              (!completeStatus ? 'Hoàn thành' : 'Chưa hoàn thành');
           return Scaffold(
             appBar: AppBar(
                 title: Text(
@@ -121,11 +124,17 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                                   widget.appointment.startTime,
                                   widget.appointment.endTime);
                             }
+                            if (!completeStatus) {
+                              congViecHT = await controller.getCompletedWork(
+                                  selectedCongViec.maCV,
+                                  widget.appointment.startTime);
+                            }
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content:
                                     Text('Cập nhật trạng thái thành công')));
                             setState(() {
                               isChange = true;
+                              completeStatus = !completeStatus;
                             });
                           },
                         ),
