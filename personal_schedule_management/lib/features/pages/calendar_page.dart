@@ -436,7 +436,10 @@ class CustomSearchDelegate extends SearchDelegate {
     return Theme.of(context).copyWith(
       inputDecorationTheme: searchFieldDecorationTheme,
       textTheme: Theme.of(context).textTheme.copyWith(
-            titleLarge: TextStyle(color: Colors.white, fontSize: 18),
+            titleLarge: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontSize: 18
+            ),
           ),
     );
   }

@@ -15,7 +15,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: AnimatedSplashScreen(
+      debugShowCheckedModeBanner: false,
+      home: AnimatedSplashScreen(
       duration: 2000,
       splash: Image.asset('assets/image/logo.jpg'),
       nextScreen: MyApp(),
