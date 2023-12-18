@@ -67,7 +67,7 @@ class _WorkCategoryPageState extends State<WorkCategoryPage> {
                     onTap: () {
                       controller.openCreateWorkCategoryDialog(
                         context,
-                        () => setState(() {}),
+                            () => setState(() {}),
                       );
                     },
                   );

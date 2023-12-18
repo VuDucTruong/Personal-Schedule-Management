@@ -286,7 +286,9 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               style: TextStyle(
                                   color: COLOR_LEVEL[
                                       selectedCongViec.doUuTien - 1],
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                  backgroundColor: Colors.black,
+                              ),
                             ),
                             SizedBox(
                               height: 8,
