@@ -282,7 +282,15 @@ class _PieChartState extends State<PieChart> {
               radius: '110%',
               explode: true,
               explodeGesture: ActivationMode.singleTap,
-              dataLabelSettings: DataLabelSettings(isVisible: true))
+              dataLabelSettings: DataLabelSettings(
+                  isVisible: true,
+                  color: Theme.of(context).colorScheme.onBackground,
+                  textStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.background,
+                    fontSize: 13
+                  )
+              )
+          )
         ]));
   }
 }

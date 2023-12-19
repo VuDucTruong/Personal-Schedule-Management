@@ -366,14 +366,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         isSwitch: false,
                         function: () => AppRoutes.toRingtonePage(context),
                       ),
-                      const SettingsDivider(),
-                      SettingItem(
-                        color: Colors.brown,
-                        content: 'Thông báo & nhắc nhở',
-                        iconData: FontAwesomeIcons.solidBell,
-                        isSwitch: false,
-                        function: null,
-                      ),
+                      // const SettingsDivider(),
+                      // SettingItem(
+                      //   color: Colors.brown,
+                      //   content: 'Thông báo & nhắc nhở',
+                      //   iconData: FontAwesomeIcons.solidBell,
+                      //   isSwitch: false,
+                      //   function: null,
+                      // ),
                       const SettingsDivider(),
                       SettingItem(
                         function: () => AppRoutes.toAppThemePage(context),

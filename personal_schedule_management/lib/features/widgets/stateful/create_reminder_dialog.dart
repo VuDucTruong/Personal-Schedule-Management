@@ -30,7 +30,9 @@ class _CreateReminderDialogState extends State<CreateReminderDialog> {
     // TODO: implement build
     return AlertDialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 15),
-      title: Text('Thông báo tùy chỉnh'),
+      title: Text('Thông báo tùy chỉnh',
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -48,6 +50,7 @@ class _CreateReminderDialogState extends State<CreateReminderDialog> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 maxLines: 1,
                 maxLength: 3,
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -79,7 +82,9 @@ class _CreateReminderDialogState extends State<CreateReminderDialog> {
                                       isSelected = value!;
                                     });
                                   }),
-                              Text(e),
+                              Text(e, style: TextStyle(
+                                color: Theme.of(context).colorScheme.onBackground
+                              )),
                             ],
                           )),
                     ],
@@ -99,7 +104,9 @@ class _CreateReminderDialogState extends State<CreateReminderDialog> {
                                       isSelected = value!;
                                     });
                                   }),
-                              Text(e),
+                                Text(e, style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onBackground
+                                )),
                             ],
                           )),
                       Divider(
@@ -110,7 +117,9 @@ class _CreateReminderDialogState extends State<CreateReminderDialog> {
                       InkWell(
                         child: Text(
                           'Lúc ${timeOfDay.hour}:${timeOfDay.minute.toString().padLeft(2, '0')}',
-                          style: AppTextStyle.h2_5,
+                          style: AppTextStyle.h2_5.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground
+                          ),
                         ),
                         onTap: () async {
                           timeOfDay = await showTimePicker(

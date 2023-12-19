@@ -28,7 +28,14 @@ class AppTheme extends ChangeNotifier {
     return ThemeData(
         useMaterial3: true,
         colorScheme: colorScheme,
-        textTheme: GoogleFonts.robotoTextTheme()
+        textTheme: GoogleFonts.robotoTextTheme().copyWith(
+          bodySmall: GoogleFonts.robotoTextTheme().bodySmall?.copyWith(
+            color: colorScheme.onSurface
+          )
+        ),
+        timePickerTheme: TimePickerThemeData().copyWith(
+          helpTextStyle: TextStyle(color: colorScheme.onBackground),
+        )
     );
   }
 
