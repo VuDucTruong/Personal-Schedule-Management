@@ -53,7 +53,7 @@ class DataSourceController {
         DateTime time = i.startTime.subtract(j.thoiGian);
         if (time.isBefore(DateTime.now())) continue;
         await notificationServices.createNotification(
-            i, time, j.maTB, bool.tryParse(i.notes![4]) ?? false);
+            i, time, j.maTB, bool.tryParse(i.notes!.substring(4)) ?? false);
       }
     }
   }

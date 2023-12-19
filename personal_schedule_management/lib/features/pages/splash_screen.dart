@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: AnimatedSplashScreen(
-      duration: 2000,
+      duration: 1000,
       splash: Image.asset('assets/image/logo.jpg'),
       nextScreen: MyApp(),
       splashTransition: SplashTransition.fadeTransition,

@@ -138,6 +138,7 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
                                                   } catch (e) {
                                                     print(e);
                                                   }
+                                                  setState(() {});
                                                 }
                                               },
                                               title: Text(e.name ?? ''),

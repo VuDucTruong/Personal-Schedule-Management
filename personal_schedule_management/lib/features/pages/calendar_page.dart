@@ -436,8 +436,7 @@ class CustomSearchDelegate extends SearchDelegate {
       textTheme: Theme.of(context).textTheme.copyWith(
             titleLarge: TextStyle(
                 color: Theme.of(context).colorScheme.onBackground,
-                fontSize: 18
-            ),
+                fontSize: 18),
           ),
     );
   }
