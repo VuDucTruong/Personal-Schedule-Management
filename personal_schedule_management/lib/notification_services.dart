@@ -45,7 +45,7 @@ class NotificationServices {
         notificationTime.hour,
         notificationTime.minute,
         0);
-    ;
+    print('This is Alarm : ${isAlarm}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String musicPath = prefs.getString(RINGTONE) ?? DEFAULT_RINGTONE;
     List<String> musics = musicPath.split('/').last.split('.');
