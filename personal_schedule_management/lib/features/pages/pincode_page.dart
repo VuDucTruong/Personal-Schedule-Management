@@ -312,6 +312,12 @@ class _PincodePageState extends State<PincodePage> {
                         ),
                         onPressed: () async {
                           if (currentText == pinCode) {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return const Center(child: CircularProgressIndicator());
+                                });
                             UserCredential? userCredential =
                             await registerWithEmailAndPassword(
                                 widget.email, widget.password, widget.name);
@@ -322,32 +328,8 @@ class _PincodePageState extends State<PincodePage> {
                             } else {
                               print('Account creation failed!');
                             }
-                            // await showDialog(
-                            //   context: context,
-                            //   builder: (BuildContext context) {
-                            //     return AlertDialog(
-                            //       title: Text('Thông báo'),
-                            //       content: Text(
-                            //         'XÁC NHẬN THÀNH CÔNG',
-                            //         style: AppTextStyle.h1,
-                            //       ),
-                            //       actions: [
-                            //         TextButton(
-                            //           onPressed: () {
-                            //             Navigator.of(context).pop();
-                            //           },
-                            //           child: Text('Đóng'),
-                            //         ),
-                            //       ],
-                            //     );
-                            //   },
-                            // );
-                            // Navigator.pushReplacement(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => LoginPage(),
-                            //     ));
                             _verifySuccess = true;
+                            Navigator.of(context, rootNavigator: true).pop();
                             setState(() {});
                           } else {
                             showDialog(

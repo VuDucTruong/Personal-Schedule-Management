@@ -103,6 +103,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
       createWorkController.priorityValue = priorityList[congViec.doUuTien - 1];
       createWorkController.allDaySwitch = congViec.isCaNgay;
       createWorkController.selectedValue = congViec.loaiCongViec;
+      createWorkController.alarmSwitch = congViec.isBaoThuc;
+      createWorkController.reminderSwitch = true;
       if (congViec.tenCK.isNotEmpty) {
         createWorkController.contentRecurrence.add(congViec.tenCK);
         createWorkController.contentRecurrence
@@ -200,7 +202,9 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                       ),
                       Text(
                         'Công việc',
-                        style: AppTextStyle.h2,
+                        style: AppTextStyle.h2.copyWith(
+                              color: Theme.of(context).colorScheme.primary
+                            ),
                       ),
                       InkWell(
                         child: Icon(FontAwesomeIcons.check,
@@ -275,10 +279,12 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                             },
                                             maxLines: 1,
                                             minLines: 1,
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                                 hintText: 'Tiêu đề',
                                                 border: InputBorder.none),
-                                            style: AppTextStyle.h2,
+                                            style: AppTextStyle.h2.copyWith(
+                                                    color: Theme.of(context).colorScheme.secondary
+                                                  ),
                                           ),
                                         ),
                                       ),
@@ -291,6 +297,9 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                       expands: true,
                                       maxLines: null,
                                       minLines: null,
+                                      style: TextStyle(
+                                            color: Theme.of(context).colorScheme.onBackground
+                                      ),
                                       decoration: InputDecoration(
                                           hintText: 'Thêm chi tiết',
                                           border: InputBorder.none),
@@ -373,11 +382,12 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                       value: createWorkController.priorityValue,
                       items: [
                         ...priorityList.map((e) => DropdownMenuItem(
+                              value: e,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(e),
-                                  SizedBox(
+                                  Text(e, style: TextStyle(color: Theme.of(context).colorScheme.onBackground)),
+                                  const SizedBox(
                                     width: 4,
                                   ),
                                   Container(
@@ -391,7 +401,6 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                                   )
                                 ],
                               ),
-                              value: e,
                             ))
                       ],
                       onChanged: (value) {
@@ -475,14 +484,15 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                     ListTitleWork(
                       Text('Thiết lập nhắc nhở'),
                       Icons.message,
-                      Switch(
-                        onChanged: (value) {
-                          createWorkController.changeReminderSwitch(value);
-                          setState(() {});
-                        },
-                        value: createWorkController.reminderSwitch,
-                        activeColor: createWorkController.colorIcon,
-                      ),
+                      null
+                      // Switch(
+                      //   onChanged: (value) {
+                      //     createWorkController.changeReminderSwitch(value);
+                      //     setState(() {});
+                      //   },
+                      //   value: createWorkController.reminderSwitch,
+                      //   activeColor: createWorkController.colorIcon,
+                      // ),
                     ),
                     Builder(builder: (context) {
                       int max =

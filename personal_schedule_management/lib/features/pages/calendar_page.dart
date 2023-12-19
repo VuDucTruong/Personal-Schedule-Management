@@ -71,11 +71,11 @@ class _CalendarPageState extends State<CalendarPage>
   Future<bool> tempFunc() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     timeFormatString =
-        (prefs.getBool(TIME_24H_FORMAT) ?? false) ? ('HH:mm') : ("hh:mm a");
+        (prefs.getBool(TIME_24H_FORMAT) ?? false) ? ('HH:mm') : ("hh a");
     timeFormat = DateFormat(timeFormatString, 'vi_VN');
     dayFormat = DateFormat(
         prefs.getString(DATE_FORMAT) ?? AppDateFormat.DAY_MONTH_YEAR);
-    isWeatherOn = prefs.getBool(WEATHER) ?? true;
+    // isWeatherOn = prefs.getBool(WEATHER) ?? true;
     if (!isLoad) {
       getAllCompleteWork();
       await calendarPageController.getCalendarEvents();
@@ -91,7 +91,7 @@ class _CalendarPageState extends State<CalendarPage>
     // TODO: implement build
     print('build!');
     return Scaffold(
-      drawer: MyDrawer(calendarController, dayFormat, isWeatherOn),
+      drawer: MyDrawer(calendarController),
       appBar: AppBar(
         title: const Text('Lịch'),
         actions: [
@@ -137,6 +137,8 @@ class _CalendarPageState extends State<CalendarPage>
             return SfCalendar(
               controller: calendarController,
               view: CalendarView.schedule,
+              timeSlotViewSettings:
+                  TimeSlotViewSettings(timeFormat: timeFormatString),
               scheduleViewSettings: const ScheduleViewSettings(
                 appointmentItemHeight: 70,
               ),
@@ -348,7 +350,11 @@ class _CalendarPageState extends State<CalendarPage>
                       bool result = await showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              content: const Text('Xóa công việc này ?'),
+                              content: Text('Xóa công việc này ?',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground)),
                               actions: [
                                 FilledButton(
                                   onPressed: () {
@@ -421,6 +427,19 @@ class CustomSearchDelegate extends SearchDelegate {
       await calendarScheduleController.showWorkDetails(
           context, appointment, getAllCompleteWork);
     }
+  }
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+      inputDecorationTheme: searchFieldDecorationTheme,
+      textTheme: Theme.of(context).textTheme.copyWith(
+            titleLarge: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontSize: 18
+            ),
+          ),
+    );
   }
 
   @override
@@ -514,16 +533,27 @@ class MyDrawer extends StatefulWidget {
     return _MyDrawerState();
   }
 
-  MyDrawer(this.calendarController, this.dateFormat, this.isWeatherOn,
-      {super.key});
+  MyDrawer(this.calendarController, {super.key});
   CalendarController calendarController;
-  DateFormat dateFormat;
-  bool isWeatherOn;
+  DateFormat dateFormat = DateFormat(AppDateFormat.DAY_MONTH_YEAR);
+  bool isWeatherOn = true;
 }
 
 class _MyDrawerState extends State<MyDrawer> {
   ApiServices apiServices = ApiServices();
   bool isWeatherVisible = true;
+
+  Future<WeatherDTO> fetchWeatherDataFunc() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    widget.isWeatherOn = prefs.getBool(WEATHER) ?? true;
+    String? format = prefs.getString(DATE_FORMAT);
+    if (format != null) {
+      widget.dateFormat = DateFormat(format);
+    }
+    WeatherDTO data = await apiServices.fetchWeatherData();
+    return data;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -542,18 +572,29 @@ class _MyDrawerState extends State<MyDrawer> {
             child: Column(children: [
       Container(
         color: widget.calendarController.view == CalendarView.schedule
-            ? Colors.lightGreenAccent
+            ? Theme.of(context).colorScheme.primary
             : null,
         child: ListTile(
-          leading: const Image(
-            image: AssetImage('assets/image/schedule_icon.png'),
-            width: 25,
-            height: 25,
+          leading: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+                widget.calendarController.view == CalendarView.schedule
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onBackground,
+                BlendMode.srcIn),
+            child: const Image(
+              image: AssetImage('assets/image/schedule_icon.png'),
+              width: 25,
+              height: 25,
+            ),
           ),
           style: ListTileStyle.drawer,
-          title: const Text(
+          title: Text(
             'Lịch biểu',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: widget.calendarController.view == CalendarView.schedule
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onBackground),
           ),
           onTap: () {
             widget.calendarController.view = CalendarView.schedule;
@@ -564,18 +605,29 @@ class _MyDrawerState extends State<MyDrawer> {
       const DividerWorkItem(),
       Container(
         color: widget.calendarController.view == CalendarView.day
-            ? Colors.lightGreenAccent
+            ? Theme.of(context).colorScheme.primary
             : null,
         child: ListTile(
-          leading: const Image(
-            image: AssetImage('assets/image/day_icon.png'),
-            width: 25,
-            height: 25,
+          leading: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+                widget.calendarController.view == CalendarView.day
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onBackground,
+                BlendMode.srcIn),
+            child: const Image(
+              image: AssetImage('assets/image/day_icon.png'),
+              width: 25,
+              height: 25,
+            ),
           ),
           style: ListTileStyle.drawer,
-          title: const Text(
+          title: Text(
             'Ngày',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: widget.calendarController.view == CalendarView.day
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onBackground),
           ),
           onTap: () {
             widget.calendarController.view = CalendarView.day;
@@ -586,18 +638,29 @@ class _MyDrawerState extends State<MyDrawer> {
       const DividerWorkItem(),
       Container(
         color: widget.calendarController.view == CalendarView.week
-            ? Colors.lightGreenAccent
+            ? Theme.of(context).colorScheme.primary
             : null,
         child: ListTile(
-          leading: const Image(
-            image: AssetImage('assets/image/week_icon.png'),
-            width: 25,
-            height: 25,
+          leading: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+                widget.calendarController.view == CalendarView.week
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onBackground,
+                BlendMode.srcIn),
+            child: const Image(
+              image: AssetImage('assets/image/week_icon.png'),
+              width: 25,
+              height: 25,
+            ),
           ),
           style: ListTileStyle.drawer,
-          title: const Text(
+          title: Text(
             'Tuần',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: widget.calendarController.view == CalendarView.week
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onBackground),
           ),
           onTap: () {
             widget.calendarController.view = CalendarView.week;
@@ -608,13 +671,20 @@ class _MyDrawerState extends State<MyDrawer> {
       const DividerWorkItem(),
       Container(
         color: widget.calendarController.view == CalendarView.month
-            ? Colors.lightGreenAccent
+            ? Theme.of(context).colorScheme.primary
             : null,
         child: ListTile(
-          leading: const Icon(Icons.grid_on_rounded),
-          title: const Text(
+          leading: Icon(Icons.grid_on_rounded,
+              color: widget.calendarController.view == CalendarView.month
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onBackground),
+          title: Text(
             'Tháng',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: widget.calendarController.view == CalendarView.month
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onBackground),
           ),
           onTap: () {
             widget.calendarController.view = CalendarView.month;
@@ -626,15 +696,16 @@ class _MyDrawerState extends State<MyDrawer> {
       const SizedBox(
         height: 8,
       ),
-      const Text(
+      Text(
         'Dự báo thời tiết',
-        style: AppTextStyle.h2,
+        style: AppTextStyle.h2
+            .copyWith(color: Theme.of(context).colorScheme.primary),
       ),
       const SizedBox(
         height: 8,
       ),
       FutureBuilder(
-        future: apiServices.fetchWeatherData(),
+        future: fetchWeatherDataFunc(),
         builder: (context, snapshot) {
           if (snapshot.hasData && widget.isWeatherOn) {
             WeatherDTO weatherDTO = snapshot.requireData;
@@ -652,9 +723,10 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                     RichText(
                         text: TextSpan(
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
                                 fontWeight: FontWeight.bold),
                             children: [
                           TextSpan(text: location.name),
@@ -688,8 +760,13 @@ class _MyDrawerState extends State<MyDrawer> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             //color: Color.fromRGBO(32, 34, 85, 0.7),
-                            gradient: const LinearGradient(
-                              colors: [Color(0xff5bb85f), Color(0xff89f2ff)],
+                            gradient: LinearGradient(
+                              colors: [
+                                Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                                Theme.of(context).colorScheme.tertiaryContainer
+                              ],
                               stops: [0.1, 1],
                               begin: Alignment.bottomRight,
                               end: Alignment.topLeft,
@@ -702,7 +779,13 @@ class _MyDrawerState extends State<MyDrawer> {
                             children: [
                               Text(
                                 widget.dateFormat.format(e.date),
-                                style: const TextStyle(fontSize: 18),
+                                style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary),
                               ),
                               Row(
                                 children: [
@@ -723,13 +806,17 @@ class _MyDrawerState extends State<MyDrawer> {
                                       Text(
                                         '${e.weatherDay.avgtemp_c.toString()} \u00B0C',
                                         style: AppTextStyle.h1.copyWith(
-                                          color: Colors.white,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onBackground,
                                         ),
                                       ),
                                       Text(
                                         e.weatherDay.condition.text,
                                         style: AppTextStyle.h2.copyWith(
-                                            color: Colors.deepPurpleAccent),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
                                       ),
                                     ],
                                   ),
@@ -747,74 +834,103 @@ class _MyDrawerState extends State<MyDrawer> {
                                   children: [
                                     RichText(
                                       text: TextSpan(children: [
-                                        const TextSpan(
+                                        TextSpan(
                                             text: 'Nhiệt độ tối đa: ',
                                             style: TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                            )),
+                                                fontStyle: FontStyle.italic,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground)),
                                         TextSpan(
                                             text: e.weatherDay.maxtemp_c
                                                     .toString() +
                                                 '\u00B0C',
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold)),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground)),
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        const TextSpan(
+                                        TextSpan(
                                             text: 'Nhiệt độ tối thiểu: ',
                                             style: TextStyle(
-                                                fontStyle: FontStyle.italic)),
+                                                fontStyle: FontStyle.italic,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground)),
                                         TextSpan(
                                             text: e.weatherDay.mintemp_c
                                                     .toString() +
                                                 '\u00B0C',
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold)),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground)),
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        const TextSpan(
+                                        TextSpan(
                                             text: 'Độ ẩm: ',
                                             style: TextStyle(
-                                                fontStyle: FontStyle.italic)),
+                                                fontStyle: FontStyle.italic,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground)),
                                         TextSpan(
                                           text: e.weatherDay.avghumidity
                                                   .toString() +
                                               '%',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground),
                                         )
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        const TextSpan(
+                                        TextSpan(
                                             text: 'Tầm nhìn: ',
                                             style: TextStyle(
-                                                fontStyle: FontStyle.italic)),
+                                                fontStyle: FontStyle.italic,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground)),
                                         TextSpan(
                                           text: e.weatherDay.avgvis_km
                                                   .toString() +
                                               ' km',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground),
                                         ),
                                       ]),
                                     ),
                                     RichText(
                                       text: TextSpan(children: [
-                                        const TextSpan(
+                                        TextSpan(
                                             text: 'Gió tối đa: ',
                                             style: TextStyle(
-                                                fontStyle: FontStyle.italic)),
+                                                fontStyle: FontStyle.italic,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onBackground)),
                                         TextSpan(
                                           text:
                                               '${e.weatherDay.maxwind_kph.toString()} km/h',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onBackground),
                                         )
                                       ]),
                                     ),

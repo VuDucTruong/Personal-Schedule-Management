@@ -58,7 +58,7 @@ class _RingtonesPageState extends State<RingtonesPage> {
     currentRingtone =
         await settingsController.GetRingtone() ?? DEFAULT_RINGTONE;
     if (currentRingtone == '') currentRingtone = DEFAULT_RINGTONE;
-    Navigator.of(context).pop();
+    Navigator.of(context, rootNavigator: true).pop();
     setState(() {});
     hasCalledGetData = true;
   }

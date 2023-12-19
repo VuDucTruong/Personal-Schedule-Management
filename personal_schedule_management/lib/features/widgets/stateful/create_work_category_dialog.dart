@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/features/controller/work_category_controller.dart';
+
+import '../../../config/text_styles/app_text_style.dart';
 
 class WorkCategoryDialog extends StatefulWidget {
   WorkCategoryDialog(this.workCategoryController, this.setStateCallBack,
@@ -20,11 +23,16 @@ class _WorkCategoryDialogState extends State<WorkCategoryDialog> {
 
     // TODO: implement build
     return AlertDialog(
-      title: Text('Tạo loại công việc'),
+      title: Text('Tạo loại công việc',
+        style: TextStyle(color: Theme.of(context).colorScheme.primary)
+      ),
       content: Form(
         key: _formKey,
         child: TextFormField(
           controller: controller,
+          inputFormatters: [
+            FilteringTextInputFormatter.deny(RegExp(r"\n"))
+          ],
           validator: (value) {
             if (value != null && value.isNotEmpty)
               return null;
@@ -33,6 +41,7 @@ class _WorkCategoryDialogState extends State<WorkCategoryDialog> {
           },
           maxLines: 2,
           maxLength: 20,
+          style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
           decoration: InputDecoration(
               hintText: 'Tên loại công việc...',
               border: OutlineInputBorder(
@@ -49,11 +58,28 @@ class _WorkCategoryDialogState extends State<WorkCategoryDialog> {
               if (category.isEmpty) return;
               if (await widget.workCategoryController
                   .insertWorkCategory(category)) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('Thêm thành công!')));
+                Navigator.pop(context);
+                // ScaffoldMessenger.of(context)
+                //     .showSnackBar(SnackBar(content: Text('Thêm thành công!')));
               } else {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('Thêm thất bại!')));
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Thêm thất bại!',
+                        style: TextStyle(color: Theme.of(context).colorScheme.error)
+                      ),
+                      content: Text(
+                        'Loại công việc bạn vừa nhập đã tồn tại hoặc do lỗi hệ thống',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground),
+                      ),
+                    );
+                  },
+                );
+                // ScaffoldMessenger.of(context)
+                //     .showSnackBar(SnackBar(content: Text('Thêm thất bại!')));
               }
               widget.setStateCallBack();
             },
@@ -63,7 +89,7 @@ class _WorkCategoryDialogState extends State<WorkCategoryDialog> {
               Navigator.pop(context);
             },
             style:
-                FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: Text('Hủy'))
       ],
     );

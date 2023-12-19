@@ -44,7 +44,7 @@ class _AppThemePageState extends State<AppThemePage> {
     _currentTheme = await settingsController.GetAppTheme();
     _selectedTheme = _currentTheme ?? AppTheme.DEFAULT;
     _currentDarkMode = await settingsController.GetDarkMode() ?? false;
-    Navigator.of(context).pop();
+    Navigator.of(context, rootNavigator: true).pop();
     setState(() {});
   }
 
@@ -128,9 +128,9 @@ class _AppThemePageState extends State<AppThemePage> {
             centerTitle: false,
             leading: IconButton(
                 onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.pop(context);
                 },
-                icon: Icon(FontAwesomeIcons.circleChevronLeft,
+                icon: Icon(Icons.arrow_back,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
             title: Text('Giao diện',
                     style: Theme.of(context).textTheme.headlineSmall!.copyWith(

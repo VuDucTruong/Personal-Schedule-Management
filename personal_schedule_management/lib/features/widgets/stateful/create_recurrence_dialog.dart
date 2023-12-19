@@ -52,7 +52,7 @@ class CreateRecurrenceDialogState extends State<CreateRecurrenceDialog>
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Đặt lặp lại'),
+      title: Text('Đặt lặp lại', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       insetPadding: EdgeInsets.symmetric(horizontal: 15),
       content: Builder(builder: (context) {
         return SizedBox(
@@ -78,7 +78,7 @@ class CreateRecurrenceDialogState extends State<CreateRecurrenceDialog>
             ),
             Expanded(
                 child: Card(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.background,
               child: TabBarView(
                   controller: tabController,
                   physics: NeverScrollableScrollPhysics(),
