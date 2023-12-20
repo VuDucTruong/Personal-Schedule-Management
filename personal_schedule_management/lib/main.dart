@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,7 @@ import 'config/theme/app_theme.dart';
 import 'core/data/datasource/remote/firebase_options.dart';
 import 'injection_container.dart';
 import 'notification_services.dart';
+import 'package:personal_schedule_management/config/connection_status.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +60,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    ConnectionStatus.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 
@@ -70,6 +80,7 @@ class _MyAppState extends State<MyApp> {
     GetIt.instance<NotificationServices>().initialNotification(context);
     ApiServices apiServices = ApiServices();
     apiServices.fetchWeatherData();
+    ConnectionStatus.createInstance(context);
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       return MaterialApp(

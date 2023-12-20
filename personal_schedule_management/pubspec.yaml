@@ -74,6 +74,8 @@ dependencies:
   recase: ^4.1.0
   permission_handler: ^11.1.0
   animated_splash_screen: ^1.3.0
+  #connection checker
+  internet_connection_checker: ^1.0.0+1
 
 dev_dependencies:
   flutter_test:
