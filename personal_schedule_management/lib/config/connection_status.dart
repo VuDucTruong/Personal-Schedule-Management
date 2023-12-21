@@ -58,14 +58,11 @@ class ConnectionStatus {
     listener.pause();
   }
 
-  final InternetConnectionChecker connectionCheckerInstance =
-  InternetConnectionChecker.createInstance(
-    checkTimeout: const Duration(seconds: 0),
-    checkInterval: const Duration(seconds: 1),
-  );
-
   static StreamSubscription<InternetConnectionStatus> listener =
-  InternetConnectionChecker().onStatusChange.listen(
+  InternetConnectionChecker.createInstance(
+        checkTimeout: const Duration(seconds: 1),
+        checkInterval: const Duration(seconds: 1)
+      ).onStatusChange.listen(
         (InternetConnectionStatus status) {
       switch (status) {
         case InternetConnectionStatus.connected:
