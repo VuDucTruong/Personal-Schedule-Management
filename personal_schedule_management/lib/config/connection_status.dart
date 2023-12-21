@@ -60,7 +60,7 @@ class ConnectionStatus {
 
   final InternetConnectionChecker connectionCheckerInstance =
   InternetConnectionChecker.createInstance(
-    checkTimeout: const Duration(seconds: 1),
+    checkTimeout: const Duration(seconds: 0),
     checkInterval: const Duration(seconds: 1),
   );
 
