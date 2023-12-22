@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_ht_entity.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/report_responsitory_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -12,8 +11,6 @@ class ReportController {
       GetIt.instance<ReportResponsitoryImpl>();
   WorkRespositoryImpl workRespositoryImpl =
       GetIt.instance<WorkRespositoryImpl>();
-  CompletedWorkRespositoryImpl completedWorkRespositoryImpl =
-      GetIt.instance<CompletedWorkRespositoryImpl>();
   int numOfFinish = 0;
   int numOfUnFinish = 0;
   int numOfLate = 0;
@@ -21,20 +18,12 @@ class ReportController {
   List<CongViecHT> congViecHT = [];
 
   Future<String> getAllNumberOfWorks() async {
-    congViecHT = await completedWorkRespositoryImpl.getAllCompletedWork();
-    congViecHT.forEach((element) {
-      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc) &&
-          element.ngayKetThuc.isBefore(DateTime.now())) {
-        numOfLate--;
-      }
-    });
     List<CongViec> congViecList =
         await workRespositoryImpl.getAllCongViecByUserId('');
     congViecList.forEach((element) {
       if (element.thoiDiemLap.isNotEmpty) {
         congViecHT
             .removeWhere((ht) => element.ngayNgoaiLe.contains(ht.ngayBatDau));
-
         List<DateTime> dateTaskList =
             SfCalendar.getRecurrenceDateTimeCollection(
                 element.thoiDiemLap, element.ngayBatDau);
@@ -54,7 +43,16 @@ class ReportController {
           numOfLate++;
         }
       }
+      if (element.congViecHTList.isNotEmpty) {
+        congViecHT.addAll(element.congViecHTList);
+      }
     });
+    for (var element in congViecHT) {
+      if (element.ngayHoanThanh.isBefore(element.ngayKetThuc) &&
+          element.ngayKetThuc.isBefore(DateTime.now())) {
+        numOfLate--;
+      }
+    }
     numOfFinish = congViecHT.length;
     numOfUnFinish = totalNumOfWorks - numOfFinish;
     return 'Hello';

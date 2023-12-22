@@ -1,7 +1,10 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:personal_schedule_management/core/data/dto/thong_bao_dto.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
+
+import 'cong_viec_ht_dto.dart';
 
 class CongViecDTO {
   String? maCV;
@@ -21,6 +24,7 @@ class CongViecDTO {
   String? thoiDiemLap;
   bool isBaoThuc;
   List<Timestamp> ngayNgoaiLe;
+  List<Map<String, dynamic>> congViecHTList, thongBaoList;
 
   CongViecDTO(
       this.maCV,
@@ -39,7 +43,9 @@ class CongViecDTO {
       this.tenCK,
       this.thoiDiemLap,
       this.isBaoThuc,
-      this.ngayNgoaiLe);
+      this.ngayNgoaiLe,
+      this.congViecHTList,
+      this.thongBaoList);
 
   toJson() {
     return {
@@ -60,6 +66,8 @@ class CongViecDTO {
       "thoiDiemLap": thoiDiemLap,
       "isBaoThuc": isBaoThuc,
       "ngayNgoaiLe": ngayNgoaiLe,
+      "congViecHTList": congViecHTList,
+      "thongBaoList": thongBaoList,
     };
   }
 
@@ -81,7 +89,9 @@ class CongViecDTO {
         json['tenCK'],
         json['thoiDiemLap'],
         json['isBaoThuc'],
-        List.from(json['ngayNgoaiLe']));
+        List.from(json['ngayNgoaiLe']),
+        List.from(json['congViecHTList']),
+        List.from(json['thongBaoList']));
   }
 
   toCongViec() {
@@ -102,6 +112,10 @@ class CongViecDTO {
         tenCK ?? '',
         thoiDiemLap ?? '',
         isBaoThuc,
-        ngayNgoaiLe.map((e) => e.toDate()).toList());
+        ngayNgoaiLe.map((e) => e.toDate()).toList(),
+        congViecHTList
+            .map((e) => CongViecHTDTO.fromJson(e).toCongViecHT())
+            .toList(),
+        thongBaoList.map((e) => ThongBaoDTO.fromJson(e).toThongBao()).toList());
   }
 }

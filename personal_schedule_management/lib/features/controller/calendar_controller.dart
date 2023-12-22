@@ -2,8 +2,7 @@ import 'package:device_calendar/device_calendar.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
+
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:personal_schedule_management/notification_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,10 +20,6 @@ class CalendarPageController {
   final DeviceCalendarPlugin deviceCalendarPlugin = DeviceCalendarPlugin();
   WorkRespositoryImpl workRespositoryImpl =
       GetIt.instance<WorkRespositoryImpl>();
-  CompletedWorkRespositoryImpl completedWorkRespositoryImpl =
-      GetIt.instance<CompletedWorkRespositoryImpl>();
-  NotificationRespositoryImpl notificationRespositoryImpl =
-      GetIt.instance<NotificationRespositoryImpl>();
   bool isWeatherVisible = true;
 
   Future<bool> getCalendarEvents() async {
@@ -49,7 +44,7 @@ class CalendarPageController {
             endTime: DateTime.parse(event.end.toString()),
             isAllDay: event.allDay!,
             subject: event.title!,
-            notes: '0|2|0', //is ReadOnly - priority - is alarm
+            notes: '0|3|0', //is ReadOnly - priority - is alarm
             recurrenceRule: null,
             location: event.location,
             color: SchemeLight_default.primary));

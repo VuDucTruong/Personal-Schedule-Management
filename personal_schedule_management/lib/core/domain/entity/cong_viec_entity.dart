@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:personal_schedule_management/core/data/dto/cong_viec_dto.dart';
+import 'package:personal_schedule_management/core/domain/entity/thong_bao_entity.dart';
+
+import 'cong_viec_ht_entity.dart';
 
 class CongViec {
   String maCV;
@@ -20,6 +23,8 @@ class CongViec {
   String thoiDiemLap;
   bool isBaoThuc;
   List<DateTime> ngayNgoaiLe;
+  List<CongViecHT> congViecHTList;
+  List<ThongBao> thongBaoList;
 
   CongViec(
       this.maCV,
@@ -38,7 +43,9 @@ class CongViec {
       this.tenCK,
       this.thoiDiemLap,
       this.isBaoThuc,
-      this.ngayNgoaiLe);
+      this.ngayNgoaiLe,
+      this.congViecHTList,
+      this.thongBaoList);
 
   toCongViecDTO() {
     return CongViecDTO(
@@ -58,6 +65,8 @@ class CongViec {
         tenCK,
         thoiDiemLap,
         this.isBaoThuc,
-        this.ngayNgoaiLe.map((e) => Timestamp.fromDate(e)).toList());
+        this.ngayNgoaiLe.map((e) => Timestamp.fromDate(e)).toList(),
+        congViecHTList.map((e) => e.toCongViecHTDTO().toJson()).toList(),
+        thongBaoList.map((e) => e.toThongBaoDTO().toJson()).toList());
   }
 }

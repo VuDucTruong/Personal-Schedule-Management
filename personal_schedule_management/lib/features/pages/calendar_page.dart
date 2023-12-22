@@ -28,25 +28,23 @@ class CalendarPage extends StatefulWidget {
   }
 }
 
-class _CalendarPageState extends State<CalendarPage>
-    with TickerProviderStateMixin {
-  late TabController tabController;
+class _CalendarPageState extends State<CalendarPage> {
   late CalendarPageController calendarPageController = CalendarPageController();
   CalendarScheduleController calendarScheduleController =
       CalendarScheduleController();
   CalendarController calendarController = CalendarController();
-  DataSourceController dataSourceController =
-      GetIt.instance<DataSourceController>();
   DateFormat timeFormat = DateFormat('HH:mm', 'vi_VN');
   String timeFormatString = 'HH:mm';
   DateFormat dayFormat = DateFormat(AppDateFormat.DAY_MONTH_YEAR);
   bool isWeatherOn = true;
+  DataSourceController dataSourceController =
+      GetIt.instance<DataSourceController>();
   late Future<bool> fetchData;
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 4, vsync: this);
     fetchData = tempFunc();
+    print('build!');
   }
 
   @override
@@ -70,14 +68,15 @@ class _CalendarPageState extends State<CalendarPage>
   bool isLoad = false;
   Future<bool> tempFunc() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    timeFormatString =
-        (prefs.getBool(TIME_24H_FORMAT) ?? false) ? ('HH:mm') : ("hh a");
+    timeFormatString = (prefs.getBool(TIME_24H_FORMAT) ?? false)
+        ? AppDateFormat.TIME_24H
+        : AppDateFormat.TIME_12H;
     timeFormat = DateFormat(timeFormatString, 'vi_VN');
     dayFormat = DateFormat(
         prefs.getString(DATE_FORMAT) ?? AppDateFormat.DAY_MONTH_YEAR);
     // isWeatherOn = prefs.getBool(WEATHER) ?? true;
-    if (!isLoad) {
-      getAllCompleteWork();
+    await calendarScheduleController.getAllCompletedWork(() {});
+    if (!isLoad && dataSourceController.isEmpty()) {
       await calendarPageController.getCalendarEvents();
       isLoad = true;
     }
@@ -89,7 +88,6 @@ class _CalendarPageState extends State<CalendarPage>
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    print('build!');
     return Scaffold(
       drawer: MyDrawer(calendarController),
       appBar: AppBar(
@@ -101,7 +99,7 @@ class _CalendarPageState extends State<CalendarPage>
                 await showSearch(
                   context: context,
                   delegate: CustomSearchDelegate(
-                      dataSourceController.calendarDataSource,
+                      dataSourceController.calendarDataSource!,
                       calendarScheduleController,
                       context,
                       getAllCompleteWork,
@@ -128,7 +126,7 @@ class _CalendarPageState extends State<CalendarPage>
         future: fetchData,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (isNeedSetUp) {
+            if (isNeedSetUp && dataSourceController.isEmpty()) {
               dataSourceController.appointmentList =
                   calendarPageController.appointmentList;
               dataSourceController.setUpNotification();
@@ -150,13 +148,13 @@ class _CalendarPageState extends State<CalendarPage>
                   )),
               dataSource: dataSourceController.calendarDataSource,
               onTap: (calendarTapDetails) {
-                print(dataSourceController.calendarDataSource.appointments
+                print(dataSourceController.calendarDataSource?.appointments
                     ?.map((e) {
                   Appointment x = e;
                   print('${x.id} ${x.subject}');
                 }));
                 print(dataSourceController
-                    .calendarDataSource.appointments?.length);
+                    .calendarDataSource?.appointments?.length);
               },
               scheduleViewMonthHeaderBuilder: (context, details) =>
                   CustomMonthView(context, details),

@@ -1,8 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/data/datasource/local/local_database.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/completed_work_respository_impl.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/report_responsitory_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
@@ -14,11 +12,7 @@ final instance = GetIt.instance;
 Future<void> initializeDependencies() async {
   instance.registerSingleton<LocalDatabase>(LocalDatabase());
   instance.registerSingleton<WorkRespositoryImpl>(WorkRespositoryImpl());
-  instance.registerSingleton<NotificationRespositoryImpl>(
-      NotificationRespositoryImpl());
   instance.registerSingleton<ReportResponsitoryImpl>(ReportResponsitoryImpl());
-  instance.registerSingleton<CompletedWorkRespositoryImpl>(
-      CompletedWorkRespositoryImpl());
   instance.registerSingleton<NotificationServices>(NotificationServices());
   instance.registerSingleton<DataSourceController>(DataSourceController());
   final SharedPreferences prefs = await SharedPreferences.getInstance();
