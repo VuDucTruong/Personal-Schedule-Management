@@ -7,7 +7,7 @@ import '../../core/domain/entity/thong_bao_entity.dart';
 import '../../notification_services.dart';
 
 class DataSourceController {
-  late CalendarDataSource calendarDataSource;
+  CalendarDataSource? calendarDataSource;
   late List<Appointment> _appointmentList;
   WorkRespositoryImpl workRespositoryImpl =
       GetIt.instance<WorkRespositoryImpl>();
@@ -21,31 +21,36 @@ class DataSourceController {
   set appointmentList(List<Appointment> value) {
     _appointmentList = value;
     calendarDataSource = MyCalendarDataSource(_appointmentList);
-    calendarDataSource.addListener((p0, p1) {
+    calendarDataSource?.addListener((p0, p1) {
       setUpNotification();
     });
   }
 
   void insertAppointment(Appointment x) {
     appointmentList.add(x);
-    calendarDataSource.notifyListeners(CalendarDataSourceAction.add, [x]);
+    calendarDataSource?.notifyListeners(CalendarDataSourceAction.add, [x]);
   }
 
   void removeAppointment(Appointment x) {
     appointmentList.remove(x);
-    calendarDataSource.notifyListeners(CalendarDataSourceAction.remove, [x]);
+    calendarDataSource?.notifyListeners(CalendarDataSourceAction.remove, [x]);
   }
 
   void updateAppointment(Appointment x) {
     appointmentList.removeWhere((element) => element.id == x.id);
     appointmentList.add(x);
-    calendarDataSource.notifyListeners(
+    calendarDataSource?.notifyListeners(
         CalendarDataSourceAction.reset, appointmentList);
   }
 
+  bool isEmpty() {
+    return calendarDataSource?.appointments?.isEmpty ?? true;
+  }
+
   Future<void> setUpNotification() async {
-    List<Appointment> appointments = calendarDataSource.getVisibleAppointments(
-        DateTime.now(), '', DateTime.now().add(const Duration(days: 2)));
+    List<Appointment> appointments = calendarDataSource?.getVisibleAppointments(
+            DateTime.now(), '', DateTime.now().add(const Duration(days: 2))) ??
+        [];
     notificationServices.cancelNotification();
     for (Appointment i in appointments) {
       List<ThongBao> thongBao =

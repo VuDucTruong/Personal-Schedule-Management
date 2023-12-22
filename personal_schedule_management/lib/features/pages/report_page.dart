@@ -28,80 +28,82 @@ class _ReportPageState extends State<ReportPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      body: SingleChildScrollView(
-        child: FutureBuilder(
-            future: reportController.getAllNumberOfWorks(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData)
-                return Center(child: CircularProgressIndicator());
-              int numOfFinish = reportController.numOfFinish;
-              int numOfUnfinish = reportController.numOfUnFinish;
-              int numOfLate = reportController.numOfLate;
-              return Container(
-                margin: EdgeInsets.all(4),
-                child: Column(
-                  children: [
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      children: [
-                        ReportBoxWidget('Số công việc hoàn thành', numOfFinish),
-                        ReportBoxWidget(
-                            'Số công việc chưa hoàn thành', numOfUnfinish),
-                        ReportBoxWidget('Số công việc bị trễ', numOfLate),
-                      ],
-                    ),
-                    SizedBox(
-                        height: 400,
-                        child: SplineChart(reportController.congViecHT)),
-                    SizedBox(
-                        height: 370,
-                        child: numOfFinish != 0 ||
-                                numOfUnfinish != 0 ||
-                                numOfLate != 0
-                            ? PieChart(numOfFinish, numOfUnfinish, numOfLate)
-                            : Card(
-                                child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.only(top: 16.0),
-                                    child: Text(
-                                      'Tổng quan',
-                                      textAlign: TextAlign.center,
-                                      style: AppTextStyle.h2.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onBackground,
-                                          fontSize: 26),
+      body: Center(
+        child: SingleChildScrollView(
+          child: FutureBuilder(
+              future: reportController.getAllNumberOfWorks(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return CircularProgressIndicator();
+                int numOfFinish = reportController.numOfFinish;
+                int numOfUnfinish = reportController.numOfUnFinish;
+                int numOfLate = reportController.numOfLate;
+                return Container(
+                  margin: EdgeInsets.all(4),
+                  child: Column(
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        children: [
+                          ReportBoxWidget(
+                              'Số công việc hoàn thành', numOfFinish),
+                          ReportBoxWidget(
+                              'Số công việc chưa hoàn thành', numOfUnfinish),
+                          ReportBoxWidget('Số công việc bị trễ', numOfLate),
+                        ],
+                      ),
+                      SizedBox(
+                          height: 400,
+                          child: SplineChart(reportController.congViecHT)),
+                      SizedBox(
+                          height: 370,
+                          child: numOfFinish != 0 ||
+                                  numOfUnfinish != 0 ||
+                                  numOfLate != 0
+                              ? PieChart(numOfFinish, numOfUnfinish, numOfLate)
+                              : Card(
+                                  child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      margin: const EdgeInsets.only(top: 16.0),
+                                      child: Text(
+                                        'Tổng quan',
+                                        textAlign: TextAlign.center,
+                                        style: AppTextStyle.h2.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground,
+                                            fontSize: 26),
+                                      ),
                                     ),
-                                  ),
-                                  ColorFiltered(
-                                    colorFilter: ColorFilter.mode(
-                                        Theme.of(context).colorScheme.error,
-                                        BlendMode.srcIn),
-                                    child: const Image(
-                                      image: AssetImage(
-                                          'assets/image/no_chart.png'),
-                                      width: 250,
-                                      height: 250,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Không có thông tin để hiển thị',
-                                    textAlign: TextAlign.center,
-                                    style: AppTextStyle.h2_5.copyWith(
-                                      color:
+                                    ColorFiltered(
+                                      colorFilter: ColorFilter.mode(
                                           Theme.of(context).colorScheme.error,
+                                          BlendMode.srcIn),
+                                      child: const Image(
+                                        image: AssetImage(
+                                            'assets/image/no_chart.png'),
+                                        width: 250,
+                                        height: 250,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 20)
-                                ],
-                              ))),
-                  ],
-                ),
-              );
-            }),
+                                    Text(
+                                      'Không có thông tin để hiển thị',
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyle.h2_5.copyWith(
+                                        color:
+                                            Theme.of(context).colorScheme.error,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20)
+                                  ],
+                                ))),
+                    ],
+                  ),
+                );
+              }),
+        ),
       ),
     );
   }
@@ -286,11 +288,8 @@ class _PieChartState extends State<PieChart> {
                   isVisible: true,
                   color: Theme.of(context).colorScheme.onBackground,
                   textStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.background,
-                    fontSize: 13
-                  )
-              )
-          )
+                      color: Theme.of(context).colorScheme.background,
+                      fontSize: 13)))
         ]));
   }
 }
