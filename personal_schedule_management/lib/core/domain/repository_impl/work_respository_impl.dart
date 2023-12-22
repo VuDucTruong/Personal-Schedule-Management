@@ -4,6 +4,8 @@ import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/data/dto/cong_viec_dto.dart';
 import 'package:personal_schedule_management/core/data/repository/work_respository.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
+import 'package:personal_schedule_management/core/domain/entity/cong_viec_ht_entity.dart';
+import 'package:personal_schedule_management/core/domain/entity/thong_bao_entity.dart';
 
 class WorkRespositoryImpl extends WorkRespository {
   final FirebaseFirestore _storage = FirebaseFirestore.instance;
@@ -101,5 +103,71 @@ class WorkRespositoryImpl extends WorkRespository {
       congViecList.add(CongViecDTO.fromJson(i.data(), i.id).toCongViec());
     }
     return congViecList;
+  }
+
+  @override
+  Future<void> addCongViecHT(CongViecHT congViecHT, String maCV) async {
+    CongViec? c = await getCongViecById(maCV);
+    if (c != null) {
+      c.congViecHTList.add(congViecHT);
+      await updateWorkToRemote(c);
+    }
+  }
+
+  @override
+  Future<void> addThongBao(ThongBao thongBao, String maCV) async {
+    CongViec? c = await getCongViecById(maCV);
+    if (c != null) {
+      c.thongBaoList.add(thongBao);
+      await updateWorkToRemote(c);
+    }
+  }
+
+  @override
+  Future<void> removeCongViecHT(DateTime ngayBatDau, String maCV) async {
+    CongViec? c = await getCongViecById(maCV);
+    if (c != null) {
+      for (var element in c.congViecHTList) {
+        if (element.ngayBatDau == ngayBatDau) {
+          c.congViecHTList.remove(element);
+          break;
+        }
+      }
+      await updateWorkToRemote(c);
+    }
+  }
+
+  @override
+  Future<void> removeThongBao(ThongBao thongBao, String maCV) async {
+    CongViec? c = await getCongViecById(maCV);
+    if (c != null) {
+      c.thongBaoList.remove(thongBao);
+      await updateWorkToRemote(c);
+    }
+  }
+
+  @override
+  Future<CongViecHT?> getCongViecHTByWorkId(
+      String maCV, DateTime startTime) async {
+    CongViec? congViec = await getCongViecById(maCV);
+    if (congViec != null) {
+      if (congViec.congViecHTList.isNotEmpty) {
+        for (var element in congViec.congViecHTList) {
+          if (element.ngayBatDau == startTime) {
+            return element;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<List<ThongBao>> getThongBaoListByWorkId(String maCV) async {
+    CongViec? c = await getCongViecById(maCV);
+    if (c != null) {
+      return c.thongBaoList;
+    }
+    return [];
   }
 }

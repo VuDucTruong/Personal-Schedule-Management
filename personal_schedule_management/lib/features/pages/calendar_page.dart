@@ -70,8 +70,9 @@ class _CalendarPageState extends State<CalendarPage>
   bool isLoad = false;
   Future<bool> tempFunc() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    timeFormatString =
-        (prefs.getBool(TIME_24H_FORMAT) ?? false) ? ('HH:mm') : ("hh a");
+    timeFormatString = (prefs.getBool(TIME_24H_FORMAT) ?? false)
+        ? AppDateFormat.TIME_24H
+        : AppDateFormat.TIME_12H;
     timeFormat = DateFormat(timeFormatString, 'vi_VN');
     dayFormat = DateFormat(
         prefs.getString(DATE_FORMAT) ?? AppDateFormat.DAY_MONTH_YEAR);

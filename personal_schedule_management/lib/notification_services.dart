@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:device_calendar/device_calendar.dart' as tz;
@@ -15,7 +16,6 @@ class NotificationServices {
       FlutterLocalNotificationsPlugin();
   final AndroidInitializationSettings _androidFlutterLocalNotificationsPlugin =
       AndroidInitializationSettings('logo_icon');
-
   void initialNotification(BuildContext context) async {
     InitializationSettings initializationSettings = InitializationSettings(
         android: _androidFlutterLocalNotificationsPlugin);
@@ -35,8 +35,8 @@ class NotificationServices {
     );
   }
 
-  Future<void> createNotification(Appointment appointment,
-      DateTime notificationTime, String notifyId, bool isAlarm) async {
+  Future<void> createNotification(
+      Appointment appointment, DateTime notificationTime, bool isAlarm) async {
     tz.TZDateTime scheduledDate = tz.TZDateTime(
         tz.getLocation('Asia/Ho_Chi_Minh'),
         notificationTime.year,
@@ -61,7 +61,7 @@ class NotificationServices {
     );*/
     print('Thông báo vào ${scheduledDate}');
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        caculateId(notifyId),
+        Random().nextInt(999),
         appointment.subject,
         'Hãy hoàn thành công việc này nào!!',
         scheduledDate,
@@ -73,14 +73,6 @@ class NotificationServices {
 
   Future<void> cancelNotification() async {
     await _flutterLocalNotificationsPlugin.cancelAll();
-  }
-
-  int caculateId(String id) {
-    int sum = 0;
-    for (int i = 0; i < id.length; i++) {
-      sum += id.codeUnitAt(i);
-    }
-    return sum;
   }
 
   AndroidNotificationDetails chooseNotificationChannel(

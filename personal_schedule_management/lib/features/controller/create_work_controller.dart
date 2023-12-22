@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
 import 'package:personal_schedule_management/core/domain/entity/thong_bao_entity.dart';
-import 'package:personal_schedule_management/core/domain/repository_impl/notification_respository_impl.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
 import 'package:personal_schedule_management/features/widgets/stateful/create_recurrence_dialog.dart';
 import 'package:personal_schedule_management/features/widgets/stateless/reminder_dialog.dart';
@@ -25,8 +24,6 @@ class CreateWorkController {
   Map<String, dynamic>? loop;
   Color colorIcon = SchemeLight_default.primary;
   DateTime currentDate = DateTime.now();
-  NotificationRespositoryImpl notificationRespositoryImpl =
-      GetIt.instance<NotificationRespositoryImpl>();
   WorkRespositoryImpl workRespositoryImpl =
       GetIt.instance<WorkRespositoryImpl>();
 
@@ -61,30 +58,28 @@ class CreateWorkController {
 
   Future<void> fulfillReminderList(String maCV) async {
     List<ThongBao> thongBaoList =
-        await notificationRespositoryImpl.getNotificationByWorkId(maCV);
-    thongBaoList.forEach((element) {
+        await workRespositoryImpl.getThongBaoListByWorkId(maCV);
+    for (var element in thongBaoList) {
       reminderValueList.add(element.thoiGian);
       reminderTimeList.add(element.tenTB);
-    });
+    }
   }
 
-  Future<void> createNotification(String maCV) async {
+  List<ThongBao> getNotificationList() {
     int index = 0;
+    List<ThongBao> thongBaoList = [];
     if (reminderValueList.isNotEmpty) {
-      reminderValueList.forEach((element) {
-        ThongBao thongBao =
-            ThongBao('', maCV, reminderTimeList[index++], element);
-        notificationRespositoryImpl.insertNotificationToWork(thongBao, maCV);
-      });
+      for (var element in reminderValueList) {
+        ThongBao thongBao = ThongBao(reminderTimeList[index++], element);
+        thongBaoList.add(thongBao);
+      }
     }
+    return thongBaoList;
   }
 
   Future<String?> createWork(CongViec congViec) async {
     await getRecurrenceInfo(congViec);
     String? maCV = await workRespositoryImpl.insertWorkToRemote(congViec);
-    if (maCV != null && reminderSwitch) {
-      createNotification(maCV);
-    }
     return maCV;
   }
 
@@ -131,23 +126,9 @@ class CreateWorkController {
     await getRecurrenceInfo(congViec);
     String? maCV = await workRespositoryImpl.updateWorkToRemote(congViec);
     if (maCV != null) {
-      await updateNotifcation(maCV);
       return true;
     }
     return false;
-  }
-
-  Future<void> updateNotifcation(String maCV) async {
-    int index = 0;
-    await notificationRespositoryImpl.deleteALlNotificationByWorkId(maCV);
-    if (reminderValueList.isNotEmpty) {
-      reminderValueList.forEach((element) {
-        ThongBao thongBao =
-            ThongBao('', maCV, reminderTimeList[index], element);
-        index++;
-        notificationRespositoryImpl.insertNotificationToWork(thongBao, maCV);
-      });
-    }
   }
 
   Future<void> pickUpStartDate(BuildContext context) async {
