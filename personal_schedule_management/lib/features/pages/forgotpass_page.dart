@@ -2,8 +2,11 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
+
+import '../../config/theme/app_theme.dart';
 
 class ForgotPassPage extends StatefulWidget {
   const ForgotPassPage({super.key});
@@ -139,7 +142,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop();
                 },
-                icon: Icon(FontAwesomeIcons.circleChevronLeft,
+                icon: Icon(Icons.arrow_back,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
           ),
           body: SingleChildScrollView(
@@ -428,7 +431,27 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
     );
 
     // TODO: implement build
-    return !_SendSuccessful ? mainPage : subPage;
+    return MaterialApp(
+      localizationsDelegates:
+        const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          ],
+          debugShowCheckedModeBanner: false,
+          supportedLocales:
+          const [
+          Locale('en'), // English
+          Locale('vi'),
+        ],
+      locale: const Locale('vi'),
+      theme: AppTheme.of(context, listen: true).lightTheme,
+      darkTheme: AppTheme.of(context, listen: true).darkTheme,
+      themeMode: AppTheme.of(context, listen: true).darkMode
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      home: !_SendSuccessful ? mainPage : subPage,
+    );
   }
 
   // CHANGE PAGE ANIMATION

@@ -3,12 +3,15 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+
+import '../../config/theme/app_theme.dart';
 
 Future<UserCredential?> registerWithEmailAndPassword(
     String email, String password, String displayName) async {
@@ -132,7 +135,7 @@ class _PincodePageState extends State<PincodePage> {
                     ),
                   );
                 },
-                icon: Icon(FontAwesomeIcons.circleChevronLeft,
+                icon: Icon(Icons.arrow_back,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
           ),
           body: SingleChildScrollView(
@@ -503,7 +506,28 @@ class _PincodePageState extends State<PincodePage> {
       ),
     );
 
-    return _verifySuccess? finishedPage : mainPage;
+    // TODO: implement build
+    return MaterialApp(
+      localizationsDelegates:
+      const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      debugShowCheckedModeBanner: false,
+      supportedLocales:
+      const [
+        Locale('en'), // English
+        Locale('vi'),
+      ],
+      locale: const Locale('vi'),
+      theme: AppTheme.of(context, listen: true).lightTheme,
+      darkTheme: AppTheme.of(context, listen: true).darkTheme,
+      themeMode: AppTheme.of(context, listen: true).darkMode
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      home: _verifySuccess? finishedPage : mainPage,
+    );
   }
 
   // CHANGE PAGE ANIMATION

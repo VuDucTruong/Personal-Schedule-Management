@@ -201,9 +201,9 @@ class _ChangePassPageState extends State<ChangePassPage> {
                     fontWeight: FontWeight.bold)),
             leading: IconButton(
                 onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.pop(context);
                 },
-                icon: Icon(FontAwesomeIcons.circleChevronLeft,
+                icon: Icon(Icons.arrow_back,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
           ),
           body: SingleChildScrollView(

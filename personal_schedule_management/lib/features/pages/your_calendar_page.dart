@@ -43,7 +43,7 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
                 onPressed: () async {
                   Navigator.of(context).pop();
                 },
-                icon: Icon(FontAwesomeIcons.circleChevronLeft,
+                icon: Icon(Icons.arrow_back,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
             title: Text('Lịch của bạn',
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
