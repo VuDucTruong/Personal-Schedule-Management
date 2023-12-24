@@ -419,7 +419,8 @@ class CustomSearchDelegate extends SearchDelegate {
   VoidCallback getAllCompleteWork;
   String timeFormatString;
   late List<Appointment> appointmentList;
-  Future<void> onTap(details) async {
+  Future<void>
+  onTap(details) async {
     if ((details.appointments?.length ?? 5) == 1 && details.date != null) {
       Appointment appointment = details.appointments!.first;
       await calendarScheduleController.showWorkDetails(

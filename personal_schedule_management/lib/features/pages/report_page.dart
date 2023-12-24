@@ -18,6 +18,8 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   ReportController reportController = ReportController();
+
+
   @override
   void initState() {
     super.initState();
@@ -289,7 +291,10 @@ class _PieChartState extends State<PieChart> {
                   color: Theme.of(context).colorScheme.onBackground,
                   textStyle: TextStyle(
                       color: Theme.of(context).colorScheme.background,
-                      fontSize: 13)))
+                      fontSize: 13),
+                  showZeroValue: false
+              )
+          ),
         ]));
   }
 }

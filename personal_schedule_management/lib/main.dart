@@ -18,6 +18,7 @@ import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'config/theme/app_theme.dart';
 import 'core/data/datasource/remote/firebase_options.dart';
+import 'features/pages/invitation_page.dart';
 import 'injection_container.dart';
 import 'notification_services.dart';
 import 'package:personal_schedule_management/config/connection_status.dart';
@@ -45,6 +46,7 @@ class _MyAppState extends State<MyApp> {
   final pageList = [
     CalendarPage(),
     ReportPage(),
+    InvitationPage(),
     SettingsPage(),
   ];
 
@@ -107,6 +109,7 @@ class _MyAppState extends State<MyApp> {
                   BarItem(
                       title: 'Thống kê',
                       icon: FontAwesomeIcons.magnifyingGlassChart),
+                  BarItem(title: 'Lời mời', icon: FontAwesomeIcons.envelope),
                   BarItem(title: 'Cài đặt', icon: FontAwesomeIcons.gear)
                 ],
                 iconSize: 20,
