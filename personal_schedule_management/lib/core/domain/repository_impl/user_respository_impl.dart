@@ -31,4 +31,11 @@ class UserRespositoryImpl extends UserRespository {
       return '';
     }
   }
+
+  @override
+  Future<List<String>> getAllUserEmail() async {
+    var docRef = await _storage.collection(NGUOIDUNG).get();
+    print(docRef.docs.map((doc) => doc.data()));
+    return [];
+  }
 }

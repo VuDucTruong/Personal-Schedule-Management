@@ -566,7 +566,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                     children: [
                       Expanded(
                         child: Text(
-                          "0",
+                          createWorkController.guestList.length.toString(),
                           textAlign: TextAlign.end,
                           style: AppTextStyle.h2_5
                               .copyWith(fontWeight: FontWeight.bold),
@@ -582,7 +582,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                   ),
                 ),
                 onTap: () {
-                  AppRoutes.toAddGuestEmailPage(context);
+                  AppRoutes.toAddGuestEmailPage(context,
+                      createWorkController.guestList, () => setState(() {}));
                 },
               ),
             ),

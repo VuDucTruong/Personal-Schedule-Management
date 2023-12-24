@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:personal_schedule_management/features/pages/invitation%20pages/add_guest_email_page.dart';
 import 'package:personal_schedule_management/features/pages/setting%20pages/apptheme_page.dart';
@@ -33,9 +35,11 @@ class AppRoutes {
       MaterialPageRoute(
         builder: (context) => YourCalendarPage(),
       ));
-  static void toAddGuestEmailPage(BuildContext context) => Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddGuestEmail(),
-      ));
+  static void toAddGuestEmailPage(BuildContext context, List<String> guestList,
+          VoidCallback setStateCallBack) =>
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddGuestEmail(guestList),
+          )).then((value) => setStateCallBack);
 }
