@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
@@ -551,7 +552,39 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
               ),
             ),
             const DividerWorkItem(),
-            //TODO
+            ListTitleWork(
+              const Text('Thêm khách mời'),
+              Icons.email,
+              InkWell(
+                child: Container(
+                  width: 120,
+                  height: 30,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "0",
+                          textAlign: TextAlign.end,
+                          style: AppTextStyle.h2_5
+                              .copyWith(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Icon(Icons.arrow_forward_ios)
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  AppRoutes.toAddGuestEmailPage(context);
+                },
+              ),
+            ),
+            const DividerWorkItem(),
             Builder(
               builder: (context) {
                 if (createWorkController.loop != null) {
