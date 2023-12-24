@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:personal_schedule_management/features/pages/login_page.dart';
+import 'package:personal_schedule_management/features/pages/auth%20pages/login_page.dart';
 
-import '../../config/theme/app_theme.dart';
+import '../../../config/theme/app_theme.dart';
 
 class ForgotPassPage extends StatefulWidget {
   const ForgotPassPage({super.key});
@@ -403,8 +403,9 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
                             ),
                             onPressed: () async {
                               /* do something */
-                              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                                  _createRoute(), (route) => false);
+                              Navigator.of(context, rootNavigator: true)
+                                  .pushAndRemoveUntil(
+                                      _createRoute(), (route) => false);
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width *
@@ -432,18 +433,16 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
 
     // TODO: implement build
     return MaterialApp(
-      localizationsDelegates:
-        const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          ],
-          debugShowCheckedModeBanner: false,
-          supportedLocales:
-          const [
-          Locale('en'), // English
-          Locale('vi'),
-        ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      debugShowCheckedModeBanner: false,
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('vi'),
+      ],
       locale: const Locale('vi'),
       theme: AppTheme.of(context, listen: true).lightTheme,
       darkTheme: AppTheme.of(context, listen: true).darkTheme,

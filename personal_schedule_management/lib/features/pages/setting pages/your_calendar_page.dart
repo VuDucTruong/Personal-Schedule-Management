@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
 import 'package:personal_schedule_management/features/controller/your_calendar_controller.dart';
-import '../../config/text_styles/app_text_style.dart';
-import '../../config/theme/app_theme.dart';
+import '../../../config/text_styles/app_text_style.dart';
+import '../../../config/theme/app_theme.dart';
 
 class YourCalendarPage extends StatefulWidget {
   YourCalendarPage();

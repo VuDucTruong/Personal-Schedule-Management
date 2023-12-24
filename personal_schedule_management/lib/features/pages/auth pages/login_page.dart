@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
-import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
-import 'package:personal_schedule_management/features/pages/register_page.dart';
+import 'package:personal_schedule_management/features/pages/auth%20pages/forgotpass_page.dart';
+import 'package:personal_schedule_management/features/pages/auth%20pages/register_page.dart';
 import 'package:personal_schedule_management/main.dart';
 
 class LoginPage extends StatefulWidget {
@@ -88,9 +88,8 @@ class _LoginPageState extends State<LoginPage> {
 
     if (result) {
       // ignore: use_build_context_synchronously
-      Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-        _createRoute(), (route) => false
-      );
+      Navigator.of(context, rootNavigator: true)
+          .pushAndRemoveUntil(_createRoute(), (route) => false);
     } else {
       setState(() {
         errorText = "Tài khoản hoặc mật khẩu không chính xác!";
@@ -201,11 +200,14 @@ class _LoginPageState extends State<LoginPage> {
                                   children: [
                                     Text(
                                       "Email",
-                                      style: Theme.of(context).textTheme.titleMedium!
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
                                           .copyWith(
                                               fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).colorScheme.tertiary
-                                        ),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .tertiary),
                                     ),
                                   ],
                                 ),
@@ -217,8 +219,13 @@ class _LoginPageState extends State<LoginPage> {
                                   focusNode: emailFocus,
                                   keyboardType: TextInputType.emailAddress,
                                   onTap: () => {firstEnterEmailTF = true},
-                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                          color: Theme.of(context).colorScheme.onBackground),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onBackground),
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
@@ -237,8 +244,13 @@ class _LoginPageState extends State<LoginPage> {
                                         borderRadius:
                                             BorderRadius.circular(32)),
                                     hintText: "Email",
-                                    hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                            color: Theme.of(context).colorScheme.secondary),
+                                    hintStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary),
                                     prefixIcon:
                                         const Icon(Icons.email_outlined),
                                     helperText: " ",
@@ -260,9 +272,14 @@ class _LoginPageState extends State<LoginPage> {
                                   children: [
                                     Text(
                                       "Mật khẩu",
-                                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
                                               fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).colorScheme.tertiary),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .tertiary),
                                     ),
                                   ],
                                 ),
@@ -273,26 +290,38 @@ class _LoginPageState extends State<LoginPage> {
                                   controller: passwordController,
                                   focusNode: passwordFocus,
                                   onTap: () => {firstEnterPasswordTF = true},
-                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      color: Theme.of(context).colorScheme.onBackground),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onBackground),
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             width: 2,
-                                            color: Theme.of(context).colorScheme.outline
-                                        ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .outline),
                                         borderRadius:
                                             BorderRadius.circular(32)),
                                     focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             width: 3,
-                                            color: Theme.of(context).colorScheme.onBackground),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
                                         borderRadius:
                                             BorderRadius.circular(32)),
                                     hintText: "Mật khẩu",
-                                    hintStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                            color: Theme.of(context).colorScheme.secondary
-                                          ),
+                                    hintStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary),
                                     prefixIcon: const Icon(Icons.lock_outlined),
                                     suffixIcon: GestureDetector(
                                       onTap: () {
@@ -320,10 +349,14 @@ class _LoginPageState extends State<LoginPage> {
                               children: [
                                 Text(
                                   errorText,
-                                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                          color: Theme.of(context).colorScheme.error,
-                                          fontStyle: FontStyle.italic
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                          fontStyle: FontStyle.italic),
                                 ),
                               ],
                             ),
@@ -445,8 +478,7 @@ class _LoginPageState extends State<LoginPage> {
   // CHANGE PAGE ANIMATION
   Route _createRoute() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-      const MyApp(),
+      pageBuilder: (context, animation, secondaryAnimation) => const MyApp(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,

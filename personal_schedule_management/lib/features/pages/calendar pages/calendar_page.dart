@@ -8,15 +8,15 @@ import 'package:personal_schedule_management/features/controller/data_source_con
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../../config/text_styles/app_text_style.dart';
-import '../../config/theme/app_theme.dart';
-import '../../core/constants/constants.dart';
-import '../../core/data/datasource/remote/api_services.dart';
-import '../../core/data/dto/forecast_weather_dto.dart';
-import '../../core/data/dto/weather_dto.dart';
-import '../../core/data/dto/weather_location_dto.dart';
-import '../controller/calendar_controller.dart';
-import '../widgets/stateless/delete_dialog.dart';
+import '../../../config/text_styles/app_text_style.dart';
+import '../../../config/theme/app_theme.dart';
+import '../../../core/constants/constants.dart';
+import '../../../core/data/datasource/remote/api_services.dart';
+import '../../../core/data/dto/forecast_weather_dto.dart';
+import '../../../core/data/dto/weather_dto.dart';
+import '../../../core/data/dto/weather_location_dto.dart';
+import '../../controller/calendar_controller.dart';
+import '../../widgets/stateless/delete_dialog.dart';
 import 'create_work_page.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -419,8 +419,7 @@ class CustomSearchDelegate extends SearchDelegate {
   VoidCallback getAllCompleteWork;
   String timeFormatString;
   late List<Appointment> appointmentList;
-  Future<void>
-  onTap(details) async {
+  Future<void> onTap(details) async {
     if ((details.appointments?.length ?? 5) == 1 && details.date != null) {
       Appointment appointment = details.appointments!.first;
       await calendarScheduleController.showWorkDetails(

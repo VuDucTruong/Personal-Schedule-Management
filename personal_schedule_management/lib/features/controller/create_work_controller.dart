@@ -21,6 +21,7 @@ class CreateWorkController {
   DateTime? startDate, endDate;
   List<String> reminderTimeList = [];
   List<String> contentRecurrence = [];
+  List<String> guestList = [];
   Map<String, dynamic>? loop;
   Color colorIcon = SchemeLight_default.primary;
   DateTime currentDate = DateTime.now();

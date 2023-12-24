@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:personal_schedule_management/features/pages/add_guest_email_page.dart';
-import 'package:personal_schedule_management/features/pages/apptheme_page.dart';
-import 'package:personal_schedule_management/features/pages/chooseringtones_page.dart';
-import 'package:personal_schedule_management/features/pages/sync_calendar_page.dart';
-import 'package:personal_schedule_management/features/pages/work_category_page.dart';
-import 'package:personal_schedule_management/features/pages/your_calendar_page.dart';
+import 'package:personal_schedule_management/features/pages/invitation%20pages/add_guest_email_page.dart';
+import 'package:personal_schedule_management/features/pages/setting%20pages/apptheme_page.dart';
+import 'package:personal_schedule_management/features/pages/setting%20pages/chooseringtones_page.dart';
+import 'package:personal_schedule_management/features/pages/setting%20pages/sync_calendar_page.dart';
+import 'package:personal_schedule_management/features/pages/calendar%20pages/work_category_page.dart';
+import 'package:personal_schedule_management/features/pages/setting%20pages/your_calendar_page.dart';
 
 class AppRoutes {
   static void toWorkCategoryPage(BuildContext context, String category) =>

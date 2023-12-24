@@ -8,11 +8,11 @@ import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/create_work_controller.dart';
 import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
-import 'package:personal_schedule_management/features/pages/work_category_page.dart';
+import 'package:personal_schedule_management/features/pages/calendar%20pages/work_category_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../../core/domain/entity/cong_viec_entity.dart';
+import '../../../core/domain/entity/cong_viec_entity.dart';
 
 class CreateWorkPage extends StatefulWidget {
   CreateWorkPage(this.selectedCongViec, {super.key});
@@ -105,6 +105,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
       createWorkController.allDaySwitch = congViec.isCaNgay;
       createWorkController.selectedValue = congViec.loaiCongViec;
       createWorkController.alarmSwitch = congViec.isBaoThuc;
+      createWorkController.guestList = congViec.khachMoiList;
       createWorkController.reminderSwitch = true;
       if (congViec.tenCK.isNotEmpty) {
         createWorkController.contentRecurrence.add(congViec.tenCK);
@@ -236,7 +237,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                               widget.selectedCongViec?.ngayNgoaiLe ?? [],
                               widget.selectedCongViec?.congViecHTList ?? [],
                               widget.selectedCongViec?.thongBaoList ??
-                                  createWorkController.getNotificationList());
+                                  createWorkController.getNotificationList(),
+                              createWorkController.guestList);
                           await chooseAction(congViec);
                           Appointment x = _createAppointment(congViec);
                           if (update) {

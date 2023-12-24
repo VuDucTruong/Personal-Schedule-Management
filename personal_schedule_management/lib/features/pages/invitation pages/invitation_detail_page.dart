@@ -3,32 +3,25 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
-import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_entity.dart';
+import 'package:personal_schedule_management/core/domain/entity/cong_viec_ht_entity.dart';
+import 'package:personal_schedule_management/core/domain/entity/thong_bao_entity.dart';
 import 'package:personal_schedule_management/features/controller/calendar_schedule_controller.dart';
 import 'package:personal_schedule_management/features/controller/data_source_controller.dart';
 import 'package:personal_schedule_management/features/controller/work_detail_controller.dart';
-import 'package:personal_schedule_management/features/pages/create_work_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../../core/domain/entity/cong_viec_ht_entity.dart';
-import '../../core/domain/entity/thong_bao_entity.dart';
-import '../widgets/stateless/delete_dialog.dart';
-
-class WorkDetailPage extends StatefulWidget {
+class InvitationDetailPage extends StatefulWidget {
   @override
-  _WorkDetailPageState createState() {
-    return _WorkDetailPageState();
-  }
-
-  WorkDetailPage(this.congViec, this.appointment, {super.key});
+  State<InvitationDetailPage> createState() => _InvitationDetailPageState();
+  InvitationDetailPage(this.congViec, this.appointment, {super.key});
   CongViec congViec;
   Appointment appointment;
 }
 
-class _WorkDetailPageState extends State<WorkDetailPage> {
+class _InvitationDetailPageState extends State<InvitationDetailPage> {
   late CongViec selectedCongViec;
   late DateFormat dayFormat;
   late DateFormat timeFormat;
@@ -72,167 +65,53 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
   bool isChange = false;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-
     int times = 0;
     int timesRemove = 0;
-    return FutureBuilder(
-      future: getData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          String complete =
-              (!completeStatus ? 'Hoàn thành' : 'Chưa hoàn thành');
-          return Scaffold(
-            appBar: AppBar(
-                title: Text(
-                  selectedCongViec.tieuDe,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                centerTitle: true,
-                leading: InkWell(
-                  child: Icon(Icons.arrow_back),
-                  onTap: () {
-                    Navigator.pop(context, isChange);
-                  },
-                ),
-                iconTheme: IconThemeData(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                actions: [
-                  PopupMenuButton(
-                    offset: Offset(0, 30),
-                    icon: Icon(
-                      Icons.more_horiz,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                          child: Text(complete),
-                          value: complete,
-                          onTap: () async {
-                            if (times++ > 0) return;
-                            if (congViecHT != null) {
-                              await controller.removeCompletedWork(
-                                  selectedCongViec.maCV,
-                                  widget.appointment.startTime);
-                            } else {
-                              await controller.addCompletedWork(
-                                  selectedCongViec.maCV,
-                                  widget.appointment.startTime,
-                                  widget.appointment.endTime);
-                            }
-                            if (!completeStatus) {
-                              congViecHT = await controller.getCompletedWork(
-                                  selectedCongViec.maCV,
-                                  widget.appointment.startTime);
-                            }
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content:
-                                    Text('Cập nhật trạng thái thành công')));
-                            setState(() {
-                              isChange = true;
-                              completeStatus = !completeStatus;
-                            });
-                          },
-                        ),
-                        PopupMenuItem(
-                          child: Text('Chỉnh sửa'),
-                          value: 'Chỉnh sửa',
-                          onTap: () async {
-                            CongViec? i = await showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (context) =>
-                                  CreateWorkPage(selectedCongViec),
-                            );
-                            if (i != null) {
-                              setState(() {
-                                selectedCongViec = i;
-                              });
-                            }
-                          },
-                        ),
-                        PopupMenuItem(
-                          child: Text('Xóa'),
-                          value: 'Xóa',
-                          onTap: () async {
-                            if (timesRemove > 0) return;
-                            if ((selectedCongViec.thoiDiemLap.isNotEmpty)) {
-                              int result = await showDialog(
-                                    context: context,
-                                    builder: (context) => DeleteDialog(),
-                                  ) ??
-                                  0;
-                              if (result == 0) return;
-                              if (result == 1) {
-                                await calendarScheduleController
-                                    .removeWork(selectedCongViec.maCV);
-                                dataSourceController
-                                    .removeAppointment(widget.appointment);
-                              } else {
-                                await calendarScheduleController
-                                    .addExceptionInWork(selectedCongViec.maCV,
-                                        widget.appointment.startTime);
-                                if (widget
-                                        .appointment.recurrenceExceptionDates !=
-                                    null) {
-                                  widget.appointment.recurrenceExceptionDates
-                                      ?.add(widget.appointment.startTime);
-                                } else {
-                                  widget.appointment.recurrenceExceptionDates =
-                                      [widget.appointment.startTime];
-                                }
-                                dataSourceController
-                                    .updateAppointment(widget.appointment);
-                              }
-                              timesRemove++;
-                              Navigator.pop(context, isChange);
-                            } else {
-                              bool result = await showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      content: Text(
-                                        'Xóa công việc này ?',
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onBackground),
-                                      ),
-                                      actions: [
-                                        FilledButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, true);
-                                          },
-                                          child: Text('OK'),
-                                        ),
-                                        FilledButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, false);
-                                          },
-                                          child: Text('Hủy'),
-                                        )
-                                      ],
-                                    ),
-                                  ) ??
-                                  false;
-                              if (result) {
-                                await calendarScheduleController
-                                    .removeWork(selectedCongViec.maCV);
-                                dataSourceController
-                                    .removeAppointment(widget.appointment);
-                                timesRemove++;
-                                Navigator.pop(context, isChange);
-                              }
-                            }
-                          },
-                        ),
-                      ];
-                    },
-                  )
-                ]),
-            body: Container(
-              margin: EdgeInsets.symmetric(horizontal: 4),
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'CHI TIẾT LỜI MỜI\t',
+          style: AppTextStyle.h2
+              .copyWith(color: Theme.of(context).colorScheme.primary),
+        ),
+        leading: InkWell(
+          child: Icon(Icons.arrow_back),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Người mời: ',
+              style: AppTextStyle.normal
+                  .copyWith(color: Theme.of(context).colorScheme.primary),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Ngày mời: ',
+              style: AppTextStyle.normal
+                  .copyWith(color: Theme.of(context).colorScheme.primary),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Nội dung công việc',
+              style: AppTextStyle.normal
+                  .copyWith(color: Theme.of(context).colorScheme.primary),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border:
+                    Border.all(color: Theme.of(context).colorScheme.primary),
+              ),
+              width: double.infinity,
+              height: size.height / 2 + 20,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,14 +278,60 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                 ),
               ),
             ),
-          );
-        }
-        return Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
+            SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    width: size.width / 5 + 15,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(
+                        left: 15, right: 15, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.25),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    child: Text(
+                      'Đồng ý',
+                      style: AppTextStyle.normal.copyWith(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    width: size.width / 5 + 15,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(
+                        left: 15, right: 15, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.25),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    child: Text(
+                      'Từ chối',
+                      style: AppTextStyle.normal.copyWith(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 

@@ -9,6 +9,7 @@ const String THONGBAO = 'THONGBAO';
 const String THONGKE = 'THONGKE';
 const String CONGVIECHT = 'CONGVIECHT';
 const String BAN_ACCOUNT = 'BAN_ACCOUNT';
+const String THUMOI = 'THUMOI';
 const String SYNC = 'SYNC';
 const List<String> REMINDER_LIST = [
   'Trước 15 phút',

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/core/domain/entity/cong_viec_ht_entity.dart';
 import 'package:personal_schedule_management/core/domain/repository_impl/work_respository_impl.dart';
-import 'package:personal_schedule_management/features/pages/work_detail_page.dart';
+import 'package:personal_schedule_management/features/pages/calendar%20pages/work_detail_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../core/domain/entity/cong_viec_entity.dart';

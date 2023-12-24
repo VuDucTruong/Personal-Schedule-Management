@@ -5,9 +5,9 @@ import 'package:personal_schedule_management/config/routes/routes.dart';
 import 'package:personal_schedule_management/config/text_styles/app_text_style.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:personal_schedule_management/features/controller/settings_controller.dart';
-import 'package:personal_schedule_management/features/pages/changepass_page.dart';
-import 'package:personal_schedule_management/features/pages/forgotpass_page.dart';
-import 'package:personal_schedule_management/features/pages/login_page.dart';
+import 'package:personal_schedule_management/features/pages/auth%20pages/changepass_page.dart';
+import 'package:personal_schedule_management/features/pages/auth%20pages/forgotpass_page.dart';
+import 'package:personal_schedule_management/features/pages/auth%20pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 

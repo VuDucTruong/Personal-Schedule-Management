@@ -5,9 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:personal_schedule_management/features/pages/pincode_page.dart';
+import 'package:personal_schedule_management/features/pages/auth%20pages/pincode_page.dart';
 
-import '../../config/theme/app_theme.dart';
+import '../../../config/theme/app_theme.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -101,7 +101,8 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       _NameValidateText = _NameValidating(_NameController.value.text);
       _EmailValidateText = _EmailValidating(_EmailController.value.text);
-      _PasswordValidateText = _PasswordValidating(_PasswordController.value.text);
+      _PasswordValidateText =
+          _PasswordValidating(_PasswordController.value.text);
     });
     if (_NameCorrect && _EmailCorrect && _PasswordCorrect) {
       // do something
@@ -121,9 +122,8 @@ class _RegisterPageState extends State<RegisterPage> {
       }
       if (result == false) {
         // Chuyển hướng sang PINCODE page để xác thực tài khoản
-        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-            _createRoute(), (route) => false
-        );
+        Navigator.of(context, rootNavigator: true)
+            .pushAndRemoveUntil(_createRoute(), (route) => false);
       } else if (_ExceptionText != null) {
         String? message = _ExceptionText;
         ScaffoldMessenger.of(context)
@@ -212,25 +212,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // TODO: implement build
     return MaterialApp(
-      localizationsDelegates:
-        const [
+        localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-      debugShowCheckedModeBanner: false,
-      supportedLocales:
-        const [
+        debugShowCheckedModeBanner: false,
+        supportedLocales: const [
           Locale('en'), // English
           Locale('vi'),
-          ],
-      locale: const Locale('vi'),
-      theme: AppTheme.of(context, listen: true).lightTheme,
-      darkTheme: AppTheme.of(context, listen: true).darkTheme,
-      themeMode: AppTheme.of(context, listen: true).darkMode
-      ? ThemeMode.dark
-          : ThemeMode.light,
-      home: SafeArea(
+        ],
+        locale: const Locale('vi'),
+        theme: AppTheme.of(context, listen: true).lightTheme,
+        darkTheme: AppTheme.of(context, listen: true).darkTheme,
+        themeMode: AppTheme.of(context, listen: true).darkMode
+            ? ThemeMode.dark
+            : ThemeMode.light,
+        home: SafeArea(
           child: Builder(
             builder: (context) => Scaffold(
                 resizeToAvoidBottomInset: true,
@@ -240,7 +238,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         Navigator.of(context, rootNavigator: true).pop();
                       },
                       icon: Icon(Icons.arrow_back,
-                          size: 40, color: Theme.of(context).colorScheme.primary)),
+                          size: 40,
+                          color: Theme.of(context).colorScheme.primary)),
                 ),
                 body: SingleChildScrollView(
                   reverse: true,
@@ -337,10 +336,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                                         .onBackground),
                                             decoration: InputDecoration(
                                               contentPadding:
-                                                  EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                                  EdgeInsets.fromLTRB(
+                                                      12, 8, 12, 0),
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    width: 3, color: Colors.black),
+                                                    width: 3,
+                                                    color: Colors.black),
                                                 borderRadius:
                                                     BorderRadius.circular(50.0),
                                               ),
@@ -387,10 +388,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                                         .onBackground),
                                             decoration: InputDecoration(
                                               contentPadding:
-                                                  EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                                  EdgeInsets.fromLTRB(
+                                                      12, 8, 12, 0),
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    width: 3, color: Colors.black),
+                                                    width: 3,
+                                                    color: Colors.black),
                                                 borderRadius:
                                                     BorderRadius.circular(50.0),
                                               ),
@@ -439,10 +442,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                                         .onBackground),
                                             decoration: InputDecoration(
                                               contentPadding:
-                                                  EdgeInsets.fromLTRB(12, 8, 12, 0),
+                                                  EdgeInsets.fromLTRB(
+                                                      12, 8, 12, 0),
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    width: 3, color: Colors.black),
+                                                    width: 3,
+                                                    color: Colors.black),
                                                 borderRadius:
                                                     BorderRadius.circular(50.0),
                                               ),
@@ -492,8 +497,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               _RegisterButton(context);
                             },
                             child: Container(
-                              width:
-                                  MediaQuery.of(context).size.width * buttonRatio,
+                              width: MediaQuery.of(context).size.width *
+                                  buttonRatio,
                               alignment: Alignment.center,
                               child: Text("Đăng kí",
                                   style: Theme.of(context)
@@ -511,8 +516,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 )),
           ),
-        )
-    );
+        ));
   }
 
   Route _createRoute() {

@@ -25,6 +25,7 @@ class CongViecDTO {
   bool isBaoThuc;
   List<Timestamp> ngayNgoaiLe;
   List<Map<String, dynamic>> congViecHTList, thongBaoList;
+  List<String> khachMoiList;
 
   CongViecDTO(
       this.maCV,
@@ -45,7 +46,8 @@ class CongViecDTO {
       this.isBaoThuc,
       this.ngayNgoaiLe,
       this.congViecHTList,
-      this.thongBaoList);
+      this.thongBaoList,
+      this.khachMoiList);
 
   toJson() {
     return {
@@ -68,6 +70,7 @@ class CongViecDTO {
       "ngayNgoaiLe": ngayNgoaiLe,
       "congViecHTList": congViecHTList,
       "thongBaoList": thongBaoList,
+      "khachMoiList": khachMoiList
     };
   }
 
@@ -91,10 +94,11 @@ class CongViecDTO {
         json['isBaoThuc'],
         List.from(json['ngayNgoaiLe']),
         List.from(json['congViecHTList']),
-        List.from(json['thongBaoList']));
+        List.from(json['thongBaoList']),
+        List.from(json['khachMoiList']));
   }
 
-  toCongViec() {
+  CongViec toCongViec() {
     return CongViec(
         maCV ?? '',
         maND ?? '',
@@ -116,6 +120,7 @@ class CongViecDTO {
         congViecHTList
             .map((e) => CongViecHTDTO.fromJson(e).toCongViecHT())
             .toList(),
-        thongBaoList.map((e) => ThongBaoDTO.fromJson(e).toThongBao()).toList());
+        thongBaoList.map((e) => ThongBaoDTO.fromJson(e).toThongBao()).toList(),
+        this.khachMoiList);
   }
 }

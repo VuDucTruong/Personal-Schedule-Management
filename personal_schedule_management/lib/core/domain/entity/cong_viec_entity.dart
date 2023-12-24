@@ -25,6 +25,7 @@ class CongViec {
   List<DateTime> ngayNgoaiLe;
   List<CongViecHT> congViecHTList;
   List<ThongBao> thongBaoList;
+  List<String> khachMoiList;
 
   CongViec(
       this.maCV,
@@ -45,7 +46,8 @@ class CongViec {
       this.isBaoThuc,
       this.ngayNgoaiLe,
       this.congViecHTList,
-      this.thongBaoList);
+      this.thongBaoList,
+      this.khachMoiList);
 
   toCongViecDTO() {
     return CongViecDTO(
@@ -64,9 +66,10 @@ class CongViec {
         isKhachMoi,
         tenCK,
         thoiDiemLap,
-        this.isBaoThuc,
-        this.ngayNgoaiLe.map((e) => Timestamp.fromDate(e)).toList(),
+        isBaoThuc,
+        ngayNgoaiLe.map((e) => Timestamp.fromDate(e)).toList(),
         congViecHTList.map((e) => e.toCongViecHTDTO().toJson()).toList(),
-        thongBaoList.map((e) => e.toThongBaoDTO().toJson()).toList());
+        thongBaoList.map((e) => e.toThongBaoDTO().toJson()).toList(),
+        khachMoiList);
   }
 }
