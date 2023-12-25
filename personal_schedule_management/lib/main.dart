@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   final pageList = [
     CalendarPage(),
     ReportPage(),
-    InvitationPage(),
+    // InvitationPage(),
     SettingsPage(),
   ];
 
@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
                   BarItem(
                       title: 'Thống kê',
                       icon: FontAwesomeIcons.magnifyingGlassChart),
-                  BarItem(title: 'Lời mời', icon: FontAwesomeIcons.envelope),
+                  // BarItem(title: 'Lời mời', icon: FontAwesomeIcons.envelope),
                   BarItem(title: 'Cài đặt', icon: FontAwesomeIcons.gear)
                 ],
                 iconSize: 20,
