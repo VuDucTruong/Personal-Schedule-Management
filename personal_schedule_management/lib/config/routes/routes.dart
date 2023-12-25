@@ -33,9 +33,9 @@ class AppRoutes {
       MaterialPageRoute(
         builder: (context) => YourCalendarPage(),
       ));
-  static void toAddGuestEmailPage(BuildContext context) => Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddGuestEmail(),
-      ));
+  // static void toAddGuestEmailPage(BuildContext context) => Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => AddGuestEmail(),
+  //     ));
 }

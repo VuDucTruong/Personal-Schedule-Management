@@ -101,6 +101,40 @@ class _PincodePageState extends State<PincodePage> {
     sendConfirmationCode(pinCode);
   }
 
+  bool _canPop = false;
+  void _backButton(BuildContext context) async {
+    if (!_verifySuccess){
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Cảnh báo'),
+          content: Text(
+              'Hành động này sẽ chuyển bạn về trang đăng nhập ! \n Bạn có chắc chắn không ?'),
+          actions: [
+            FilledButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Hủy')),
+            FilledButton(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                      _createRoute(), (route) => false
+                  );
+                },
+                child: Text('Đồng ý'))
+          ],
+        ),
+      );
+    }
+    else
+    {
+      Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          _createRoute(), (route) => false
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -112,28 +146,7 @@ class _PincodePageState extends State<PincodePage> {
           appBar: AppBar(
             leading: IconButton(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Cảnh báo'),
-                      content: Text(
-                          'Hành động này sẽ chuyển bạn về trang đăng nhập ! \n Bạn có chắc chắn không ?'),
-                      actions: [
-                        FilledButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('Hủy')),
-                        FilledButton(
-                            onPressed: () {
-                              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                                  _createRoute(), (route) => false
-                              );
-                            },
-                            child: Text('Đồng ý'))
-                      ],
-                    ),
-                  );
+                  _backButton(context);
                 },
                 icon: Icon(Icons.arrow_back,
                     size: 40, color: Theme.of(context).colorScheme.primary)),
@@ -526,7 +539,24 @@ class _PincodePageState extends State<PincodePage> {
       themeMode: AppTheme.of(context, listen: true).darkMode
           ? ThemeMode.dark
           : ThemeMode.light,
-      home: _verifySuccess? finishedPage : mainPage,
+      home: Builder(
+        builder: (context) => PopScope(
+          canPop: _canPop,
+          onPopInvoked: (didPop) {
+            if (_canPop) return;
+            if (_verifySuccess){
+              _backButton(context);
+              return;
+            }
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) async {
+                _backButton(context);
+              }
+            );
+          },
+          child: _verifySuccess? finishedPage : mainPage,
+        )
+      )
     );
   }
 

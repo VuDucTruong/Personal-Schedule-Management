@@ -57,7 +57,7 @@ class _ForgotPassPageState extends State<ForgotPassPage> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message.toString())));
     }
-    Navigator.of(context).pop();
+    Navigator.of(context, rootNavigator: true).pop();
 
     setState(() {});
   }
