@@ -80,6 +80,14 @@ class _CalendarPageState extends State<CalendarPage> {
       await calendarPageController.getCalendarEvents();
       isLoad = true;
     }
+    else if (CalendarPageController.isSyncCalendarModified){
+        dataSourceController.appointmentList.clear();
+        await calendarPageController.getCalendarEvents();
+        // await calendarPageController.getSyncCalendarEvents();
+        // await calendarPageController.getCalendarEvents();
+        isLoad = true;
+
+    }
     return true;
   }
 
