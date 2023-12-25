@@ -551,39 +551,39 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                 activeColor: createWorkController.colorIcon,
               ),
             ),
-            const DividerWorkItem(),
-            ListTitleWork(
-              const Text('Thêm khách mời'),
-              Icons.email,
-              InkWell(
-                child: Container(
-                  width: 120,
-                  height: 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "0",
-                          textAlign: TextAlign.end,
-                          style: AppTextStyle.h2_5
-                              .copyWith(fontWeight: FontWeight.bold),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Icon(Icons.arrow_forward_ios)
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  AppRoutes.toAddGuestEmailPage(context);
-                },
-              ),
-            ),
+            // const DividerWorkItem(),
+            // ListTitleWork(
+            //   const Text('Thêm khách mời'),
+            //   Icons.email,
+            //   InkWell(
+            //     child: Container(
+            //       width: 120,
+            //       height: 30,
+            //       child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.end,
+            //         children: [
+            //           Expanded(
+            //             child: Text(
+            //               "0",
+            //               textAlign: TextAlign.end,
+            //               style: AppTextStyle.h2_5
+            //                   .copyWith(fontWeight: FontWeight.bold),
+            //               maxLines: 1,
+            //               overflow: TextOverflow.ellipsis,
+            //             ),
+            //           ),
+            //           const SizedBox(
+            //             width: 10,
+            //           ),
+            //           const Icon(Icons.arrow_forward_ios)
+            //         ],
+            //       ),
+            //     ),
+            //     onTap: () {
+            //       AppRoutes.toAddGuestEmailPage(context);
+            //     },
+            //   ),
+            // ),
             const DividerWorkItem(),
             Builder(
               builder: (context) {
