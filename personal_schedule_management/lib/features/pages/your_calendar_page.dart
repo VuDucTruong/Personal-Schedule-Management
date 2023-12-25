@@ -80,45 +80,48 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
                                   left: 4.0, top: 4.0, right: 4.0, bottom: 4.0),
                               child: InkWell(
                                   child: ListTile(
-                                title: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(5.0), //or 15.0
-                                      child: Container(
-                                        height: 50,
-                                        width: 50,
-                                        color: Colors.white,
-                                        child: Image.asset(
-                                            'assets/image/google_image.png'),
-                                      ),
+                                    title: Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0), //or 15.0
+                                          child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            color: Colors.white,
+                                            child: Image.asset(
+                                                'assets/image/google_image.png'),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 16,
+                                        ),
+                                        Text('Tài khoản Google',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimaryContainer,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
                                     ),
-                                    const SizedBox(
-                                      width: 16,
+                                    trailing: Switch(
+                                      value: yourCalendarController.isSync,
+                                      onChanged: (value) async {
+                                        if (await yourCalendarController
+                                            .changeSync(value)) {
+                                          _modified = true;
+                                          setState(() {});
+                                        }
+                                      },
                                     ),
-                                    Text('Tài khoản Google',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimaryContainer,
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                                trailing: Switch(
-                                  value: yourCalendarController.isSync,
-                                  onChanged: (value) async {
-                                    if (await yourCalendarController
-                                        .changeSync(value)) {
-                                      _modified = true;
-                                      setState(() {});
-                                    }
-                                  },
-                                ),
-                              ))),
+                                  )
+                              )
+                          ),
                           Visibility(
                             visible: yourCalendarController.isSync,
                             child: ListView.builder(
+                              primary: false,
                               shrinkWrap: true,
                               itemCount:
                                   yourCalendarController.accountList.length,
