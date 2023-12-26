@@ -79,14 +79,12 @@ class _CalendarPageState extends State<CalendarPage> {
     if (!isLoad && dataSourceController.isEmpty()) {
       await calendarPageController.getCalendarEvents();
       isLoad = true;
-    }
-    else if (CalendarPageController.isSyncCalendarModified){
-        dataSourceController.appointmentList.clear();
-        await calendarPageController.getCalendarEvents();
-        // await calendarPageController.getSyncCalendarEvents();
-        // await calendarPageController.getCalendarEvents();
-        isLoad = true;
-
+    } else if (CalendarPageController.isSyncCalendarModified) {
+      dataSourceController.appointmentList.clear();
+      await calendarPageController.getCalendarEvents();
+      // await calendarPageController.getSyncCalendarEvents();
+      // await calendarPageController.getCalendarEvents();
+      isLoad = true;
     }
     return true;
   }
@@ -155,15 +153,6 @@ class _CalendarPageState extends State<CalendarPage> {
                     todayBackgroundColor: Theme.of(context).colorScheme.primary,
                   )),
               dataSource: dataSourceController.calendarDataSource,
-              onTap: (calendarTapDetails) {
-                print(dataSourceController.calendarDataSource?.appointments
-                    ?.map((e) {
-                  Appointment x = e;
-                  print('${x.id} ${x.subject}');
-                }));
-                print(dataSourceController
-                    .calendarDataSource?.appointments?.length);
-              },
               scheduleViewMonthHeaderBuilder: (context, details) =>
                   CustomMonthView(context, details),
               appointmentBuilder: (context, calendarAppointmentDetails) =>
@@ -427,8 +416,7 @@ class CustomSearchDelegate extends SearchDelegate {
   VoidCallback getAllCompleteWork;
   String timeFormatString;
   late List<Appointment> appointmentList;
-  Future<void>
-  onTap(details) async {
+  Future<void> onTap(details) async {
     if ((details.appointments?.length ?? 5) == 1 && details.date != null) {
       Appointment appointment = details.appointments!.first;
       await calendarScheduleController.showWorkDetails(

@@ -32,8 +32,19 @@ class DataSourceController {
   }
 
   void removeAppointment(Appointment x) {
-    appointmentList.remove(x);
-    calendarDataSource?.notifyListeners(CalendarDataSourceAction.remove, [x]);
+    Appointment? temp;
+    appointmentList.removeWhere((element) {
+      if (element.id == x.id) {
+        temp = element;
+        return true;
+      } else {
+        return false;
+      }
+    });
+    if (temp != null) {
+      calendarDataSource
+          ?.notifyListeners(CalendarDataSourceAction.remove, [temp]);
+    }
   }
 
   void updateAppointment(Appointment x) {
