@@ -138,6 +138,22 @@ class _SettingsPageState extends State<SettingsPage> {
       await launchUrl(_emailLaunchUri);
     } catch (e) {
       print('Không thể mở ứng dụng email: $e');
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Lỗi'),
+              content: Text('Thiết bị của bạn không có ứng dụng email!'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OKE'),
+                )
+              ],
+            );
+          });
     }
   }
 
