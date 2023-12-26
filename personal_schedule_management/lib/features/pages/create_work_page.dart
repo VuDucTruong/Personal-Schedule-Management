@@ -641,6 +641,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
               margin: const EdgeInsets.symmetric(horizontal: 12),
               child: TextField(
                 controller: locationController,
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     icon: Icon(
@@ -655,6 +656,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
               margin: const EdgeInsets.symmetric(horizontal: 12),
               child: TextField(
                 controller: urlController,
+                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     icon: Icon(

@@ -31,11 +31,23 @@ class AppTheme extends ChangeNotifier {
         textTheme: GoogleFonts.robotoTextTheme().copyWith(
           bodySmall: GoogleFonts.robotoTextTheme().bodySmall?.copyWith(
             color: colorScheme.onSurface
-          )
+          ),
+          bodyMedium: GoogleFonts.robotoTextTheme().bodyMedium?.copyWith(
+              color: colorScheme.onSurface
+          ),
+          bodyLarge: GoogleFonts.robotoTextTheme().bodyLarge?.copyWith(
+              color: colorScheme.onSurface
+          ),
+          titleMedium: GoogleFonts.robotoTextTheme().titleMedium?.copyWith(
+            color: colorScheme.onSurface
+          ),
+          titleLarge: GoogleFonts.robotoTextTheme().titleLarge?.copyWith(
+              color: colorScheme.onSurface
+          ),
         ),
         timePickerTheme: TimePickerThemeData().copyWith(
           helpTextStyle: TextStyle(color: colorScheme.onBackground),
-        )
+        ),
     );
   }
 
