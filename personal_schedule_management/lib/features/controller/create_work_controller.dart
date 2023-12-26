@@ -145,6 +145,8 @@ class CreateWorkController {
       if (startDate!.compareTo(endDate!) > 0)
         endDate = startDate?.add(Duration(hours: 1));
     }
+    loop = null;
+    contentRecurrence.clear();
   }
 
   Future<void> pickUpEndDate(BuildContext context) async {
@@ -161,6 +163,8 @@ class CreateWorkController {
       if (endDate!.compareTo(startDate!) < 0) {
         endDate = startDate;
       }
+      loop = null;
+      contentRecurrence.clear();
     }
   }
 
@@ -178,6 +182,8 @@ class CreateWorkController {
       } else {
         startDate = temp;
       }
+      loop = null;
+      contentRecurrence.clear();
     }
   }
 
@@ -192,6 +198,8 @@ class CreateWorkController {
       if (temp.compareTo(startDate!) >= 0) {
         endDate = temp;
       }
+      loop = null;
+      contentRecurrence.clear();
     }
   }
 
