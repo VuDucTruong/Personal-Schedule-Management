@@ -23,6 +23,7 @@ class _RecurrencingWeekState extends State<RecurrencingWeek> {
     'T7': false,
     'CN': false
   };
+  late DateTime startTime;
   String dayOption = 'Chọn ngày kết thúc lặp lại';
   bool isSelected = false;
   String weekNumber = '1';
@@ -34,6 +35,7 @@ class _RecurrencingWeekState extends State<RecurrencingWeek> {
     dayOfWeek[key] = true;
     tempList = widget.recurrenceWeekData['weekDays'];
     tempList.add(key);
+    startTime = widget.recurrenceWeekData['startDate'] ?? DateTime.now();
     widget.recurrenceWeekData['weekNumber'] = weekNumber;
   }
 
@@ -127,12 +129,11 @@ class _RecurrencingWeekState extends State<RecurrencingWeek> {
         CheckboxListTile(
           value: isSelected,
           onChanged: (value) async {
-            DateTime now = DateTime.now();
             DateTime? date = await showDatePicker(
                 context: context,
-                initialDate: now,
-                firstDate: now,
-                lastDate: DateTime(now.year + 5));
+                initialDate: startTime,
+                firstDate: startTime,
+                lastDate: DateTime(startTime.year + 5));
             widget.recurrenceWeekData['endDate'] = date;
             if (date != null) {
               setState(() {

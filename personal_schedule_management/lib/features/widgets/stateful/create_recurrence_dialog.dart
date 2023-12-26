@@ -24,10 +24,12 @@ class CreateRecurrenceDialogState extends State<CreateRecurrenceDialog>
   bool isSelected = false;
   String dayNumber = '1', weekNumber = '1';
   Map<String, dynamic> recurrenceDayData = {
+    'startDate': null,
     'dayNumber': null,
     'endDate': null
   }; // dayNumber - endDate
   Map<String, dynamic> recurrenceWeekData = {
+    'startDate': null,
     'weekDays': [],
     'weekNumber': null,
     'endDate': null
@@ -46,13 +48,16 @@ class CreateRecurrenceDialogState extends State<CreateRecurrenceDialog>
     super.initState();
     tabController = TabController(length: 4, vsync: this);
     recurrenceMonthData['startDate'] = widget.startDate;
+    recurrenceDayData['startDate'] = widget.startDate;
+    recurrenceWeekData['startDate'] = widget.startDate;
     recurrenceYearData['startDate'] = widget.startDate;
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Đặt lặp lại', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+      title: Text('Đặt lặp lại',
+          style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       insetPadding: EdgeInsets.symmetric(horizontal: 15),
       content: Builder(builder: (context) {
         return SizedBox(
