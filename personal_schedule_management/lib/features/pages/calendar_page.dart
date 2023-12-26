@@ -311,7 +311,7 @@ class _CalendarPageState extends State<CalendarPage> {
               Visibility(
                 visible: isFinished == 1,
                 child: InkWell(
-                  child: const Icon(FontAwesomeIcons.xmark),
+                  child: const Icon(FontAwesomeIcons.xmark, color: Colors.white),
                   onTap: () async {
                     if ((appointment.recurrenceRule?.isNotEmpty ?? false)) {
                       int result = await showDialog(
@@ -941,17 +941,26 @@ class _MyDrawerState extends State<MyDrawer> {
               ],
             );
           } else if (!widget.isWeatherOn) {
-            return const Column(
+            return Column(
               children: [
-                Image(
-                    image: AssetImage('assets/image/no_weather.png'),
-                    fit: BoxFit.contain,
-                    width: 100,
-                    height: 100),
-                SizedBox(
+                ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                      Theme.of(context).colorScheme.onBackground,
+                      BlendMode.srcIn),
+                  child: const Image(
+                            image: AssetImage('assets/image/no_weather.png'),
+                            fit: BoxFit.contain,
+                            width: 100,
+                            height: 100
+                        ),
+                ),
+
+                const SizedBox(
                   height: 8,
                 ),
-                Text('Thời tiết đã bị tắt...')
+                Text('Thời tiết đã bị tắt...',
+                  style: TextStyle(color: Theme.of(context).colorScheme.onBackground)
+                )
               ],
             );
           }
