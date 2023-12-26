@@ -14,10 +14,12 @@ class RecurrencingDay extends StatefulWidget {
 }
 
 class _RecurrencingDayState extends State<RecurrencingDay> {
+  late DateTime startTime;
   @override
   void initState() {
     super.initState();
     widget.recurrenceDayData['dayNumber'] = dayNumber;
+    startTime = widget.recurrenceDayData['startDate'] ?? DateTime.now();
   }
 
   String dayOption = 'Chọn ngày kết thúc lặp lại';
@@ -59,12 +61,11 @@ class _RecurrencingDayState extends State<RecurrencingDay> {
         CheckboxListTile(
           value: isSelected,
           onChanged: (value) async {
-            DateTime now = DateTime.now();
             DateTime? date = await showDatePicker(
                 context: context,
-                initialDate: now,
-                firstDate: now,
-                lastDate: DateTime(now.year + 5));
+                initialDate: startTime,
+                firstDate: startTime,
+                lastDate: DateTime(startTime.year + 5));
             widget.recurrenceDayData['endDate'] = date;
             if (date != null) {
               setState(() {

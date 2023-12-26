@@ -158,6 +158,9 @@ class CreateWorkController {
           year: selectedDate.year,
           month: selectedDate.month,
           day: selectedDate.day);
+      if (endDate!.compareTo(startDate!) < 0) {
+        endDate = startDate;
+      }
     }
   }
 
