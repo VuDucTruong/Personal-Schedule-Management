@@ -22,6 +22,11 @@ class DataSourceController {
     _appointmentList = value;
     calendarDataSource = MyCalendarDataSource(_appointmentList);
     calendarDataSource?.addListener((p0, p1) {
+      if (p0 == CalendarDataSourceAction.reset) {
+        p1.forEach((element) {
+          print(element);
+        });
+      }
       setUpNotification();
     });
   }
@@ -48,8 +53,18 @@ class DataSourceController {
   }
 
   void updateAppointment(Appointment x) {
-    appointmentList.removeWhere((element) => element.id == x.id);
-    appointmentList.add(x);
+    Appointment? temp;
+    appointmentList.removeWhere((element) {
+      if (element.id == x.id) {
+        temp = element;
+        return true;
+      } else {
+        return false;
+      }
+    });
+    if (temp != null) {
+      appointmentList.add(temp!);
+    }
     calendarDataSource?.notifyListeners(
         CalendarDataSourceAction.reset, appointmentList);
   }
