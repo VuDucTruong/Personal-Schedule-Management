@@ -76,6 +76,8 @@ dependencies:
   animated_splash_screen: ^1.3.0
   #connection checker
   internet_connection_checker: ^1.0.0+1
+  #look up latitude & longtitude
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:

@@ -22,11 +22,9 @@ class DataSourceController {
     _appointmentList = value;
     calendarDataSource = MyCalendarDataSource(_appointmentList);
     calendarDataSource?.addListener((p0, p1) {
-      if (p0 == CalendarDataSourceAction.reset) {
-        p1.forEach((element) {
-          print(element);
-        });
-      }
+      p1.forEach((element) {
+        print(element);
+      });
       setUpNotification();
     });
   }
@@ -56,7 +54,7 @@ class DataSourceController {
     Appointment? temp;
     appointmentList.removeWhere((element) {
       if (element.id == x.id) {
-        temp = element;
+        temp = copyAppointment(element, x);
         return true;
       } else {
         return false;
@@ -88,5 +86,18 @@ class DataSourceController {
             i, time, bool.tryParse(i.notes!.substring(4)) ?? false);
       }
     }
+  }
+
+  Appointment copyAppointment(Appointment old, Appointment newApp) {
+    Appointment newAppointment = old;
+    newAppointment.notes = newApp.notes;
+    newAppointment.id = newApp.id;
+    newAppointment.color = newApp.color;
+    newAppointment.subject = newApp.subject;
+    newAppointment.recurrenceRule = newApp.recurrenceRule;
+    newAppointment.isAllDay = newApp.isAllDay;
+    newAppointment.recurrenceExceptionDates = newApp.recurrenceExceptionDates;
+    newAppointment.location = newApp.location;
+    return newAppointment;
   }
 }
