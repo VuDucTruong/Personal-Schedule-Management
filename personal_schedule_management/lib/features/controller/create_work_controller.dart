@@ -98,11 +98,19 @@ class CreateWorkController {
                 'FREQ=${loop?['type']};INTERVAL=${data['weekNumber']}';
             List<dynamic>? weekDaysList = data['weekDays'];
             if (weekDaysList != null) {
-              String byDay = weekDaysList.reduce((value, element) {
+              /*String byDay = weekDaysList.reduce((value, element) {
+                print(value);
+                print(element);
+                print('${weekDaysMap[value] ?? value},${weekDaysMap[element]}');
                 return '${weekDaysMap[value] ?? value},${weekDaysMap[element]}';
+              });*/
+              String byDay = '';
+              weekDaysList.forEach((element) {
+                byDay += '${weekDaysMap[element]}';
               });
-
-              thoiDiemLap += ';BYDAY=$byDay';
+              if (byDay.isNotEmpty) {
+                thoiDiemLap += ';BYDAY=$byDay';
+              }
             }
             break;
           case 'MONTHLY':
