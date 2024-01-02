@@ -96,13 +96,13 @@ class _CalendarPageState extends State<CalendarPage> {
     // TODO: implement build
     return Scaffold(
       drawer: MyDrawer(calendarController),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            print(dataSourceController.appointmentList);
-          });
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     setState(() {
+      //       print(dataSourceController.appointmentList);
+      //     });
+      //   },
+      // ),
       appBar: AppBar(
         title: const Text('Lịch'),
         actions: [
