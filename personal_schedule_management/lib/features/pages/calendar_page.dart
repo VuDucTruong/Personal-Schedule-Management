@@ -96,13 +96,13 @@ class _CalendarPageState extends State<CalendarPage> {
     // TODO: implement build
     return Scaffold(
       drawer: MyDrawer(calendarController),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            print(dataSourceController.appointmentList);
-          });
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     setState(() {
+      //       print(dataSourceController.appointmentList);
+      //     });
+      //   },
+      // ),
       appBar: AppBar(
         title: const Text('Lịch'),
         actions: [
@@ -404,12 +404,22 @@ class _CalendarPageState extends State<CalendarPage> {
             height: details.bounds.height),
         Positioned(
           left: 55,
-          right: 0,
+          // right: 0,
           top: 20,
-          bottom: 0,
-          child: Text(
-            monthName + ' ' + details.date.year.toString(),
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          // bottom: 0,
+          child: Card(
+            color: Theme.of(context).colorScheme.primary,
+            child: Container(
+              margin: const EdgeInsets.only( left: 8.0, right: 8.0),
+              child: Text(
+                monthName + ' ' + details.date.year.toString(),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            )
           ),
         )
       ],
