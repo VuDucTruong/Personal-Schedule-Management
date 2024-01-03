@@ -80,8 +80,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     GetIt.instance<NotificationServices>().initialNotification(context);
-    ApiServices apiServices = ApiServices();
-    apiServices.fetchWeatherData();
     ConnectionStatus.createInstance(context);
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {

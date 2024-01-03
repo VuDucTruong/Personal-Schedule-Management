@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +13,7 @@ import 'package:personal_schedule_management/features/controller/work_detail_con
 import 'package:personal_schedule_management/features/pages/create_work_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/domain/entity/cong_viec_ht_entity.dart';
 import '../../core/domain/entity/thong_bao_entity.dart';
@@ -368,13 +370,30 @@ class _WorkDetailPageState extends State<WorkDetailPage> {
                               height: 8,
                             ),
                             IconWithText(Icons.link, 'URL'),
-                            Text(
-                              selectedCongViec.url.isNotEmpty
-                                  ? selectedCongViec.url
-                                  : notSet,
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
+                            GestureDetector(
+                              child: Text(
+                                selectedCongViec.url.isNotEmpty
+                                    ? selectedCongViec.url
+                                    : notSet,
+                                style:selectedCongViec.url.isNotEmpty
+                                    ? TextStyle(
+                                    color: Colors.blue,
+                                    fontStyle: FontStyle.italic) : TextStyle(
+                                    color:
+                                    Theme.of(context).colorScheme.secondary),
+                              ),
+                              onTap: () async {
+                                if (!selectedCongViec.url.isNotEmpty) return;
+                                try {
+                                  if (!await launchUrl(
+                                      Uri.parse(selectedCongViec.url))) {
+                                    Fluttertoast.showToast(
+                                        msg: 'Không thể tải đường dẫn này!');
+                                  }
+                                } catch (e) {
+                                  print('Không phải đường dẫn....');
+                                }
+                              },
                             ),
                             SizedBox(
                               height: 8,

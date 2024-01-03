@@ -22,9 +22,6 @@ class DataSourceController {
     _appointmentList = value;
     calendarDataSource = MyCalendarDataSource(_appointmentList);
     calendarDataSource?.addListener((p0, p1) {
-      p1.forEach((element) {
-        print(element);
-      });
       setUpNotification();
     });
   }
@@ -61,6 +58,7 @@ class DataSourceController {
       }
     });
     if (temp != null) {
+      print(temp);
       appointmentList.add(temp!);
     }
     calendarDataSource?.notifyListeners(
@@ -90,6 +88,8 @@ class DataSourceController {
 
   Appointment copyAppointment(Appointment old, Appointment newApp) {
     Appointment newAppointment = old;
+    newAppointment.startTime = newApp.startTime;
+    newAppointment.endTime = newApp.endTime;
     newAppointment.notes = newApp.notes;
     newAppointment.id = newApp.id;
     newAppointment.color = newApp.color;

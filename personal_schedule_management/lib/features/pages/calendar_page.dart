@@ -408,19 +408,18 @@ class _CalendarPageState extends State<CalendarPage> {
           top: 20,
           // bottom: 0,
           child: Card(
-            color: Theme.of(context).colorScheme.primary,
-            child: Container(
-              margin: const EdgeInsets.only( left: 8.0, right: 8.0),
-              child: Text(
-                monthName + ' ' + details.date.year.toString(),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.primary,
+              child: Container(
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+                child: Text(
+                  monthName + ' ' + details.date.year.toString(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
-              ),
-            )
-          ),
+              )),
         )
       ],
     );
@@ -733,18 +732,23 @@ class _MyDrawerState extends State<MyDrawer> {
                     const SizedBox(
                       width: 10,
                     ),
-                    RichText(
-                        text: TextSpan(
-                            style: TextStyle(
-                                fontSize: 16,
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
-                                fontWeight: FontWeight.bold),
-                            children: [
-                          TextSpan(text: location.name),
-                          const TextSpan(text: ','),
-                          TextSpan(text: location.country),
-                        ])),
+                    SizedBox(
+                      width: 250,
+                      child: RichText(
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
+                                  fontWeight: FontWeight.bold),
+                              children: [
+                                TextSpan(text: location.name),
+                                const TextSpan(text: ','),
+                                TextSpan(text: location.country),
+                              ])),
+                    ),
                     const Spacer(),
                     InkWell(
                       child: Icon(

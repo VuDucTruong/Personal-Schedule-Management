@@ -17,6 +17,7 @@ class ApiServices {
       response = await http.get(Uri.parse(
           '$baseURL/forecast.json?key=d9ae32330a674b9f9d1135156232109&q=${position.latitude},${position.longitude}&days=3&lang=vi'));
     }
+    print(response.request);
     if (response.statusCode == 200) {
       final data = utf8.decode(response.bodyBytes);
       return WeatherDTO.fromJson(jsonDecode(data));
@@ -44,7 +45,15 @@ class ApiServices {
     if (permission == LocationPermission.deniedForever) {
       return null;
     }
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low);
+    Position? position;
+    try {
+      position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.low,
+          timeLimit: Duration(seconds: 2));
+    } catch (e) {
+      return null;
+    }
+
+    return position;
   }
 }
