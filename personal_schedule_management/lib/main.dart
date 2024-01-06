@@ -12,7 +12,6 @@ import 'package:personal_schedule_management/features/pages/calendar_page.dart';
 import 'package:personal_schedule_management/features/pages/login_page.dart';
 import 'package:personal_schedule_management/features/pages/report_page.dart';
 import 'package:personal_schedule_management/features/pages/settings_page.dart';
-import 'package:personal_schedule_management/features/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -30,7 +29,7 @@ Future<void> main() async {
   tz.initializeTimeZones();
   runApp(ChangeNotifierProvider(
     create: (_) => AppTheme(),
-    child: SplashScreen(),
+    child: const MyApp(),
   ));
 }
 
