@@ -37,7 +37,8 @@ class YourCalendarController {
     for (var element in accountList) {
       for (var i in element.value) {
         // print({element.key + '\n' + (i.name ?? '') : !banList.contains(i.id)});
-        accountMap.addAll({element.key + '\n' + (i.name ?? ''): !banList.contains(i.id)});
+        accountMap.addAll(
+            {element.key + '\n' + (i.name ?? ''): !banList.contains(i.id)});
       }
     }
   }
@@ -59,6 +60,7 @@ class YourCalendarController {
   Future<bool> changeSync(value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (value) {
+      (await deviceCalendarPlugin.requestPermissions());
       if (await Permission.calendarFullAccess.isGranted) {
         isSync = value;
         prefs.setBool(SYNC, isSync);
