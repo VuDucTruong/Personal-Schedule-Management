@@ -1,8 +1,8 @@
 class WeatherDay {
-  double maxtemp_c, mintemp_c, avgtemp_c;
-  double maxwind_kph, avgvis_km, avghumidity;
+  dynamic maxtemp_c, mintemp_c, avgtemp_c;
+  dynamic maxwind_kph, avgvis_km, avghumidity;
   Condition condition;
-  double uv;
+  dynamic uv;
 
   WeatherDay(this.maxtemp_c, this.mintemp_c, this.avgtemp_c, this.maxwind_kph,
       this.avgvis_km, this.avghumidity, this.condition, this.uv);
@@ -18,6 +18,11 @@ class WeatherDay {
         Condition.fromJson(json['condition']),
         json['uv']);
   }
+
+  @override
+  String toString() {
+    return 'WeatherDay{maxtemp_c: $maxtemp_c, mintemp_c: $mintemp_c, avgtemp_c: $avgtemp_c, maxwind_kph: $maxwind_kph, avgvis_km: $avgvis_km, avghumidity: $avghumidity, condition: $condition, uv: $uv}';
+  }
 }
 
 class Forecast {
@@ -27,8 +32,9 @@ class Forecast {
 
   factory Forecast.fromJson(Map<String, dynamic> json) {
     List<dynamic> jsonList = json['forecastday'];
+
     List<ForecastDay> forecastDayList = [];
-    for (dynamic i in jsonList) {
+    for (Map<String, dynamic> i in jsonList) {
       forecastDayList.add(ForecastDay.fromJson(i));
     }
     return Forecast(forecastDayList);
@@ -50,6 +56,11 @@ class ForecastDay {
     return ForecastDay(
         DateTime.parse(json['date']), WeatherDay.fromJson(json['day']));
   }
+
+  @override
+  String toString() {
+    return 'ForecastDay{date: $date, weatherDay: $weatherDay}';
+  }
 }
 
 class Condition {
@@ -61,5 +72,10 @@ class Condition {
 
   factory Condition.fromJson(Map<String, dynamic> json) {
     return Condition(json['text'], 'https:' + json['icon'], json['code']);
+  }
+
+  @override
+  String toString() {
+    return 'Condition{text: $text, icon: $icon, code: $code}';
   }
 }
