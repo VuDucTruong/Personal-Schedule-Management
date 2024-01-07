@@ -178,10 +178,11 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
     return FutureBuilder(
       future: getDateFormat,
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
+        if (!snapshot.hasData) {
           return const Center(
             child: CircularProgressIndicator(),
           );
+        }
         return Container(
           margin: const EdgeInsets.all(8),
           height: height * 5 / 6,
@@ -235,8 +236,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
                               createWorkController.alarmSwitch,
                               widget.selectedCongViec?.ngayNgoaiLe ?? [],
                               widget.selectedCongViec?.congViecHTList ?? [],
-                              widget.selectedCongViec?.thongBaoList ??
-                                  createWorkController.getNotificationList());
+                              createWorkController.getNotificationList());
                           await chooseAction(congViec);
                           Appointment x = _createAppointment(congViec);
                           if (update) {
@@ -487,16 +487,7 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
             Column(
               children: [
                 ListTitleWork(
-                    const Text('Thiết lập nhắc nhở'), Icons.message, null
-                    // Switch(
-                    //   onChanged: (value) {
-                    //     createWorkController.changeReminderSwitch(value);
-                    //     setState(() {});
-                    //   },
-                    //   value: createWorkController.reminderSwitch,
-                    //   activeColor: createWorkController.colorIcon,
-                    // ),
-                    ),
+                    const Text('Thiết lập nhắc nhở'), Icons.message, null),
                 Builder(builder: (context) {
                   int max = createWorkController.reminderTimeList.length + 1;
                   return Visibility(
@@ -641,7 +632,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
               margin: const EdgeInsets.symmetric(horizontal: 12),
               child: TextField(
                 controller: locationController,
-                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     icon: Icon(
@@ -656,7 +648,8 @@ class _CreateWorkPageState extends State<CreateWorkPage> {
               margin: const EdgeInsets.symmetric(horizontal: 12),
               child: TextField(
                 controller: urlController,
-                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     icon: Icon(

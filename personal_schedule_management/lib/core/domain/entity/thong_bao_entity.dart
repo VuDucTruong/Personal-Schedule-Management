@@ -9,4 +9,9 @@ class ThongBao {
   ThongBaoDTO toThongBaoDTO() {
     return ThongBaoDTO(this.tenTB, thoiGian.toString());
   }
+
+  @override
+  String toString() {
+    return 'ThongBao{tenTB: $tenTB, thoiGian: $thoiGian}';
+  }
 }

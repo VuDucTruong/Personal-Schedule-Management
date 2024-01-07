@@ -69,4 +69,9 @@ class CongViec {
         congViecHTList.map((e) => e.toCongViecHTDTO().toJson()).toList(),
         thongBaoList.map((e) => e.toThongBaoDTO().toJson()).toList());
   }
+
+  @override
+  String toString() {
+    return 'CongViec{maCV: $maCV, maND: $maND, tieuDe: $tieuDe, noiDung: $noiDung, loaiCongViec: $loaiCongViec, ngayBatDau: $ngayBatDau, ngayKetThuc: $ngayKetThuc, isCaNgay: $isCaNgay, doUuTien: $doUuTien, mauSac: $mauSac, diaDiem: $diaDiem, url: $url, isKhachMoi: $isKhachMoi, tenCK: $tenCK, thoiDiemLap: $thoiDiemLap, isBaoThuc: $isBaoThuc, ngayNgoaiLe: $ngayNgoaiLe, congViecHTList: $congViecHTList, thongBaoList: $thongBaoList}';
+  }
 }
