@@ -48,8 +48,18 @@ class CalendarPageController {
     print('Sync Google Calendar!');
     _calendarAppointmentList = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? syncCalendar = prefs.getBool(SYNC);
+    // fresh start
+    if (syncCalendar == null){
+      await deviceCalendarPlugin.requestPermissions();
+      bool isSync = await Permission.calendarFullAccess.isGranted;
+      prefs.setBool(SYNC, isSync);
+      if (isSync == false){
+        return false;
+      }
+    } else
     // no sync
-    if (!(prefs.getBool(SYNC) ?? false)) {
+    if (!syncCalendar) {
       print('Sync off');
       isSyncCalendarModified = false;
       return false;
