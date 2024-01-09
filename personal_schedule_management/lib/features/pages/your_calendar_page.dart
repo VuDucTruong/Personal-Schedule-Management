@@ -31,10 +31,6 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       yourCalendarController.getAllGoogleAccounts().whenComplete(() {
         if (mounted) {
@@ -42,6 +38,10 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
         }
       });
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Builder(builder: (context) {
         return PopScope(
@@ -116,6 +116,9 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
                                       if (await yourCalendarController
                                           .changeSync(value)) {
                                         _modified = true;
+                                        if (value) {
+                                          await yourCalendarController.getAllGoogleAccounts();
+                                        }
                                         setState(() {});
                                       }
                                     },
