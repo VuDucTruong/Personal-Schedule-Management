@@ -116,6 +116,9 @@ class _YourCalendarPageState extends State<YourCalendarPage> {
                                       if (await yourCalendarController
                                           .changeSync(value)) {
                                         _modified = true;
+                                        if (value) {
+                                          await yourCalendarController.getAllGoogleAccounts();
+                                        }
                                         setState(() {});
                                       }
                                     },
