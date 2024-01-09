@@ -1,13 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:personal_schedule_management/config/theme/app_theme.dart';
 import 'package:personal_schedule_management/core/constants/constants.dart';
 import 'package:recase/recase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'data_source_controller.dart';
+
 class SettingsController {
   User? get currentUser => FirebaseAuth.instance.currentUser;
-
+  DataSourceController dataSourceController =
+      GetIt.instance<DataSourceController>();
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
   }
@@ -98,6 +102,7 @@ class SettingsController {
   Future<void> SetRingtone(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(RINGTONE, value);
+    dataSourceController.setUpNotification();
   }
 
   Future<String?> GetRingtone() async {
