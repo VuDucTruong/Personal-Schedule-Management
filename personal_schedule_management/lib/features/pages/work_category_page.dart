@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_schedule_management/features/controller/work_category_controller.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class WorkCategoryPage extends StatefulWidget {
   WorkCategoryPage(this.selectedCategory, {super.key});
@@ -52,8 +53,14 @@ class _WorkCategoryPageState extends State<WorkCategoryPage> {
                       InkWell(
                         child: Icon(Icons.delete),
                         onTap: () async {
-                          await controller.removeWorkCategory(index);
-                          setState(() {});
+                          if (selectedValue != data[index]) {
+                            await controller.removeWorkCategory(index);
+                            setState(() {});
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: 'Không thể xóa công việc đang chọn!',
+                            );
+                          }
                         },
                       )
                     ]),
@@ -67,7 +74,7 @@ class _WorkCategoryPageState extends State<WorkCategoryPage> {
                     onTap: () {
                       controller.openCreateWorkCategoryDialog(
                         context,
-                            () => setState(() {}),
+                        () => setState(() {}),
                       );
                     },
                   );
